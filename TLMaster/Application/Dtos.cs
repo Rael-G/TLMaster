@@ -13,7 +13,7 @@ public record AuctionDto(
     IReadOnlyList<BidDto> Bids,
     CharacterDto? Winner,
     AuctionStatus Status
-);
+) : IDto;
 
 public record BidDto(
     Guid Id,
