@@ -3,9 +3,8 @@ using TLMaster.Core.Enums;
 namespace TLMaster.Core.Entities;
 
 public class Character(Guid id, string name, Guild guild, List<Item> itens, int coin, Role role, List<Weapon> weapons)
+    : BaseEntity(id)
 {
-    public Guid Id { get; set; } = id;
-
     public string Name { get; set; } = name;
 
     public Guild? Guild { get; set; } = guild;

@@ -2,9 +2,10 @@ using System;
 
 namespace TLMaster.Core.Entities;
 
-public class Bid : IComparable<Bid>
+public class Bid : BaseEntity, IComparable<Bid>
 {
-    public Bid(Character bidder, Auction auction, int value)
+    public Bid(Guid id, Character bidder, Auction auction, int value)
+        : base(id)
     {
         Bidder = bidder;
         Auction = auction;
@@ -31,7 +32,7 @@ public class Bid : IComparable<Bid>
         return Value.CompareTo(other?.Value);
     }
 
-    public void ValidateValue(int value)
+    private static void ValidateValue(int value)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, nameof(Value));
     }

@@ -2,7 +2,8 @@ using TLMaster.Core.Enums;
 
 namespace TLMaster.Core.Entities;
 
-public class Auction(Item item, int initialPrice, DateTime startTime, TimeSpan duration, List<Bid> bids, Character? winner, AuctionStatus status)
+public class Auction(Guid id, Item item, int initialPrice, DateTime startTime, TimeSpan duration, List<Bid> bids, Character? winner, AuctionStatus status)
+    : BaseEntity(id)
 {
     public Item Item { get; set; } = item;
 
@@ -31,7 +32,7 @@ public class Auction(Item item, int initialPrice, DateTime startTime, TimeSpan d
         Bids.Add(bid);
     }
 
-    public void ValidateInitialPrice(int value)
+    private static void ValidateInitialPrice(int value)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(InitialPrice));
     }
