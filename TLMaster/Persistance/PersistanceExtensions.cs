@@ -8,6 +8,11 @@ namespace TLMaster.Persistance;
 
 public static class PersistanceExtensions
 {
+    /// <summary>
+    /// Configures persistence-related services such as database context and repositories.
+    /// </summary>
+    /// <param name="services">The collection of services to configure.</param>
+    /// <param name="configuration">The configuration settings.</param>
     public static void ConfigurePersistance(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
