@@ -10,14 +10,8 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public void Create(User user)
-        => _context.Users.Add(user);
-
     public void Update(User user)
         => _context.Users.Update(user);
-
-    public void Delete(User user)
-        => _context.Users.Remove(user);
 
     public async Task<User?> Get(Guid id)
         => await _context.Users
