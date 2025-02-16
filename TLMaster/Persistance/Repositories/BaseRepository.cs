@@ -6,7 +6,6 @@ using TLMaster.Persistance.Context;
 
 namespace TLMaster.Persistance.Repositories;
 
-
 public abstract class BaseRepository<T>(ApplicationDbContext context)
     : IBaseRepository<T> where T : BaseEntity
 {
