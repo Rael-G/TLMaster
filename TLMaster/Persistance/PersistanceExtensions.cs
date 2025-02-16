@@ -19,5 +19,6 @@ public static class PersistanceExtensions
         services.AddScoped<IGuildRepository, GuildRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IPartyRepository, PartyRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 }
