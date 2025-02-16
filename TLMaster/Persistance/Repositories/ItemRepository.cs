@@ -1,7 +1,7 @@
 using System;
 using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
-using TLMaster.Persistance.Context;
+using TLMaster.Persistance.Contexts;
 
 namespace TLMaster.Persistance.Repositories;
 
