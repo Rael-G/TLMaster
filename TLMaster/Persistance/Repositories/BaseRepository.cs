@@ -20,7 +20,7 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
     public virtual void Delete(T entity)
         => Context.Remove(entity);
 
-    public virtual async Task<T?> Get(Guid id)
+    public virtual async Task<T?> GetById(Guid id)
         => await Context.Set<T>()
         .AsNoTracking()
         .FirstOrDefaultAsync(t => t.Id == id);

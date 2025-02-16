@@ -29,7 +29,7 @@ public interface IBaseRepository<T> where T : BaseEntity
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
     /// <returns>The retrieved entity, or null if not found.</returns>
-    Task<T?> Get(Guid id);
+    Task<T?> GetById(Guid id);
 
     /// <summary>
     /// Retrieves all entities of type T.

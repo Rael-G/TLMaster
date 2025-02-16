@@ -37,9 +37,9 @@ public abstract class BaseService<TDto, TEntity>
         return true;
     }
 
-    public virtual async Task<TDto?> Get(Guid id)
+    public virtual async Task<TDto?> GetById(Guid id)
     {
-        var entity = await Repository.Get(id);
+        var entity = await Repository.GetById(id);
         return Mapper.Map<TDto>(entity);
     }
 
