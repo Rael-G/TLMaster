@@ -1,6 +1,6 @@
 using System;
 
-namespace TLMaster.Entities;
+namespace TLMaster.Core.Entities;
 
 public class Item(Guid id, string name, Character? owner)
 {

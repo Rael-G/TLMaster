@@ -1,6 +1,6 @@
 using System;
 
-namespace TLMaster.Entities;
+namespace TLMaster.Core.Entities;
 
 public class Guild(Guid id, User guildMaster, List<User> staff, List<Character> characters, List<Auction> auctions, List<Party> parties)
 {

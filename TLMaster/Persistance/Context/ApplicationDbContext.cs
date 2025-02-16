@@ -1,8 +1,7 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using TLMaster.Entities;
+using TLMaster.Core.Entities;
 
-namespace TLMaster.Context;
+namespace TLMaster.Persistance.Context;
 
 public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {

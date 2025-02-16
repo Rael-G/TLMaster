@@ -1,6 +1,6 @@
 using System;
 
-namespace TLMaster.Entities;
+namespace TLMaster.Core.Entities;
 
 public class Party(Guid id, string name, List<Character> characters)
 {

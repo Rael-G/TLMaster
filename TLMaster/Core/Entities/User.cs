@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace TLMaster.Entities;
+namespace TLMaster.Core.Entities;
 
 public class User(List<Character> characters) : IdentityUser<Guid>
 {

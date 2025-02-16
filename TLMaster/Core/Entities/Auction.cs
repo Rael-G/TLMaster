@@ -1,7 +1,6 @@
-using System;
-using TLMaster.Enums;
+using TLMaster.Core.Enums;
 
-namespace TLMaster.Entities;
+namespace TLMaster.Core.Entities;
 
 public class Auction(Item item, int initialPrice, DateTime startTime, TimeSpan duration, List<Bid> bids, Character? winner, AuctionStatus status)
 {

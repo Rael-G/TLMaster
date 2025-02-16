@@ -1,4 +1,4 @@
-namespace TLMaster.Enums;
+namespace TLMaster.Core.Enums;
 
 public enum AuctionStatus
 {
