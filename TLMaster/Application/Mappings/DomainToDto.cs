@@ -2,11 +2,11 @@ using System;
 using AutoMapper;
 using TLMaster.Core.Entities;
 
-namespace TLMaster.Application;
+namespace TLMaster.Application.Mappings;
 
-public class Mapper : Profile
+public class DomainToDto : Profile
 {
-    public Mapper()
+    public DomainToDto()
     {
         CreateMap<Auction, AuctionDto>()
             .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => src.Bids))

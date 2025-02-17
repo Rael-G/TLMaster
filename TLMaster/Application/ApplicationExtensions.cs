@@ -1,5 +1,6 @@
 using System;
 using TLMaster.Application.Interfaces;
+using TLMaster.Application.Mappings;
 using TLMaster.Application.Services;
 
 namespace TLMaster.Application;
@@ -13,7 +14,7 @@ public static class ApplicationExtensions
         public static void ConfigureApplication(this IServiceCollection services, IConfiguration configuration)
         {
             // Registers the AutoMapper service
-            services.AddAutoMapper(typeof(Mapper));
+            services.AddAutoMapper(typeof(DomainToDto));
 
             // Registers the PostService and CommentService services with scoped lifetime.
             services.AddScoped<IAuctionService, AuctionService>();
