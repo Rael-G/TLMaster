@@ -1,6 +1,27 @@
+using TLMaster;
+using TLMaster.Application;
+using TLMaster.Persistance;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigurePersistance(builder.Configuration);
+builder.Services.ConfigureApplication(builder.Configuration);
+builder.Services.ConfigureCors();
+builder.Services.ConfigureSwagger();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
+    app.InitializeDb();
+}
+
+app.UseCors();
+app.MapControllers();
 
 app.Run();
