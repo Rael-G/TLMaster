@@ -2,9 +2,9 @@ using System;
 
 namespace TLMaster.Core.Entities;
 
-public class BaseEntity(Guid id)
+public class BaseEntity
 {
-    private Guid _id = id;
+    private Guid _id;
 
     public Guid Id 
     { 
@@ -15,6 +15,17 @@ public class BaseEntity(Guid id)
             _id = value;
         }
     }
+
+    public BaseEntity(Guid id)
+    {
+        _id = id;
+    }
+
+    public BaseEntity()
+    {
+        
+    }
+
     private static void ValidateId(Guid id)
     {
         if (id == Guid.Empty)

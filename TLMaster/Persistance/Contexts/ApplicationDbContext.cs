@@ -14,70 +14,92 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+    {
+        base.OnModelCreating(modelBuilder);
 
-            // Auction
-            modelBuilder.Entity<Auction>()
-                .HasOne(a => a.Item)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+        // Auction
+        modelBuilder.Entity<Auction>()
+            .HasOne(a => a.Item)
+            .WithOne(i => i.Auction)
+            .HasForeignKey<Auction>(a => a.ItemId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Auction>()
-                .HasMany(a => a.Bids)
-                .WithOne(b => b.Auction)
-                .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Auction>()
+            .HasMany(a => a.Bids)
+            .WithOne(b => b.Auction)
+            .HasForeignKey(b => b.AuctionId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Auction>()
-                .HasOne(a => a.Winner)
-                .WithMany()
-                .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Auction>()
+            .HasOne(a => a.Winner)
+            .WithMany()
+            .HasForeignKey(a => a.WinnerId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-            // Bid
-            modelBuilder.Entity<Bid>()
-                .HasOne(b => b.Bidder)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade);
+        // Bid
+        modelBuilder.Entity<Bid>()
+            .HasOne(b => b.Bidder)
+            .WithMany(c => c.Bids)
+            .HasForeignKey(b => b.BidderId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
-            // Character
-            modelBuilder.Entity<Character>()
-                .HasOne(c => c.Guild)
-                .WithMany(g => g.Characters)
-                .OnDelete(DeleteBehavior.SetNull);
+        // Character
+        modelBuilder.Entity<Character>()
+            .HasOne(c => c.Guild)
+            .WithMany(g => g.Characters)
+            .HasForeignKey(c => c.GuildId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Character>()
-                .HasMany(c => c.Itens)
-                .WithOne(i => i.Owner)
-                .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Character>()
+            .HasMany(c => c.Itens)
+            .WithOne(i => i.Owner)
+            .HasForeignKey(i => i.OwnerId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-            // Guild
-            modelBuilder.Entity<Guild>()
-                .HasOne(g => g.GuildMaster)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade);
+        // Guild
+        modelBuilder.Entity<Guild>()
+            .HasOne(g => g.GuildMaster)
+            .WithMany(u => u.OwnedGuilds)
+            .HasForeignKey(g => g.GuildMasterId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Guild>()
-                .HasMany(g => g.Staff)
-                .WithMany();
+        modelBuilder.Entity<Guild>()
+            .HasMany(g => g.Staff)
+            .WithMany(u => u.StaffGuilds);
 
-            modelBuilder.Entity<Guild>()
-                .HasMany(g => g.Auctions)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Guild>()
+            .HasMany(g => g.Characters)
+            .WithOne(c => c.Guild)
+            .HasForeignKey(c => c.GuildId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Guild>()
-                .HasMany(g => g.Parties)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Guild>()
+            .HasMany(g => g.Auctions)
+            .WithOne(a => a.Guild)
+            .HasForeignKey(a => a.GuildId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            // Party
-            modelBuilder.Entity<Party>()
-                .HasMany(p => p.Characters)
-                .WithMany();
+        modelBuilder.Entity<Guild>()
+            .HasMany(g => g.Parties)
+            .WithOne(a => a.Guild)
+            .HasForeignKey(p => p.GuildId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            // User
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Characters)
-                .WithOne();
-        }
+        // Party
+        modelBuilder.Entity<Party>()
+            .HasMany(p => p.Characters)
+            .WithMany();
+
+        // User
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Characters)
+            .WithOne(c => c.User)
+            .HasForeignKey(c => c.UserId)
+            .IsRequired();
+    }
+
 }

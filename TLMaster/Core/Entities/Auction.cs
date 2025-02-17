@@ -2,24 +2,59 @@ using TLMaster.Core.Enums;
 
 namespace TLMaster.Core.Entities;
 
-public class Auction(Guid id, Item item, int initialPrice, DateTime startTime, TimeSpan duration, List<Bid> bids, Character? winner, AuctionStatus status)
-    : BaseEntity(id)
+public class Auction : BaseEntity
 {
-    public Item Item { get; set; } = item;
+    private int _initialPrice;
 
-    public int InitialPrice { get; set; } = initialPrice;
+    public Item Item { get; set; }
 
-    public DateTime StartTime { get; set; } = startTime;
+    public Guid ItemId { get; set; }
 
-    public TimeSpan Duration { get; set; } = duration;
+    public int InitialPrice
+    {
+        get => _initialPrice;
+        set
+        {
+            ValidateInitialPrice(value);
+            _initialPrice = value;
+        }
+    }
 
-    public List<Bid> Bids { get; private set; } = bids;
+    public DateTime StartTime { get; set; }
 
-    public Character? Winner { get; set; } = winner;
+    public TimeSpan Duration { get; set; }
 
-    public AuctionStatus Status { get; set; } = status;
+    public List<Bid> Bids { get; private set; } = [];
+
+    public Character? Winner { get; set; }
+
+    public Guid? WinnerId { get; set; }
+
+    public AuctionStatus Status { get; set; }
 
     public Bid? HighestBid => Bids.Count > 0 ? Bids.Max() : null;
+
+    public Guild Guild { get; set; }
+
+    public Guid GuildId { get; set; }
+
+    public Auction(Guid id, Item item, int initialPrice, DateTime startTime, TimeSpan duration, Guild guild, AuctionStatus status) : base(id)
+    {
+        Item = item;
+        InitialPrice = initialPrice;
+        StartTime = startTime;
+        Duration = duration;
+        Status = status;
+        Guild = guild;
+    }
+
+// Parameterless constructor for serialization
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public Auction()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    {
+        
+    }
 
     public void AddBid(Bid bid)
     {
