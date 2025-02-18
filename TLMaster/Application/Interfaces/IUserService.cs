@@ -9,6 +9,7 @@ public interface IUserService
     /// Creates a new user.
     /// </summary>
     /// <param name="user">The user to create.</param>
+    /// <param name="password">The user's password</param>
     /// <returns>The identity result</returns>
     Task<IdentityResult> Create(UserDto user, string password);
 
