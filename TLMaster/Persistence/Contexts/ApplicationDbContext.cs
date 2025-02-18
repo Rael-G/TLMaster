@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
 
 namespace TLMaster.Persistence.Contexts;
 
-public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Auction> Auctions { get; set; }
     public DbSet<Bid> Bids { get; set; }
@@ -11,7 +13,6 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Guild> Guilds { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Party> Parties { get; set; }
-    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -65,7 +66,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
             .WithMany(u => u.OwnedGuilds)
             .HasForeignKey(g => g.GuildMasterId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         modelBuilder.Entity<Guild>()
             .HasMany(g => g.Staff)
@@ -81,6 +82,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
             .HasMany(g => g.Auctions)
             .WithOne(a => a.Guild)
             .HasForeignKey(a => a.GuildId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Guild>()
@@ -100,7 +102,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 
 }
