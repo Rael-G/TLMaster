@@ -5,7 +5,6 @@ using TLMaster.Application.Interfaces;
 
 namespace TLMaster.Api.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
 public abstract class BaseController<TDto>(IBaseService<TDto> service)
     : ControllerBase
@@ -16,7 +15,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     /// <summary>
     /// Retrieves all entities.
     /// </summary>
-    /// <returns>Returns a list of all entities.</returns>
+    /// <returns>Returns a list containing all entities.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     protected async Task<IActionResult> GetAll()

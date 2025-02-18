@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TLMaster.Api.Interfaces;
-using TLMaster.Api.Models;
+using TLMaster.Api.Models.InputModels;
 using TLMaster.Application.Interfaces;
 
 namespace TLMaster.Api.Controllers
@@ -21,7 +20,7 @@ namespace TLMaster.Api.Controllers
             => Ok(await _service.GetAll());
 
         /// <summary>
-        /// Retrieves a specific user post by its ID.
+        /// Retrieves a specific user by its ID.
         /// </summary>
         /// <param name="id">The ID of the user to retrieve.</param>
         /// <returns>Returns the user if found, otherwise returns a 404 Not Found.</returns>
@@ -97,7 +96,7 @@ namespace TLMaster.Api.Controllers
         }
 
         /// <summary>
-        /// Deletes a user by its ID.
+        /// Deletes an user by its ID.
         /// </summary>
         /// <param name="id">The ID of the user to delete.</param>
         /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found.</returns>
