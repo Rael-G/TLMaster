@@ -2,7 +2,7 @@ using System;
 using TLMaster.Api.Interfaces;
 using TLMaster.Application;
 
-namespace TLMaster.Api.Models;
+namespace TLMaster.Api.Models.InputModels;
 
 public class UserInputModel : IInputModel<UserDto>
 {
