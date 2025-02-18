@@ -1,5 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using TLMaster.Persistence.Contexts;
 
 namespace TLMaster;
@@ -24,5 +25,20 @@ public static class HostExtensions
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }));
+    }
+
+    public static void ConfigureDoc(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "TLMaster",
+            });
+
+            var xmlFile = "TLMaster.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+        });
     }
 }

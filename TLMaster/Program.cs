@@ -7,16 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
 builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureApplication();
 builder.Services.ConfigureCors();
+builder.Services.ConfigureDoc();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger(options =>
+    {
+        options.RouteTemplate = "/openapi/{documentName}.json";
+    });
 	app.MapScalarApiReference();
 
     app.InitializeDb();
