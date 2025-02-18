@@ -1,5 +1,7 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
 using TLMaster.Persistence.Contexts;
 using TLMaster.Persistence.Repositories;
@@ -17,6 +19,10 @@ public static class PersistenceExtensions
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
+
+        services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
         services.AddScoped<IAuctionRepository, AuctionRepository>();
         services.AddScoped<IBidRepository, BidRepository>();
