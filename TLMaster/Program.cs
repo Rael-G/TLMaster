@@ -1,12 +1,12 @@
 using TLMaster;
 using TLMaster.Application;
-using TLMaster.Persistance;
+using TLMaster.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.ConfigurePersistance(builder.Configuration);
+builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureApplication(builder.Configuration);
 builder.Services.ConfigureCors();
 builder.Services.ConfigureSwagger();

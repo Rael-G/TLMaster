@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
 
-namespace TLMaster.Persistance.Contexts;
+namespace TLMaster.Persistence.Contexts;
 
 public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {
@@ -75,7 +75,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
             .HasMany(g => g.Characters)
             .WithOne(c => c.Guild)
             .HasForeignKey(c => c.GuildId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Guild>()
             .HasMany(g => g.Auctions)
@@ -99,7 +99,8 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
             .HasMany(u => u.Characters)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
 }

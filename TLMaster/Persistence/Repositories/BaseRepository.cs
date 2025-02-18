@@ -2,9 +2,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
-using TLMaster.Persistance.Contexts;
+using TLMaster.Persistence.Contexts;
 
-namespace TLMaster.Persistance.Repositories;
+namespace TLMaster.Persistence.Repositories;
 
 public abstract class BaseRepository<T>(ApplicationDbContext context)
     : IBaseRepository<T> where T : BaseEntity

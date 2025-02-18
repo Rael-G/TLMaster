@@ -1,7 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using TLMaster.Persistance.Contexts;
+using TLMaster.Persistence.Contexts;
 
 namespace TLMaster;
 
