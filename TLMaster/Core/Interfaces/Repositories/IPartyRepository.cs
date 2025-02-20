@@ -5,5 +5,5 @@ namespace TLMaster.Core.Interfaces.Repositories;
 
 public interface IPartyRepository : IBaseRepository<Party>
 {
-
+    void Update(Party party, List<Guid> characterIds);
 }

@@ -11,4 +11,12 @@ namespace TLMaster.Application.Services;
 public class PartyService(IPartyRepository partyRepository, IMapper mapper)
     : BaseService<PartyDto, Party>(partyRepository, mapper), IPartyService
 {
+    private readonly IPartyRepository _partyRepository = partyRepository;
+    
+    public override async Task Update(PartyDto partyDto)
+    {
+        var party = Mapper.Map<Party>(partyDto);
+        _partyRepository.Update(party, partyDto.CharacterIds);
+        await Repository.Commit();
+    }
 }

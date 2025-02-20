@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
@@ -21,9 +20,16 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
         => Context.Remove(entity);
 
     public virtual async Task<T?> GetById(Guid id)
-        => await Context.Set<T>()
-        .AsNoTracking()
-        .FirstOrDefaultAsync(t => t.Id == id);
+    {
+        IQueryable<T> query = Context.Set<T>().AsNoTracking();
+
+        foreach (var navigation in Context.Model.FindEntityType(typeof(T))?.GetNavigations() ?? [])
+        {
+            query = query.Include(navigation.Name);
+        }
+
+        return await query.FirstOrDefaultAsync(t => t.Id == id);
+    }
 
     public virtual async Task<IEnumerable<T>> GetAll()
         => await Context.Set<T>()
