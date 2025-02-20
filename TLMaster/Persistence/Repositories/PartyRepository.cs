@@ -9,7 +9,7 @@ namespace TLMaster.Persistence.Repositories;
 public class PartyRepository(ApplicationDbContext context)
     : BaseRepository<Party>(context), IPartyRepository
 {
-    public virtual async void Update(Party party, List<Guid> characterIds)
+    public async Task Update(Party party, List<Guid> characterIds)
     {
         var characters = await Context.Characters
         .Where(c => characterIds.Contains(c.Id))

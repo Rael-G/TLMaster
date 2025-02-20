@@ -5,5 +5,5 @@ namespace TLMaster.Core.Interfaces.Repositories;
 
 public interface IGuildRepository : IBaseRepository<Guild>
 {
-    void Update(Guild guild, List<Guid> staffIds);
+    Task Update(Guild guild, List<Guid> staffIds);
 }
