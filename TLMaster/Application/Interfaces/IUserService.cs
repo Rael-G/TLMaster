@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Identity;
+using TLMaster.Application.Dtos;
 
 namespace TLMaster.Application.Interfaces;
 
