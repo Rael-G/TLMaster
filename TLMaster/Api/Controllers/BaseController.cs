@@ -91,7 +91,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         }
         catch (Exception ex)
         {
-            return BadRequest(new { ex.Message });
+            return BadRequest(new { Message = ex.Message + "\n" + ex.InnerException?.Message });
         }
 
         return NoContent();
