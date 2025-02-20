@@ -31,6 +31,7 @@ public static class PersistenceExtensions
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IPartyRepository, PartyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
     }
 
     public static void SeedDb(this WebApplication app)

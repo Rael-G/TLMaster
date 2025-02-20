@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Guild> Guilds { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Party> Parties { get; set; }
+    public DbSet<Party> Activities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -103,6 +104,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(c => c.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.ClientCascade);
+
+        // Activity
+        modelBuilder.Entity<Activity>()
+            .HasOne(a => a.Guild)
+            .WithMany()
+            .HasForeignKey(a => a.GuildId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Activity>()
+            .HasMany(a => a.Participants)
+            .WithMany();
     }
 
 }
