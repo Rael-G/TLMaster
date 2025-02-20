@@ -14,12 +14,16 @@ public class GuildInputModel : IInputModel<GuildDto>
         => new () 
         { 
             Id = Guid.NewGuid(),
+            Name = Name,
+            Description = Description,
             GuildMasterId = GuildMasterId,
             StaffIds = StaffIds
         };
 
     public void InputToDto(GuildDto dto)
     {
+        dto.Name = Name;
+        dto.Description = Description;
         dto.GuildMasterId = GuildMasterId;
         dto.StaffIds = StaffIds;
     }

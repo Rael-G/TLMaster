@@ -28,6 +28,8 @@ public class ActivityInputModel : IInputModel<ActivityDto>
         Id = Guid.NewGuid(),
         Name = Name,
         Description = Description,
+        Payout = Payout,
+        WasPaid = WasPaid,
         DateTime = DateTime,
         IsPasswordRequired = IsPasswordRequired,
         Password = Password,
@@ -38,6 +40,8 @@ public class ActivityInputModel : IInputModel<ActivityDto>
     {
         dto.Name = Name;
         dto.Description = Description;
+        dto.Payout = Payout;
+        dto.WasPaid = WasPaid;
         dto.DateTime = DateTime;
         dto.IsPasswordRequired = IsPasswordRequired;
         dto.Password = Password;
