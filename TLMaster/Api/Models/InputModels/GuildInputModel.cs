@@ -1,17 +1,24 @@
 using TLMaster.Api.Interfaces;
-using TLMaster.Application;
+using TLMaster.Application.Dtos;
 
 namespace TLMaster.Api.Models.InputModels;
 
 public class GuildInputModel : IInputModel<GuildDto>
 {
+    public Guid GuildMasterId { get; set; }
+    public List<Guid> StaffIds { get; set; } = [];
+
     public GuildDto InputToDto()
-    {
-        throw new NotImplementedException();
-    }
+        => new () 
+        { 
+            Id = Guid.NewGuid(),
+            GuildMasterId = GuildMasterId,
+            StaffIds = StaffIds
+        };
 
     public void InputToDto(GuildDto dto)
     {
-        throw new NotImplementedException();
+        dto.GuildMasterId = GuildMasterId;
+        dto.StaffIds = StaffIds;
     }
 }

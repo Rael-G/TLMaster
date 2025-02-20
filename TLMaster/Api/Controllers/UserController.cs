@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
 using TLMaster.Application.Interfaces;
@@ -16,7 +17,7 @@ namespace TLMaster.Api.Controllers
         /// <returns>Returns a list of all users.</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        protected async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
             => Ok(await _service.GetAll());
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace TLMaster.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        protected async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var user = await _service.GetById(id);
 
@@ -45,22 +46,26 @@ namespace TLMaster.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        protected async Task<IActionResult> Post([FromBody] UserInputModel input)
+        public async Task<IActionResult> Post([FromBody] UserInputModel input)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = input.InputToDto();
+            IdentityResult result;
             try
             {
-                await _service.Create(user, input.Password);
+                result = await _service.Create(user, input.Password);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { ex.Message });
             }
 
-            return CreatedAtAction(nameof(Get), new { user.Id }, user);
+            if (!result.Succeeded)
+                return BadRequest(new { result.Errors });
+
+            return Ok();
         }
 
         /// <summary>
@@ -73,7 +78,7 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        protected async Task<IActionResult> Put(Guid id, [FromBody] UserInputModel input)
+        public async Task<IActionResult> Put(Guid id, [FromBody] UserInputModel input)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -103,7 +108,7 @@ namespace TLMaster.Api.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        protected async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var user = await _service.GetById(id);
 

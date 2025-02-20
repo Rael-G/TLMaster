@@ -1,18 +1,27 @@
-using System;
 using TLMaster.Api.Interfaces;
-using TLMaster.Application;
+using TLMaster.Application.Dtos;
 
 namespace TLMaster.Api.Models.InputModels;
 
 public class PartyInputModel : IInputModel<PartyDto>
 {
+    public string Name { get; set; } = string.Empty;
+    public List<Guid> CharacterIds { get; set; } = [];
+    public Guid GuildId { get; set; }
+
     public PartyDto InputToDto()
-    {
-        throw new NotImplementedException();
-    }
+        => new ()
+        {
+            Id = Guid.NewGuid(),
+            Name = Name,
+            CharacterIds = CharacterIds,
+            GuildId = GuildId
+        };
 
     public void InputToDto(PartyDto dto)
     {
-        throw new NotImplementedException();
+        dto.Name = Name;
+        dto.CharacterIds = CharacterIds;
+        dto.GuildId = GuildId;
     }
 }
