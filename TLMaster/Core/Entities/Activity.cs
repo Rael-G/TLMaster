@@ -8,23 +8,33 @@ public class Activity : BaseEntity
 
     public string Description { get; set; }
 
+    public int Payout { get; set; }
+
+    public bool WasPaid { get; set; }
+
     public DateTime DateTime { get; set; }
 
     public bool IsPasswordRequired { get; set; }
 
     public string? Password { get; set; }
 
+    public Guild Guild { get; set; }
+
+    public Guid GuildId { get; set; }
+
     public List<Character> Participants { get; set; } = [];
 
-    public Activity(Guid id, string name, string description, DateTime dateTime, bool isPasswordRequired, string? password)
+    public Activity(Guid id, string name, string description, int payout, DateTime dateTime, bool isPasswordRequired, string? password, Guild guild)
         : base(id)
     {
         Id = id;
         Name = name;
         Description = description;
+        Payout = payout;
         DateTime = dateTime;
         IsPasswordRequired = isPasswordRequired;
         Password = password;
+        Guild = guild;
     }
 
     // Parameterless constructor for serialization

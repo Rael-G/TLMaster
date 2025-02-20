@@ -23,5 +23,6 @@ public static class ApplicationExtensions
         services.AddScoped<IItemService, ItemService>();
         services.AddScoped<IPartyService, PartyService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IActivityService, ActivityService>();
     }
 }
