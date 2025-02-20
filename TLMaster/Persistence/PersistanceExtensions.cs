@@ -69,9 +69,9 @@ public static class PersistenceExtensions
             var auction1 = new Auction { Id = Guid.NewGuid(), ItemId = item3.Id, GuildId = guild3.Id, WinnerId = null };
             var auction2 = new Auction { Id = Guid.NewGuid(), ItemId = item4.Id, GuildId = guild1.Id, WinnerId = null };
 
-            var bid1 = new Bid { Id = Guid.NewGuid(), AuctionId = auction1.Id, BidderId = char1.Id, Value = 100 };
-            var bid2 = new Bid { Id = Guid.NewGuid(), AuctionId = auction1.Id, BidderId = char2.Id, Value = 150 };
-            var bid3 = new Bid { Id = Guid.NewGuid(), AuctionId = auction2.Id, BidderId = char3.Id, Value = 200 };
+            var bid1 = new Bid { Id = Guid.NewGuid(), AuctionId = auction1.Id, BidderId = char1.Id, Amount = 100 };
+            var bid2 = new Bid { Id = Guid.NewGuid(), AuctionId = auction1.Id, BidderId = char2.Id, Amount = 150 };
+            var bid3 = new Bid { Id = Guid.NewGuid(), AuctionId = auction2.Id, BidderId = char3.Id, Amount = 200 };
 
             var party1 = new Party { Id = Guid.NewGuid(), GuildId = guild1.Id };
             var party2 = new Party { Id = Guid.NewGuid(), GuildId = guild3.Id };

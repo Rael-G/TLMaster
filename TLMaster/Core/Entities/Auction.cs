@@ -61,7 +61,7 @@ public class Auction : BaseEntity
         if (Status is not AuctionStatus.Active)
             throw new ArgumentException("The auction isn't active.");
 
-        if (HighestBid is not null && bid.Value <= HighestBid.Value)
+        if (HighestBid is not null && bid.Amount <= HighestBid.Amount)
             throw new ArgumentException("New bid should be greater than the last bid on this auction.");
 
         Bids.Add(bid);

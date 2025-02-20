@@ -4,7 +4,7 @@ namespace TLMaster.Core.Entities;
 
 public class Bid : BaseEntity, IComparable<Bid>
 {
-    private int _value;
+    private int _amount;
 
     public Character Bidder { get; set; }
 
@@ -14,22 +14,22 @@ public class Bid : BaseEntity, IComparable<Bid>
 
     public Guid AuctionId { get; set; }
 
-    public int Value 
+    public int Amount 
     { 
-        get => _value; 
+        get => _amount; 
         set
         {
             ValidateValue(value);
-            _value = value;
+            _amount = value;
         }  
     }
 
-    public Bid(Guid id, Character bidder, Auction auction, int value)
+    public Bid(Guid id, Character bidder, Auction auction, int amount)
         : base(id)
     {
         Bidder = bidder;
         Auction = auction;
-        Value = value;
+        Amount = amount;
     }
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -41,11 +41,11 @@ public class Bid : BaseEntity, IComparable<Bid>
 
     public int CompareTo(Bid? other)
     {
-        return Value.CompareTo(other?.Value);
+        return Amount.CompareTo(other?.Amount);
     }
 
     private static void ValidateValue(int value)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, nameof(Value));
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, nameof(Amount));
     }
 }

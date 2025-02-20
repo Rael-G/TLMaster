@@ -9,7 +9,7 @@ public class BidInputModel : IInputModel<BidDto>
 {
     public Guid BidderId { get; set; }
     public Guid AuctionId { get; set; }
-    public int Value { get; set; }
+    public int Amount { get; set; }
 
     public BidDto InputToDto()
         => new()
@@ -17,13 +17,13 @@ public class BidInputModel : IInputModel<BidDto>
             Id = Guid.NewGuid(),
             BidderId = BidderId,
             AuctionId = AuctionId,
-            Value = Value
+            Amount = Amount
         };
 
     public void InputToDto(BidDto dto)
     {
         dto.BidderId = BidderId;
         dto.AuctionId = AuctionId;
-        dto.Value = Value;
+        dto.Amount = Amount;
     }
 }
