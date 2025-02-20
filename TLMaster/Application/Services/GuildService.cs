@@ -15,7 +15,7 @@ public class GuildService(IGuildRepository guildRepository, IMapper mapper)
     public override async Task Update(GuildDto guildDto)
     {
         var guild = Mapper.Map<Guild>(guildDto);
-        _guildRepository.Update(guild, guildDto.StaffIds);
+        await _guildRepository.Update(guild, guildDto.StaffIds);
         await Repository.Commit();
     }
 }
