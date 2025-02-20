@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
-using TLMaster.Application;
+using TLMaster.Application.Dtos;
 using TLMaster.Application.Interfaces;
 
 namespace TLMaster.Api.Controllers

@@ -35,5 +35,9 @@ public class DomainToDto : Profile
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(c => c.Id)))
             .ReverseMap();
+
+        CreateMap<Activity, ActivityDto>()
+            .ForMember(dest => dest.ParticipantIds, opt => opt.MapFrom(src => src.Participants.Select(c => c.Id)))
+            .ReverseMap();
     }
 }
