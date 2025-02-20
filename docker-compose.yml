@@ -1,0 +1,39 @@
+networks:
+  tlmaster-network:
+    driver: bridge
+
+volumes:
+  sqlserver-volume:
+
+services:
+
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    ports:
+      - 1433:1433
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: Y 
+      MSSQL_SA_PASSWORD: DevelopmentPW1! 
+      MSSQL_PID: Developer
+    volumes:
+      - sqlserver-volume:/var/opt/mssql
+    networks:
+      - tlmaster-network
+  
+  api:
+    ports:
+      - 3000:80
+    restart: always
+    build:
+      context: .
+      dockerfile: TLMaster/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;
+      - ConnectionStrings__ConnectionString=Server=localhost,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;
+    networks:
+      - tlmaster-network
+    depends_on: 
+      - db
+
