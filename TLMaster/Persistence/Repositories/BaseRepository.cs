@@ -28,6 +28,11 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
             query = query.Include(navigation.Name);
         }
 
+        foreach (var skipNavigation in Context.Model.FindEntityType(typeof(T))?.GetSkipNavigations() ?? [])
+        {
+            query = query.Include(skipNavigation.Name);
+        }
+
         return await query.FirstOrDefaultAsync(t => t.Id == id);
     }
 
