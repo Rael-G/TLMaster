@@ -4,6 +4,10 @@ namespace TLMaster.Core.Entities;
 
 public class Guild : BaseEntity
 {
+    public string Name { get; set; }
+
+    public string Description { get; set; }
+    
     public User GuildMaster { get; set; }
 
     public Guid GuildMasterId { get; set; }
@@ -16,8 +20,10 @@ public class Guild : BaseEntity
 
     public List<Party> Parties { get; set; } = [];
 
-    public Guild(Guid id, User guildMaster) : base(id)
+    public Guild(Guid id, string name, string description, User guildMaster) : base(id)
     {
+        Name = name;
+        Description = description;
         GuildMaster = guildMaster;
     }
 
