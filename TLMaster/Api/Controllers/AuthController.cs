@@ -9,6 +9,7 @@ namespace TLMaster.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController(SignInManager<User> signInManager, IAuthService authService)
         : ControllerBase
     {
@@ -22,7 +23,6 @@ namespace TLMaster.Api.Controllers
         /// <param name="returnUrl">The URL to redirect the user after successful authentication. Defaults to "/".</param>
         /// <returns>An authentication challenge that redirects the user to the external login provider.</returns>
         [HttpGet("login")]
-        [AllowAnonymous]
         public IActionResult Login(string returnUrl = "/")
         {
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Auth", new { returnUrl }, protocol: Request.Scheme);
@@ -42,7 +42,9 @@ namespace TLMaster.Api.Controllers
         /// Returns a 401 Unauthorized if authentication fails.
         /// </returns>
         [HttpGet("external-login-callback")]
-        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
         {
             if (remoteError != null)
@@ -73,10 +75,10 @@ namespace TLMaster.Api.Controllers
         /// Returns a 401 Unauthorized if the refresh token is invalid or expired.
         /// </returns>
         [HttpPost("regen-token")]
-        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegenToken([FromBody] string refreshToken)
         {
-
             string token;
             try
             {

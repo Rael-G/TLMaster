@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TLMaster.Api.Models.InputModels;
 using TLMaster.Application.Interfaces;
 
 namespace TLMaster.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController(IUserService service) : ControllerBase
     {
         private readonly IUserService _service = service;
@@ -18,7 +17,6 @@ namespace TLMaster.Api.Controllers
         /// <returns>Returns a list of all users.</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize]
         public async Task<IActionResult> GetAll()
             => Ok(await _service.GetAll());
 
@@ -30,7 +28,6 @@ namespace TLMaster.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
         public async Task<IActionResult> Get(Guid id)
         {
             var user = await _service.GetById(id);
@@ -49,7 +46,6 @@ namespace TLMaster.Api.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var user = await _service.GetById(id);

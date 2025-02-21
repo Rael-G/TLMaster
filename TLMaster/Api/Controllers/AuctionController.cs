@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
 using TLMaster.Application.Dtos;
@@ -7,6 +8,7 @@ namespace TLMaster.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuctionController(IAuctionService service) : BaseController<AuctionDto>(service)
     {
         /// <summary>
