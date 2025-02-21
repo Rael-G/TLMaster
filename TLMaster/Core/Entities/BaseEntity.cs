@@ -9,7 +9,7 @@ public class BaseEntity
     public Guid Id 
     { 
         get => _id; 
-        set
+        protected set
         {
             ValidateId(value);
             _id = value;
