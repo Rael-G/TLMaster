@@ -21,7 +21,7 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
 
     public virtual async Task<T?> GetById(Guid id)
     {
-        IQueryable<T> query = Context.Set<T>().AsNoTracking();
+        IQueryable<T> query = Context.Set<T>();
 
         foreach (var navigation in Context.Model.FindEntityType(typeof(T))?.GetNavigations() ?? [])
         {
