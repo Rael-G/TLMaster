@@ -10,9 +10,6 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public void Update(User user)
-        => _context.Users.Update(user);
-
     public async Task<User?> Get(Guid id)
         => await _context.Users
         .AsNoTracking()

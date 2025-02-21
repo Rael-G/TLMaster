@@ -13,21 +13,6 @@ public class UserService(UserManager<User> userManager, IMapper mapper)
     private readonly UserManager<User> _userManager = userManager;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IdentityResult> Create(UserDto userDto, string password)
-    {
-        var user = _mapper.Map<User>(userDto);
-        return await _userManager.CreateAsync(user, password);
-    }
-
-    public async Task<IdentityResult> Update(UserDto userDto)
-    {
-        var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
-        if (user is null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
-
-        _mapper.Map(userDto, user);
-        return await _userManager.UpdateAsync(user);
-    }
-
     public async Task<IdentityResult> Delete(UserDto userDto)
     {
         var user = await _userManager.FindByIdAsync(userDto.Id.ToString());

@@ -7,21 +7,6 @@ namespace TLMaster.Application.Interfaces;
 public interface IUserService
 {
     /// <summary>
-    /// Creates a new user.
-    /// </summary>
-    /// <param name="user">The user to create.</param>
-    /// <param name="password">The user's password</param>
-    /// <returns>The identity result</returns>
-    Task<IdentityResult> Create(UserDto user, string password);
-
-    /// <summary>
-    /// Updates an existing user.
-    /// </summary>
-    /// <param name="user">The user to update.</param>
-    /// <returns>The identity result</returns>
-    Task<IdentityResult> Update(UserDto user);
-
-    /// <summary>
     /// Deletes an existing user.
     /// </summary>
     /// <param name="user">The user to delete.</param>

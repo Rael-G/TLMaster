@@ -6,12 +6,6 @@ namespace TLMaster.Core.Interfaces.Repositories;
 public interface IUserRepository
 {
     /// <summary>
-    /// Updates an existing user.
-    /// </summary>
-    /// <param name="user">The user to update.</param>
-    void Update(User user);
-
-    /// <summary>
     /// Retrieves an user by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the user to retrieve.</param>
