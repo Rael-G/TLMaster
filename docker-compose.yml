@@ -23,7 +23,8 @@ services:
   
   api:
     ports:
-      - 3000:80
+      - 5001:80
+      - 7001:443
     restart: always
     build:
       context: .
@@ -31,7 +32,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80;
-      - ConnectionStrings__ConnectionString=Server=localhost,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;
+      - ConnectionStrings__ConnectionString=Server=db,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;TrustServerCertificate=true;
     networks:
       - tlmaster-network
     depends_on: 
