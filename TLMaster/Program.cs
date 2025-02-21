@@ -9,8 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureApplication();
-builder.Services.ConfigureCors();
+builder.Services.ConfigureCors(builder.Configuration);
 builder.Services.ConfigureDoc();
+builder.Services.ConfigureAuth(builder.Configuration);
 
 var app = builder.Build();
 
@@ -24,8 +25,11 @@ if (app.Environment.IsDevelopment())
 
     app.InitializeDb();
 }
-
 app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
