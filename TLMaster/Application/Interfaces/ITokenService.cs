@@ -5,5 +5,11 @@ namespace TLMaster.Application.Interfaces;
 
 public interface ITokenService
 {
-    string GenerateToken(User user);
+    string GenerateAccessToken(User user);
+
+    Task<RefreshToken> CreateRefreshToken(User user);
+
+    Task<RefreshToken?> GetByToken(string token);
+
+    Task RevokeRefreshToken(RefreshToken refreshToken);
 }
