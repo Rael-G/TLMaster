@@ -59,6 +59,10 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
     public async Task RevokeRefreshToken(RefreshToken refreshToken)
     {
         refreshToken.Revoke();
+
+        // avoid dbcontext tracking issues 
+        refreshToken.User = null!;
+        
         _refreshTokenRepository.Update(refreshToken);
         await _refreshTokenRepository.Commit();
     }
