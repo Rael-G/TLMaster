@@ -20,9 +20,9 @@ public class Character : BaseEntity
 
     public List<Bid> Bids { get; set; } = [];
 
-    public User User { get; set; }
+    public User User { get; private set; }
 
-    public Guid UserId { get; set; }
+    public Guid UserId { get; private set; }
 
     public Character(Guid id, string name, Role role, List<Weapon> weapons, User user) : base(id)
     {
@@ -30,6 +30,7 @@ public class Character : BaseEntity
         Role = role;
         Weapons = weapons;
         User = user;
+        UserId = user.Id;
     }
 
 // Parameterless constructor for serialization
