@@ -13,7 +13,7 @@ public class PartyService(IPartyRepository partyRepository, IMapper mapper)
 {
     private readonly IPartyRepository _partyRepository = partyRepository;
     
-    public override async Task Update(PartyDto partyDto)
+    public override async Task Update(PartyDto partyDto, Guid authenticatedUserId)
     {
         var party = Mapper.Map<Party>(partyDto);
         await _partyRepository.Update(party, partyDto.CharacterIds);

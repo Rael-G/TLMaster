@@ -12,7 +12,7 @@ public class GuildService(IGuildRepository guildRepository, IMapper mapper)
 {
     private readonly IGuildRepository _guildRepository = guildRepository;
 
-    public override async Task Update(GuildDto guildDto)
+    public override async Task Update(GuildDto guildDto, Guid authenticatedUserId)
     {
         var guild = Mapper.Map<Guild>(guildDto);
         await _guildRepository.Update(guild, guildDto.StaffIds);

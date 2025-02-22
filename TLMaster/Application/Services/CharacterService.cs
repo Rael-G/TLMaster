@@ -10,4 +10,5 @@ namespace TLMaster.Application.Services;
 public class CharacterService(ICharacterRepository characterRepository, IMapper mapper)
     : BaseService<CharacterDto, Character>(characterRepository, mapper), ICharacterService
 {
+    
 }
