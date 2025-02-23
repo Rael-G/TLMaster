@@ -12,9 +12,15 @@ public class Item : BaseEntity
 
     public Guid? OwnerId { get; set; }
 
-    public Item(Guid id, string name) : base(id)
+    public Guild Guild { get; set; }
+
+    public Guid GuildId { get; set; }
+
+    public Item(Guid id, string name, Guild guild) : base(id)
     {
         Name = name;
+        Guild = guild;
+        GuildId = guild.Id;
     }
 
 // Parameterless constructor for serialization

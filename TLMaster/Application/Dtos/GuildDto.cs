@@ -13,4 +13,5 @@ public class GuildDto : IDto
     public List<Guid> CharacterIds { get; set; } = [];
     public List<Guid> AuctionIds { get; set; } = [];
     public List<Guid> PartyIds { get; set; } = [];
+    public List<Guid> ItemIds { get; set; } = [];
 }

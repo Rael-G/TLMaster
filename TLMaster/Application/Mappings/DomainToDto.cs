@@ -23,6 +23,7 @@ public class DomainToDto : Profile
             .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(c => c.Id)))
             .ForMember(dest => dest.AuctionIds, opt => opt.MapFrom(src => src.Auctions.Select(a => a.Id)))
             .ForMember(dest => dest.PartyIds, opt => opt.MapFrom(src => src.Parties.Select(p => p.Id)))
+            .ForMember(dest => dest.ItemIds, opt => opt.MapFrom(src => src.Itens.Select(i => i.Id)))
             .ReverseMap();
 
         CreateMap<Item, ItemDto>()

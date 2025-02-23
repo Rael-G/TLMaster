@@ -125,6 +125,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(r => r.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Item
+        modelBuilder.Entity<Item>()
+            .HasOne(i => i.Guild)
+            .WithMany(g => g.Itens)
+            .HasForeignKey(i => i.GuildId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
 }
