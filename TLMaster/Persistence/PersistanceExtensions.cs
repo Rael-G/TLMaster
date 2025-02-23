@@ -20,7 +20,7 @@ public static class PersistenceExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
 
-        services.AddIdentity<User, IdentityRole<Guid>>()
+        services.AddIdentity<User, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
