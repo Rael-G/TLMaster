@@ -1,7 +1,11 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Interfaces;
 using TLMaster.Application.Interfaces;
+using TLMaster.Core.Entities;
 
 namespace TLMaster.Api.Controllers;
 
@@ -19,7 +23,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     protected async Task<IActionResult> GetAll()
-        => Ok(await Service.GetAll());
+        => Ok(await Service.GetAll(GetUserId(User)));
 
     /// <summary>
     /// Retrieves a specific entity post by its ID.
@@ -31,7 +35,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Get(Guid id)
     {
-        var entity = await Service.GetById(id);
+        var entity = await Service.GetById(id, GetUserId(User));
 
         if (entity is null)
             return NotFound(new {Id = id});
@@ -55,7 +59,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         var entity = input.InputToDto();
         try
         {
-            await Service.Create(entity);
+            await Service.Create(entity, GetUserId(User));
         }
         catch (Exception ex)
         {
@@ -80,14 +84,14 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var entity = await Service.GetById(id);
+        var entity = await Service.GetById(id, GetUserId(User));
         if (entity is null)
             return NotFound(new {Id = id});
 
         input.InputToDto(entity);
         try
         {
-            await Service.Update(entity);
+            await Service.Update(entity, GetUserId(User));
         }
         catch (Exception ex)
         {
@@ -107,13 +111,33 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Delete(Guid id)
     {
-        var entity = await Service.GetById(id);
+        var entity = await Service.GetById(id, GetUserId(User));
 
         if (entity is null)
             return NotFound(new {Id = id});
 
-        await Service.Delete(entity);
+        await Service.Delete(entity, GetUserId(User));
 
         return NoContent();
+    }
+
+    protected static Guid GetUserId(ClaimsPrincipal user)
+    {
+        var userIdClaim = (user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value)
+            ?? throw new NullReferenceException("User Id from claims principal is null.");
+        return Guid.Parse(userIdClaim);
+    }
+
+    protected static async Task<bool> IsAdmin(ClaimsPrincipal claim, UserManager<User> userManager)
+    {
+        var userIdClaim = claim.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        
+        if (userIdClaim is null) return false;
+
+        var user = await userManager.FindByIdAsync(userIdClaim);
+        
+        if (user == null) return false;
+
+        return await userManager.IsInRoleAsync(user,  "admin");
     }
 }

@@ -8,30 +8,29 @@ using TLMaster.Core.Entities;
 
 namespace TLMaster.Application.Services;
 
-public class UserService(UserManager<User> userManager, RoleManager<User> roleManager, IMapper mapper)
+public class UserService(UserManager<User> userManager, IMapper mapper)
     : IUserService
 {
     private readonly UserManager<User> _userManager = userManager;
-    private readonly RoleManager<User> _roleManager = roleManager;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IdentityResult> Delete(UserDto userDto, User authenticatedUser)
+    public async Task<IdentityResult> Delete(UserDto userDto, Guid authenticatedUserId)
     {
-        await ValidateIdentity(userDto.Id, authenticatedUser);
+        await ValidateIdentity(userDto.Id, authenticatedUserId);
         
         var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
         return user is not null ? await _userManager.DeleteAsync(user) : IdentityResult.Failed(new IdentityError { Description = "User not found" });
     }
 
-    public async Task<UserDto?> GetById(Guid id, User authenticatedUser)
+    public async Task<UserDto?> GetById(Guid id, Guid authenticatedUserId)
     {
-        await ValidateIdentity(id, authenticatedUser);
+        await ValidateIdentity(id, authenticatedUserId);
 
         var user = await _userManager.FindByIdAsync(id.ToString());
         return user is not null ? _mapper.Map<UserDto>(user) : null;
     }
 
-    public async Task<UserDto?> GetByUsername(string username, User authenticatedUser)
+    public async Task<UserDto?> GetByUsername(string username, Guid authenticatedUserId)
     {
         var user = await _userManager.FindByNameAsync(username);
 
@@ -40,30 +39,33 @@ public class UserService(UserManager<User> userManager, RoleManager<User> roleMa
             return null;
         }
 
-        await ValidateIdentity(user.Id, authenticatedUser);
+        await ValidateIdentity(user.Id, authenticatedUserId);
         return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<IEnumerable<UserDto>> GetAll(User authenticatedUser)
+    public async Task<IEnumerable<UserDto>> GetAll(Guid authenticatedUserId)
     {
         // only admin
-        await ValidateIdentity(Guid.NewGuid(), authenticatedUser);
+        await ValidateIdentity(Guid.NewGuid(), authenticatedUserId);
 
         var users = _userManager.Users.ToList();
         return _mapper.Map<IEnumerable<UserDto>>(users);
     }
 
-    private async Task ValidateIdentity(Guid entityId, User authenticatedUser)
+    private async Task ValidateIdentity(Guid entityId, Guid authenticatedUserId)
     {
-        if (!await IsAdmin(authenticatedUser) && entityId != authenticatedUser.Id)
+        if (!await IsAdmin(authenticatedUserId) && entityId != authenticatedUserId)
         {
             throw new ForbiddenAccessException("This user is not allowed to access this endpoint.");
         }
     }
 
-    private async Task<bool> IsAdmin(User authenticatedUser)
+    private async Task<bool> IsAdmin(Guid authenticatedUser)
     {
-        return await _roleManager.GetRoleNameAsync(authenticatedUser) == "admin";
+        var user = await _userManager.FindByIdAsync(authenticatedUser.ToString());
+        
+        if (user == null) return false;
+        return await _userManager.IsInRoleAsync(user, "admin");
     }
 }
 

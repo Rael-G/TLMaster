@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Application.Interfaces;
@@ -18,7 +20,7 @@ namespace TLMaster.Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
-            => Ok(await _service.GetAll());
+            => Ok(await _service.GetAll(GetUserId(User)));
 
         /// <summary>
         /// Retrieves a specific user by its ID.
@@ -30,7 +32,7 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
-            var user = await _service.GetById(id);
+            var user = await _service.GetById(id, GetUserId(User));
 
             if (user is null)
                 return NotFound(new {Id = id});
@@ -48,14 +50,21 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var user = await _service.GetById(id);
+            var user = await _service.GetById(id, GetUserId(User));
 
             if (user is null)
                 return NotFound(new {Id = id});
 
-            await _service.Delete(user);
+            await _service.Delete(user, GetUserId(User));
 
             return NoContent();
+        }
+
+        protected static Guid GetUserId(ClaimsPrincipal user)
+        {
+            var userIdClaim = (user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value)
+                ?? throw new NullReferenceException("User Id from claims principal is null.");
+            return Guid.Parse(userIdClaim);
         }
     }
 }
