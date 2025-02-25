@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using Blazored.LocalStorage;
 
-namespace TLMaster.UI.Services;
+namespace TLMaster.UI.Providers;
 
 public class ApplicationAuthStateProvider(ILocalStorageService localStorage) : AuthenticationStateProvider
 {

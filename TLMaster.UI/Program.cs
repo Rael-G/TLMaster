@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using TLMaster.UI.Components;
+using TLMaster.UI.Providers;
 using TLMaster.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddScoped<ApplicationAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
         provider.GetRequiredService<ApplicationAuthStateProvider>());
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<HttpClientProvider>();
 builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();

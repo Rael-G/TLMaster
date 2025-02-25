@@ -2,6 +2,7 @@ using System;
 using System.Net.Http.Headers;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using TLMaster.UI.Providers;
 
 namespace TLMaster.UI.Services;
 
@@ -12,7 +13,6 @@ public class AuthService(ILocalStorageService localStorage, HttpClient httpClien
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly ApplicationAuthStateProvider _authStateProvider = authStateProvider;
     private readonly HttpClient _httpClient = httpClient;
-
 
     public void Login()
     {
@@ -49,8 +49,17 @@ public class AuthService(ILocalStorageService localStorage, HttpClient httpClien
         _authStateProvider.NotifyAuthenticationStateChanged();
     }
 
-    public async Task<string?> GetAccessToken() 
-        => await _localStorage.GetItemAsync<string>("accessToken");
+    public async Task<string?> GetAccessToken()
+    {
+        try
+        {
+            return await _localStorage.GetItemAsync<string>("accessToken");
+        }
+        catch(InvalidOperationException)
+        {
+            return null;
+        }
+    }
 
     private string ExtractTokenFromQuery(string queryParams, string tokenName)
     {
@@ -58,7 +67,7 @@ public class AuthService(ILocalStorageService localStorage, HttpClient httpClien
         return uriQuery.TryGetValue(tokenName, out Microsoft.Extensions.Primitives.StringValues value) ? value.ToString() : string.Empty;
     }
 
-    public async Task ClearTokensAsync()
+    private async Task ClearTokensAsync()
     {
         await _localStorage.RemoveItemsAsync(["accessToken", "refreshToken"]);
     }
@@ -68,10 +77,4 @@ public class AuthService(ILocalStorageService localStorage, HttpClient httpClien
         await _localStorage.SetItemAsync("accessToken", token);
         await _localStorage.SetItemAsync("refreshToken", refreshToken);
     }
-}
-
-public class AuthResponse
-{
-    public string AccessToken { get; set; } = string.Empty;
-    public string RefreshToken { get; set; } = string.Empty;
 }

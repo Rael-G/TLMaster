@@ -1,10 +1,14 @@
 ﻿@page "/"
 
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Text.Json
+@using TLMaster.UI.Dtos
+@using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject AuthService AuthService
 @inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClientProvider HttpClientProvider
 
 @rendermode InteractiveServer
 
@@ -17,6 +21,14 @@
         <Authorized>
             <p>Bem-vindo, @context?.User?.Identity?.Name</p>
             <button @onclick="Logout">Sair</button>
+            <ul>
+            @foreach(var guild in Guilds)
+            {
+                <li>
+                    @guild.Name
+                </li>
+            }
+            </ul>
         </Authorized>
         <NotAuthorized>
             <p>Você precisa fazer login.</p>
@@ -28,6 +40,17 @@
 
 @code {
 
+    private IEnumerable<GuildDto> Guilds = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Guilds = await GetGuilds();
+            StateHasChanged();
+        }
+    }
+
     private void Login()
     {
         AuthService.Login();
@@ -36,5 +59,24 @@
     private async Task Logout()
     {
         await AuthService.Logout();
+    }
+
+    private async Task<IEnumerable<GuildDto>> GetGuilds()
+    {
+        var client = await HttpClientProvider.GetClient();
+        var response = await client.GetAsync("api/guild");
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var guilds = JsonSerializer.Deserialize<IEnumerable<GuildDto>>(json, 
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                ?? [];
+            return guilds;
+        }
+        else
+        {
+            Console.WriteLine(response.StatusCode);
+            return [];
+        }
     }
 }
