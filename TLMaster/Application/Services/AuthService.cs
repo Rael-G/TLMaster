@@ -1,6 +1,7 @@
 using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using TLMaster.Application.Dtos;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
 
@@ -13,7 +14,7 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
     private readonly UserManager<User> _userManager = userManager;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async Task<(string, string)> Login()
+    public async Task<TokenDto> Login()
     {
         var info = await _signInManager.GetExternalLoginInfoAsync() 
             ?? throw new UnauthorizedAccessException("Error retrieving info from external login.");
@@ -39,10 +40,10 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         var token = await _tokenService.GenerateAccessToken(user);
         var refreshToken = (await _tokenService.CreateRefreshToken(user)).Token;
 
-        return (token, refreshToken);
+        return new () { AccessToken = token, RefreshToken = refreshToken };
     }
 
-    public async Task<(string, string)> RegenToken(string refreshToken)
+    public async Task<TokenDto> RegenToken(string refreshToken)
     {
         var storedRefreshToken = await _tokenService.GetByToken(refreshToken);
 
@@ -64,10 +65,7 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
 
         await _tokenService.RevokeRefreshToken(storedRefreshToken);
 
-        return
-        (
-            newAccessToken,
-            newRefreshToken.Token
-        );
+        return new () { AccessToken = newAccessToken, RefreshToken = newRefreshToken.Token };
+
     }
 }

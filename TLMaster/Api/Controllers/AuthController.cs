@@ -2,6 +2,7 @@ using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TLMaster.Application.Dtos;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
 
@@ -52,18 +53,17 @@ namespace TLMaster.Api.Controllers
                 return BadRequest(new { error = $"External login error: {remoteError}" });
             }
 
-            string token;
-            string refreshToken;
+            TokenDto token;
             try
             {
-                (token, refreshToken) = await _authService.Login();
+                token = await _authService.Login();
             }
             catch(UnauthorizedAccessException e)
             {
                 return Unauthorized(e.Message);
             }
 
-            return Redirect($"{returnUrl}?access_token={token}&refresh_token={refreshToken}");
+            return Redirect($"{returnUrl}?access_token={token.AccessToken}&refresh_token={token.RefreshToken}");
         }
 
         /// <summary>
@@ -79,17 +79,17 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegenToken([FromBody] string refreshToken)
         {
-            string token;
+            TokenDto token;
             try
             {
-                (token, refreshToken) = await _authService.RegenToken(refreshToken);
+                token = await _authService.RegenToken(refreshToken);
             }
             catch(UnauthorizedAccessException e)
             {
                 return Unauthorized(e.Message);
             }
 
-            return Ok(new {AccessToken = token, RefreshToken = refreshToken});
+            return Ok(token);
         }
         
     }
