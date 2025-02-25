@@ -25,6 +25,9 @@ if (app.Environment.IsDevelopment())
 
     app.InitializeDb();
 }
+
+await app.ConfigureRoles();
+
 app.UseCors();
 
 app.UseAuthentication();
