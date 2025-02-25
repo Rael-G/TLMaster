@@ -1,7 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TLMaster.Application.Dtos;
+using TLMaster.Application.Enums;
+using TLMaster.Application.Exceptions;
 using TLMaster.Application.Interfaces;
 
 namespace TLMaster.Api.Controllers
@@ -9,9 +11,9 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController(IUserService service) : ControllerBase
+    public class UserController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _service = service;
+        private readonly IUserService _userService = userService;
 
         /// <summary>
         /// Retrieves all users.
@@ -19,8 +21,18 @@ namespace TLMaster.Api.Controllers
         /// <returns>Returns a list of all users.</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = ApplicationRoles.Admin)]
         public async Task<IActionResult> GetAll()
-            => Ok(await _service.GetAll(GetUserId(User)));
+        {
+            try
+            {
+                return Ok(await _userService.GetAll(GetUserId(User)));
+            }
+            catch (ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
+        }
 
         /// <summary>
         /// Retrieves a specific user by its ID.
@@ -32,12 +44,94 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
-            var user = await _service.GetById(id, GetUserId(User));
+            UserDto? user;
+            try
+            {
+                user = await _userService.GetById(id, GetUserId(User));
+            }
+            catch (ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
 
             if (user is null)
                 return NotFound(new {Id = id});
 
             return Ok(user);
+        }
+
+        /// <summary>
+        /// Retrieves a specific user by its username.
+        /// </summary>
+        /// <param name="username">The username of the user to retrieve.</param>
+        /// <returns>Returns the user if found, otherwise returns a 404 Not Found.</returns>
+        [HttpGet("username")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByUsername([FromQuery] string username)
+        {
+            UserDto? user;
+            try
+            {
+                user = await _userService.GetByUsername(username, GetUserId(User));
+            }
+            catch (ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
+
+            if (user is null)
+                return NotFound(new {Username = username});
+
+            return Ok(user);
+        }
+
+        [HttpGet("roles/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetRoles(Guid id)
+        {
+            var user = await _userService.GetById(id, GetUserId(User));
+
+            if (user is null)
+                return NotFound(new {Id = id});
+
+            IEnumerable<string>? roles;
+
+            try
+            {
+                roles = await _userService.GetRoles(id, GetUserId(User));
+            }
+            catch (ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
+            
+
+            return Ok(roles);
+        }
+
+        [HttpPost("roles/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = ApplicationRoles.Admin)]
+        public async Task<IActionResult> UpdateRoles(Guid id, string[] roles)
+        {
+            var user = await _userService.GetById(id, GetUserId(User));
+
+            if (user is null)
+                return NotFound(new {Id = id});
+
+            try
+            {
+                await _userService.UpdateRoles(id, roles, GetUserId(User));
+            }
+            catch(ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
+
+            return NoContent();
         }
 
         /// <summary>
@@ -50,19 +144,26 @@ namespace TLMaster.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var user = await _service.GetById(id, GetUserId(User));
+            var user = await _userService.GetById(id, GetUserId(User));
 
             if (user is null)
                 return NotFound(new {Id = id});
 
-            await _service.Delete(user, GetUserId(User));
+            try
+            {
+                await _userService.Delete(user, GetUserId(User));
+            }
+            catch(ForbiddenAccessException e)
+            {
+                return Forbid(e.Message);
+            }
 
             return NoContent();
         }
 
         protected static Guid GetUserId(ClaimsPrincipal user)
         {
-            var userIdClaim = (user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value)
+            var userIdClaim = (user.FindFirst(ClaimTypes.NameIdentifier)?.Value)
                 ?? throw new NullReferenceException("User Id from claims principal is null.");
             return Guid.Parse(userIdClaim);
         }
