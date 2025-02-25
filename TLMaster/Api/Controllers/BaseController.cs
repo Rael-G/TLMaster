@@ -123,7 +123,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
 
     protected static Guid GetUserId(ClaimsPrincipal user)
     {
-        var userIdClaim = (user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value)
+        var userIdClaim = (user.FindFirst(ClaimTypes.NameIdentifier)?.Value)
             ?? throw new NullReferenceException("User Id from claims principal is null.");
         return Guid.Parse(userIdClaim);
     }
