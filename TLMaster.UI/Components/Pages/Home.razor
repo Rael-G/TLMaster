@@ -1,7 +1,40 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+@using Microsoft.AspNetCore.Components.Authorization
+@using TLMaster.UI.Services
 
-<h1>Hello, world!</h1>
+@inject AuthService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
 
-Welcome to your new app.
+@rendermode InteractiveServer
+
+<PageTitle>TLMaster</PageTitle>
+
+<h1>TLMaster</h1>
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <p>Bem-vindo, @context?.User?.Identity?.Name</p>
+            <button @onclick="Logout">Sair</button>
+        </Authorized>
+        <NotAuthorized>
+            <p>Você precisa fazer login.</p>
+            <button @onclick="Login">Login com Discord</button>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+@code {
+
+    private void Login()
+    {
+        AuthService.Login();
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+    }
+}
