@@ -63,7 +63,7 @@ namespace TLMaster.Api.Controllers
                 return Unauthorized(e.Message);
             }
 
-            return Ok(new {AccessToken = token, RefreshToken = refreshToken});
+            return Redirect($"{returnUrl}?access_token={token}&refresh_token={refreshToken}");
         }
 
         /// <summary>
