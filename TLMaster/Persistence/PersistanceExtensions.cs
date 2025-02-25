@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TLMaster.Application.Enums;
 using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
 using TLMaster.Persistence.Contexts;
@@ -33,6 +34,23 @@ public static class PersistenceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+    }
+
+    public static async Task ConfigureRoles(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+
+        foreach (var role in ApplicationRoles.Roles)
+        {
+            var roleExists = await roleManager.RoleExistsAsync(role);
+            if (!roleExists)
+            {
+                await roleManager.CreateAsync(new ApplicationRole(role));
+            }
+        }
     }
 
     public static void SeedDb(this WebApplication app)

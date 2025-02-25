@@ -28,8 +28,7 @@ namespace TLMaster.Persistence.Migrations
                 table: "Items",
                 column: "GuildId",
                 principalTable: "Guilds",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
