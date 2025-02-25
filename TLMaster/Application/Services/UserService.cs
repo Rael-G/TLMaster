@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using TLMaster.Application.Dtos;
+using TLMaster.Application.Enums;
 using TLMaster.Application.Exceptions;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
@@ -43,6 +44,41 @@ public class UserService(UserManager<User> userManager, IMapper mapper)
         return _mapper.Map<UserDto>(user);
     }
 
+    public async Task<IEnumerable<string>?> GetRoles(Guid userId, Guid authenticatedUserId)
+    {
+        await ValidateIdentity(userId, authenticatedUserId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
+        if (user == null)
+        {
+            return null;
+        }
+
+        return await _userManager.GetRolesAsync(user);
+    }
+
+    public async Task<bool> UpdateRoles(Guid userId, string[] roles, Guid authenticatedUserId)
+    {
+        await ValidateIdentity(Guid.NewGuid(), authenticatedUserId);
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return false;
+        }
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        if (!removeResult.Succeeded)
+        {
+            return false;
+        }
+
+        var addResult = await _userManager.AddToRolesAsync(user, roles);
+        return addResult.Succeeded; 
+    }
+
     public async Task<IEnumerable<UserDto>> GetAll(Guid authenticatedUserId)
     {
         // only admin
@@ -65,7 +101,7 @@ public class UserService(UserManager<User> userManager, IMapper mapper)
         var user = await _userManager.FindByIdAsync(authenticatedUser.ToString());
         
         if (user == null) return false;
-        return await _userManager.IsInRoleAsync(user, "admin");
+        return await _userManager.IsInRoleAsync(user, ApplicationRoles.Admin);
     }
 }
 

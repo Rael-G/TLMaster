@@ -36,7 +36,7 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
             await _userManager.AddLoginAsync(user, info);
         }
 
-        var token = _tokenService.GenerateAccessToken(user);
+        var token = await _tokenService.GenerateAccessToken(user);
         var refreshToken = (await _tokenService.CreateRefreshToken(user)).Token;
 
         return (token, refreshToken);
@@ -59,7 +59,7 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         var user = await _userManager.FindByIdAsync(storedRefreshToken.UserId.ToString()) 
             ?? throw new UnauthorizedAccessException("User is not recognized.");
         
-        var newAccessToken = _tokenService.GenerateAccessToken(user);
+        var newAccessToken = await _tokenService.GenerateAccessToken(user);
         var newRefreshToken = await _tokenService.CreateRefreshToken(user);
 
         await _tokenService.RevokeRefreshToken(storedRefreshToken);

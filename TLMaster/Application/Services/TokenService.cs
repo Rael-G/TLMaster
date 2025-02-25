@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
@@ -9,7 +10,7 @@ using TLMaster.Core.Interfaces.Repositories;
 
 namespace TLMaster.Application.Services;
 
-public class TokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository)
+public class TokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
     : ITokenService
 {
     /// <summary>
@@ -26,6 +27,8 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
 
     private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
 
+    private readonly UserManager<User> _userManager = userManager;
+
     private SecurityKey SecretKey => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]??
         throw new Exception("JWT Secret not defined in configuration.")));
 
@@ -34,8 +37,8 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
     /// </summary>
     /// <param name="user">The user for whom the token is generated.</param>
     /// <returns>The generated authentication token.</returns>
-    public string GenerateAccessToken(User user)
-        => GenerateAccessToken(GenerateClaimsIdentity(user));
+    public async Task<string> GenerateAccessToken(User user)
+        => GenerateAccessToken(await GenerateClaimsIdentity(user));
 
     /// <summary>
     /// Generates a refresh token for the specified user.
@@ -94,15 +97,21 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
     }
 
     // Generates the claims for the JWT token
-    private static ClaimsIdentity GenerateClaimsIdentity(User user)
+    private async Task<ClaimsIdentity> GenerateClaimsIdentity(User user)
     {
-        var claimsIdentity = new ClaimsIdentity(
+        var claims = new List<Claim>(
         [
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user?.Email?? ""),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email?? ""),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         ]);
 
-        return claimsIdentity;
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        return new ClaimsIdentity(claims);
     }
 }

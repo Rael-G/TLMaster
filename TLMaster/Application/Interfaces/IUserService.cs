@@ -23,7 +23,11 @@ public interface IUserService
     /// <returns>The retrieved user, or null if not found.</returns>
     Task<UserDto?> GetById(Guid id, Guid authenticatedUser);
 
+    Task<IEnumerable<string>?> GetRoles(Guid userId, Guid authenticatedUserId);
+
     Task<UserDto?> GetByUsername(string username, Guid authenticatedUser);
+
+    Task<bool> UpdateRoles(Guid userId, string[] roles, Guid authenticatedUserId);
 
     /// <summary>
     /// Retrieves all entitys.
