@@ -59,16 +59,43 @@ public static class PersistenceExtensions
         var services = scope.ServiceProvider;
 
         var context = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        var configuration = app.Configuration;
 
-        Seed(context);
+        Seed(context, userManager, configuration);
     }
 
-    private static void Seed(ApplicationDbContext context)
+    private static void Seed(ApplicationDbContext context, UserManager<User> userManager, IConfiguration configuration)
     {
         if (!context.Users.Any())
         {
-            // empty for now
+            CreateAdmin(userManager, configuration);
             context.SaveChanges();
+        }
+    }
+
+    private static void CreateAdmin(UserManager<User> userManager, IConfiguration configuration)
+    {
+        var adminEmail = configuration["AdminEmail"] ?? string.Empty;
+        var adminUser = userManager.FindByEmailAsync(adminEmail).Result;
+
+        if (adminUser == null)
+        {
+            adminUser = new User
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true
+            };
+
+            var result = userManager.CreateAsync(adminUser).Result;
+            if (!result.Succeeded)
+            {
+                throw new Exception("Falha ao criar o usuário admin: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
+            var externalLogin = new UserLoginInfo("Discord", adminEmail, "Discord");
+            userManager.AddLoginAsync(adminUser, externalLogin).Wait();
         }
     }
 }

@@ -15,6 +15,7 @@ builder.Services.ConfigureAuth(builder.Configuration);
 
 var app = builder.Build();
 
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
@@ -23,10 +24,10 @@ if (app.Environment.IsDevelopment())
     });
 	app.MapScalarApiReference();
 
-    app.InitializeDb();
 }
-
+app.InitializeDb();
 await app.ConfigureRoles();
+app.SeedDb();
 
 app.UseCors();
 
