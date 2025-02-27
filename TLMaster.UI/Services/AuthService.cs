@@ -1,70 +1,67 @@
-using System;
-using System.Net.Http.Headers;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using TLMaster.UI.Dtos;
+using TLMaster.UI.Interops;
 using TLMaster.UI.Providers;
 
 namespace TLMaster.UI.Services;
 
-public class AuthService(ILocalStorageService localStorage, HttpClient httpClient, IConfiguration configuration, NavigationManager navigationManager, ApplicationAuthStateProvider authStateProvider)
+public class AuthService(ILocalStorageService localStorage, JSHttpClient jsHttpClient, IConfiguration configuration, NavigationManager navigationManager, ApplicationAuthStateProvider authStateProvider)
 {
+    private readonly JSHttpClient _jsHttpClient = jsHttpClient;
     private readonly ILocalStorageService _localStorage = localStorage;
     private readonly IConfiguration _configuraton = configuration;
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly ApplicationAuthStateProvider _authStateProvider = authStateProvider;
-    private readonly HttpClient _httpClient = httpClient;
 
     public void Login()
     {
         var returnUrl = Uri.EscapeDataString(_navigationManager.BaseUri + "auth/external-login-callback");
-        var loginUrl = $"{_configuraton["ApiUrl"]}/auth/login?returnUrl={returnUrl}";
+        var loginUrl = $"{_configuraton["ApiUrl"]}api/auth/login?returnUrl={returnUrl}";
         _navigationManager.NavigateTo(loginUrl);
     }
 
-    public async Task HandleExternalLoginCallbackAsync(string returnUrl)
+    public async Task HandleExternalLoginCallbackAsync()
     {
-        var uri = _navigationManager.Uri;
+        // Blazor documentation about how to include cookies on request
+        // Does not work
+        // var requestMessage = new HttpRequestMessage(HttpMethod.Get, "api/auth/get-token");
+        // requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
+        // requestMessage.Headers.Add("X-Requested-With", [ "XMLHttpRequest" ]);
+        // var result = await _httpClient.SendAsync(requestMessage);
 
-        var queryParams = new Uri(uri).Query;
-        var token = ExtractTokenFromQuery(queryParams, "access_token");
-        var refreshToken = ExtractTokenFromQuery(queryParams, "refresh_token");
+        var result = await _jsHttpClient.SendAsync("api/auth/get-token", HttpMethod.Get);
 
-        if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(refreshToken))
+        if (result.IsSuccessStatusCode)
         {
-            await StoreTokensAsync(token, refreshToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            _authStateProvider.NotifyAuthenticationStateChanged();
-            _navigationManager.NavigateTo(returnUrl);
+            var token = await result.Content.ReadFromJsonAsync<TokenDto>();
+
+            if (!string.IsNullOrEmpty(token?.AccessToken) && !string.IsNullOrEmpty(token?.RefreshToken))
+            {
+                await StoreTokensAsync(token.AccessToken, token.RefreshToken);
+                _authStateProvider.NotifyAuthenticationStateChanged();
+                _navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                _navigationManager.NavigateTo("/login-failed");
+            }
         }
         else
         {
-            _navigationManager.NavigateTo("/login-failed");
+            Console.WriteLine(await result.Content.ReadAsStringAsync());
         }
     }
 
     public async Task Logout()
     {
         await ClearTokensAsync();
-        _httpClient.DefaultRequestHeaders.Authorization = default;
         _authStateProvider.NotifyAuthenticationStateChanged();
     }
 
     public async Task<string?> GetAccessToken()
     {
-        try
-        {
-            return await _localStorage.GetItemAsync<string>("accessToken");
-        }
-        catch(InvalidOperationException)
-        {
-            return null;
-        }
-    }
-
-    private string ExtractTokenFromQuery(string queryParams, string tokenName)
-    {
-        var uriQuery = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(queryParams);
-        return uriQuery.TryGetValue(tokenName, out Microsoft.Extensions.Primitives.StringValues value) ? value.ToString() : string.Empty;
+        return await _localStorage.GetItemAsync<string>("accessToken");
     }
 
     private async Task ClearTokensAsync()

@@ -9,15 +9,11 @@
 <p>Processando seu login...</p>
 
 @code {
-    private bool _isCallbackProcessed = false;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !_isCallbackProcessed)
+        if (firstRender)
         {
-            _isCallbackProcessed = true;
-            var returnUrl = NavigationManager.BaseUri;
-            await AuthService.HandleExternalLoginCallbackAsync(returnUrl);
+            await AuthService.HandleExternalLoginCallbackAsync();
         }
     }
 }

@@ -1,6 +1,8 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using TLMaster.UI.Components;
+using TLMaster.UI.Interops;
 using TLMaster.UI.Providers;
 using TLMaster.UI.Services;
 
@@ -13,7 +15,16 @@ builder.Services.AddRazorComponents()
 // Services
 var apiUrl = builder.Configuration["ApiUrl"] 
     ?? throw new NullReferenceException("Api Url is not defined in configuration.");
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
+
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri(apiUrl)
+});
+builder.Services.AddScoped(sp => 
+{
+    var jsRuntime = sp.GetRequiredService<IJSRuntime>();
+    return new JSHttpClient(jsRuntime) { BaseAddress = apiUrl };
+});
 builder.Services.AddScoped<ApplicationAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
         provider.GetRequiredService<ApplicationAuthStateProvider>());
