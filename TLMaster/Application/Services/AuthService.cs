@@ -14,9 +14,9 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
     private readonly UserManager<User> _userManager = userManager;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async Task<TokenDto> Login()
+    public async Task<TokenDto> GetToken()
     {
-        var info = await _signInManager.GetExternalLoginInfoAsync() 
+        var info = await _signInManager.GetExternalLoginInfoAsync()
             ?? throw new UnauthorizedAccessException("Error retrieving info from external login.");
         var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 

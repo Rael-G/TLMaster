@@ -24,46 +24,38 @@ namespace TLMaster.Api.Controllers
         /// <param name="returnUrl">The URL to redirect the user after successful authentication. Defaults to "/".</param>
         /// <returns>An authentication challenge that redirects the user to the external login provider.</returns>
         [HttpGet("login")]
-        public IActionResult Login(string returnUrl = "/")
+        public IActionResult Login(string returnUrl)
         {
-            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Auth", new { returnUrl }, protocol: Request.Scheme);
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(DiscordAuthenticationDefaults.AuthenticationScheme, redirectUrl);
+            var redirectUrl = Url.Action(nameof(GetToken), "Auth", null, protocol: Request.Scheme);
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(DiscordAuthenticationDefaults.AuthenticationScheme, returnUrl);
             return Challenge(properties, DiscordAuthenticationDefaults.AuthenticationScheme);
         }
 
         /// <summary>
-        /// Handles the callback from the external authentication provider.
-        /// If authentication is successful, generates and returns an access token and a refresh token.
+        /// Generates and returns an authentication token.
         /// </summary>
-        /// <param name="returnUrl">The URL to redirect the user after login. Optional.</param>
-        /// <param name="remoteError">An error message returned by the external authentication provider, if any. Optional.</param>
         /// <returns>
-        /// A JSON response containing the access token and refresh token if authentication is successful.
-        /// Returns a 400 Bad Request if an external authentication error occurs.
+        /// A JSON response containing the authentication token if successful.
         /// Returns a 401 Unauthorized if authentication fails.
         /// </returns>
-        [HttpGet("external-login-callback")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("get-token")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        public async Task<IActionResult> GetToken()
         {
-            if (remoteError != null)
-            {
-                return BadRequest(new { error = $"External login error: {remoteError}" });
-            }
+            Console.WriteLine(Request.Host);
 
             TokenDto token;
             try
             {
-                token = await _authService.Login();
+                token = await _authService.GetToken();
             }
-            catch(UnauthorizedAccessException e)
+            catch (UnauthorizedAccessException e)
             {
                 return Unauthorized(e.Message);
             }
 
-            return Redirect($"{returnUrl}?access_token={token.AccessToken}&refresh_token={token.RefreshToken}");
+            return Ok(token);
         }
 
         /// <summary>

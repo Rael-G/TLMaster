@@ -4,7 +4,7 @@ namespace TLMaster.Application.Interfaces;
 
 public interface IAuthService
 {
-    Task<TokenDto> Login();
+    Task<TokenDto> GetToken();
 
     Task<TokenDto> RegenToken(string refreshToken);
 }
