@@ -28,6 +28,7 @@ public static class HostExtensions
         services.AddCors(options => options.AddDefaultPolicy(builder =>
         {
             builder.WithOrigins(allowedOrigins)
+                .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }));
