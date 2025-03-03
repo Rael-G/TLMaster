@@ -71,6 +71,13 @@ namespace TLMaster.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Retrieves the stored access and refresh tokens from the client's cookies.
+        /// </summary>
+        /// <returns>
+        /// Returns tokens if found.
+        /// Returns a 401 Unauthorized response if the tokens are missing.
+        /// </returns>
         [HttpGet("get-token")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -88,17 +95,6 @@ namespace TLMaster.Api.Controllers
             var tokenDto = new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken };
 
             return Ok(tokenDto);
-        }
-
-        [HttpPost("logout")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Logout()
-        {
-            Response.Cookies.Delete("AccessToken");
-            Response.Cookies.Delete("RefreshToken");
-
-            return NoContent();
         }
 
         /// <summary>
@@ -125,6 +121,23 @@ namespace TLMaster.Api.Controllers
             }
 
             return Ok(token);
+        }
+
+        /// <summary>
+        /// Logs out the user by deleting the authentication cookies.
+        /// </summary>
+        /// <returns>
+        /// Returns 204 No Content indicating the result of the operation.
+        /// </returns>
+        [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("AccessToken");
+            Response.Cookies.Delete("RefreshToken");
+
+            return NoContent();
         }
         
     }
