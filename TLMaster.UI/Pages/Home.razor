@@ -1,52 +1,53 @@
 ﻿@page "/"
-
-@using Microsoft.AspNetCore.Components.Authorization
 @using System.Text.Json
 @using TLMaster.UI.Dtos
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
+@inject TokenProvider TokenProvider
 @inject AuthService AuthService
-@inject AuthenticationStateProvider AuthStateProvider
 @inject HttpClientProvider HttpClientProvider
-
-@rendermode InteractiveServer
 
 <PageTitle>TLMaster</PageTitle>
 
 <h1>TLMaster</h1>
 
-<CascadingAuthenticationState>
-    <AuthorizeView>
-        <Authorized>
-            <p>Bem-vindo, @context?.User?.Identity?.Name</p>
-            <button @onclick="Logout">Sair</button>
-            <ul>
-            @foreach(var guild in Guilds)
-            {
-                <li>
-                    @guild.Name
-                </li>
-            }
-            </ul>
-        </Authorized>
-        <NotAuthorized>
-            <p>Você precisa fazer login.</p>
-            <button @onclick="Login">Login com Discord</button>
-        </NotAuthorized>
-    </AuthorizeView>
-</CascadingAuthenticationState>
-
+@if(isAuthenticated)
+{
+     <p>Bem-vindo, </p>
+    <button @onclick="Logout">Sair</button>
+    <ul>
+    @foreach(var guild in Guilds)
+    {
+        <li>
+            @guild.Name
+        </li>
+    }
+    </ul>
+}
+else
+{
+    <p>Você precisa fazer login.</p>
+    <button @onclick="Login">Login com Discord</button>
+}
 
 @code {
-
+    private bool isAuthenticated = false;
     private IEnumerable<GuildDto> Guilds = [];
+
+    @* protected override async Task OnInitializedAsync()
+    {
+
+    } *@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        isAuthenticated = await TokenProvider.GetAccessToken() is not null? true : false;
+
         if (firstRender)
         {
             Guilds = await GetGuilds();
+
             StateHasChanged();
         }
     }
@@ -63,7 +64,7 @@
 
     private async Task<IEnumerable<GuildDto>> GetGuilds()
     {
-        var client = await HttpClientProvider.GetClient();
+        var client = HttpClientProvider.GetAuthenticatedClient();
         var response = await client.GetAsync("api/guild");
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {

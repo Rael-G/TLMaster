@@ -1,54 +1,26 @@
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
-using TLMaster.UI.Components;
-using TLMaster.UI.Interops;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using TLMaster.UI;
+using TLMaster.UI.Handlers;
 using TLMaster.UI.Providers;
 using TLMaster.UI.Services;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Services
 var apiUrl = builder.Configuration["ApiUrl"] 
     ?? throw new NullReferenceException("Api Url is not defined in configuration.");
 
-builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri(apiUrl)
-});
-builder.Services.AddScoped(sp => 
-{
-    var jsRuntime = sp.GetRequiredService<IJSRuntime>();
-    return new JSHttpClient(jsRuntime) { BaseAddress = apiUrl };
-});
-builder.Services.AddScoped<ApplicationAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
-        provider.GetRequiredService<ApplicationAuthStateProvider>());
+builder.Services.AddTransient<AuthenticatedHttpHandler>();
+builder.Services.AddTransient<CredentialsHttpHandler>();
+builder.Services.AddHttpClient("Credentials", client => client.BaseAddress = new Uri(apiUrl))
+    .AddHttpMessageHandler<CredentialsHttpHandler>();
+builder.Services.AddHttpClient("Authenticated", client => client.BaseAddress = new Uri(apiUrl))
+    .AddHttpMessageHandler<AuthenticatedHttpHandler>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<HttpClientProvider>();
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<TokenProvider>();
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-
-
-app.UseAntiforgery();
-
-app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
-app.Run();
+await builder.Build().RunAsync();

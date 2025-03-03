@@ -1,23 +1,16 @@
-using System.Net.Http.Headers;
-using Blazored.LocalStorage;
-
 namespace TLMaster.UI.Providers;
 
-public class HttpClientProvider(HttpClient httpClient, ILocalStorageService localStorage)
+public class HttpClientProvider(IHttpClientFactory httpClientFactory)
 {
-    private readonly HttpClient _httpClient = httpClient;
-    private readonly ILocalStorageService _localStorage = localStorage;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-    public async Task<HttpClient> GetClient() 
+    public HttpClient GetCredentialsClient() 
     {
-        var token = await _localStorage.GetItemAsync<string>("accessToken");
-        
-        if (!string.IsNullOrEmpty(token))
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
-
-        return _httpClient;
+        return  _httpClientFactory.CreateClient("Credentials");
     }
 
+    public HttpClient GetAuthenticatedClient() 
+    {
+        return  _httpClientFactory.CreateClient("Authenticated");
+    }
 }

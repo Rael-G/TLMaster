@@ -1,18 +1,16 @@
-using Blazored.LocalStorage;
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using TLMaster.UI.Dtos;
-using TLMaster.UI.Interops;
 using TLMaster.UI.Providers;
 
 namespace TLMaster.UI.Services;
 
-public class AuthService(ILocalStorageService localStorage, JSHttpClient jsHttpClient, IConfiguration configuration, NavigationManager navigationManager, ApplicationAuthStateProvider authStateProvider)
+public class AuthService(IConfiguration configuration, NavigationManager navigationManager, 
+    HttpClientProvider httpClientProvider, TokenProvider tokenProvider)
 {
-    private readonly JSHttpClient _jsHttpClient = jsHttpClient;
-    private readonly ILocalStorageService _localStorage = localStorage;
+    private readonly HttpClientProvider _httpClientProvider = httpClientProvider;
     private readonly IConfiguration _configuraton = configuration;
     private readonly NavigationManager _navigationManager = navigationManager;
-    private readonly ApplicationAuthStateProvider _authStateProvider = authStateProvider;
+    private readonly TokenProvider _tokenProvider = tokenProvider;
 
     public void Login()
     {
@@ -23,29 +21,13 @@ public class AuthService(ILocalStorageService localStorage, JSHttpClient jsHttpC
 
     public async Task HandleExternalLoginCallbackAsync()
     {
-        // Blazor documentation about how to include cookies on request
-        // Does not work
-        // var requestMessage = new HttpRequestMessage(HttpMethod.Get, "api/auth/get-token");
-        // requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
-        // requestMessage.Headers.Add("X-Requested-With", [ "XMLHttpRequest" ]);
-        // var result = await _httpClient.SendAsync(requestMessage);
-
-        var result = await _jsHttpClient.SendAsync("api/auth/get-token", HttpMethod.Get);
+        var client = _httpClientProvider.GetCredentialsClient();
+        var result = await client.PostAsJsonAsync("api/auth/generate-token", new {});
 
         if (result.IsSuccessStatusCode)
         {
-            var token = await result.Content.ReadFromJsonAsync<TokenDto>();
-
-            if (!string.IsNullOrEmpty(token?.AccessToken) && !string.IsNullOrEmpty(token?.RefreshToken))
-            {
-                await StoreTokensAsync(token.AccessToken, token.RefreshToken);
-                _authStateProvider.NotifyAuthenticationStateChanged();
-                _navigationManager.NavigateTo("/");
-            }
-            else
-            {
-                _navigationManager.NavigateTo("/login-failed");
-            }
+            //_authStateProvider.NotifyAuthenticationStateChanged();
+            _navigationManager.NavigateTo("/");
         }
         else
         {
@@ -53,25 +35,28 @@ public class AuthService(ILocalStorageService localStorage, JSHttpClient jsHttpC
         }
     }
 
+    public async Task<bool> RefreshTokenAsync()
+    {
+        var client = _httpClientProvider.GetCredentialsClient();
+        var refreshToken = await _tokenProvider.GetRefreshToken();
+        var result = await client.PostAsJsonAsync("api/auth/regen-token", new { refreshToken });
+
+        if (result.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        else
+        {
+            await Logout();
+            return false;
+        }
+    }
+
     public async Task Logout()
     {
-        await ClearTokensAsync();
-        _authStateProvider.NotifyAuthenticationStateChanged();
+        var client = _httpClientProvider.GetCredentialsClient();
+        await client.PostAsJsonAsync("api/auth/logout", new { });
+        //_authStateProvider.NotifyAuthenticationStateChanged();
     }
 
-    public async Task<string?> GetAccessToken()
-    {
-        return await _localStorage.GetItemAsync<string>("accessToken");
-    }
-
-    private async Task ClearTokensAsync()
-    {
-        await _localStorage.RemoveItemsAsync(["accessToken", "refreshToken"]);
-    }
-
-    private async Task StoreTokensAsync(string token, string refreshToken)
-    {
-        await _localStorage.SetItemAsync("accessToken", token);
-        await _localStorage.SetItemAsync("refreshToken", refreshToken);
-    }
 }
