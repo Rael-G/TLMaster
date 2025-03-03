@@ -10,24 +10,33 @@ using TLMaster.Core.Interfaces.Repositories;
 
 namespace TLMaster.Application.Services;
 
-public class TokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
-    : ITokenService
+public class TokenService : ITokenService
 {
     /// <summary>
     /// Specifies the default expiration time for access tokens in minutes.
     /// </summary>
-    public const int MinutesToExpiry = 30;
+    public int MinutesToExpire;
 
     /// <summary>
     /// Specifies the default expiration time for refresh tokens in days.
     /// </summary>
-    public const int DaysToExpiry = 7;
+    public int DaysToExpire;
 
-    private readonly IConfiguration _configuration = configuration;
+    private readonly IConfiguration _configuration;
 
-    private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-    private readonly UserManager<User> _userManager = userManager;
+    private readonly UserManager<User> _userManager;
+
+    public TokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
+    {
+        _configuration = configuration;
+        _refreshTokenRepository = refreshTokenRepository;
+        _userManager = userManager;
+
+        MinutesToExpire = int.TryParse(_configuration["Token:MinutesToExpire"], out var minutesToExpire) ? minutesToExpire : 30;
+        DaysToExpire = int.TryParse(_configuration["Token:DaysToExpire"], out var daysToExpire) ? daysToExpire : 7;
+    }
 
     private SecurityKey SecretKey => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]??
         throw new Exception("JWT Secret not defined in configuration.")));
@@ -50,7 +59,7 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
         var refreshToken =  new RefreshToken
         (
             user,
-            DateTime.UtcNow.AddDays(DaysToExpiry)
+            DateTime.UtcNow.AddDays(DaysToExpire)
         );
 
         _refreshTokenRepository.Create(refreshToken);
@@ -84,7 +93,7 @@ public class TokenService(IConfiguration configuration, IRefreshTokenRepository 
                 SecretKey,
                 SecurityAlgorithms.HmacSha256Signature),
 
-            Expires = DateTime.UtcNow.AddMinutes(MinutesToExpiry),
+            Expires = DateTime.UtcNow.AddMinutes(MinutesToExpire),
 
             Subject = claimsIdentity,
 
