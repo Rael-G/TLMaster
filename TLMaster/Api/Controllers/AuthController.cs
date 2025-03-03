@@ -38,13 +38,11 @@ namespace TLMaster.Api.Controllers
         /// A JSON response containing the authentication token if successful.
         /// Returns a 401 Unauthorized if authentication fails.
         /// </returns>
-        [HttpGet("get-token")]
+        [HttpPost("generate-token")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetToken()
+        public async Task<IActionResult> GenerateToken()
         {
-            Console.WriteLine(Request.Host);
-
             TokenDto token;
             try
             {
@@ -55,7 +53,52 @@ namespace TLMaster.Api.Controllers
                 return Unauthorized(e.Message);
             }
 
-            return Ok(token);
+            Response.Cookies.Append("AccessToken", token.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+            });
+            Response.Cookies.Append("RefreshToken", token.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            });
+
+            return NoContent();
+        }
+
+        [HttpGet("get-token")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetToken()
+        {
+            if (!Request.Cookies.ContainsKey("AccessToken")
+                || !Request.Cookies.ContainsKey("RefreshToken"))
+            {
+                return Unauthorized("Token not found.");
+            }
+
+            string accessToken = Request.Cookies["AccessToken"]!;
+            string refreshToken = Request.Cookies["RefreshToken"]!;
+            
+            var tokenDto = new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken };
+
+            return Ok(tokenDto);
+        }
+
+        [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("AccessToken");
+            Response.Cookies.Delete("RefreshToken");
+
+            return NoContent();
         }
 
         /// <summary>
