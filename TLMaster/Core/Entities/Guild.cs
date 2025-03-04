@@ -22,6 +22,8 @@ public class Guild : BaseEntity
 
     public List<Item> Itens { get; set; } = [];
 
+    public List<Activity> Activities { get; set; } = [];
+
     public Guild(Guid id, string name, string description, User guildMaster) : base(id)
     {
         Name = name;

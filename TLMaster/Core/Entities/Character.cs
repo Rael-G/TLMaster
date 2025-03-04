@@ -24,6 +24,10 @@ public class Character : BaseEntity
 
     public Guid UserId { get; private set; }
 
+    public List<Activity> Activities { get; set; } = [];
+
+    public List<Party> Parties { get; set; } = [];
+
     public Character(Guid id, string name, Role role, List<Weapon> weapons, User user) : base(id)
     {
         Name = name;
