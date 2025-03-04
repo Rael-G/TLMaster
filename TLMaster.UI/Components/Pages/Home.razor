@@ -7,23 +7,16 @@
 @inject TokenProvider TokenProvider
 @inject AuthService AuthService
 @inject HttpClientProvider HttpClientProvider
+@inject UserProvider UserProvider
 
 <PageTitle>TLMaster</PageTitle>
 
 <h1>TLMaster</h1>
 
-@if(isAuthenticated)
+@if(User is not null)
 {
-     <p>Bem-vindo, </p>
+     <p>Bem-vindo, @User.UserName</p>
     <button @onclick="Logout">Sair</button>
-    <ul>
-    @foreach(var guild in Guilds)
-    {
-        <li>
-            @guild.Name
-        </li>
-    }
-    </ul>
 }
 else
 {
@@ -32,21 +25,13 @@ else
 }
 
 @code {
-    private bool isAuthenticated = false;
-    private IEnumerable<GuildDto> Guilds = [];
-
-    @* protected override async Task OnInitializedAsync()
-    {
-
-    } *@
+    private UserDto? User = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        isAuthenticated = await TokenProvider.GetAccessToken() is not null? true : false;
-
         if (firstRender)
         {
-            Guilds = await GetGuilds();
+            User = await UserProvider.GetUser();
 
             StateHasChanged();
         }
@@ -60,24 +45,5 @@ else
     private async Task Logout()
     {
         await AuthService.Logout();
-    }
-
-    private async Task<IEnumerable<GuildDto>> GetGuilds()
-    {
-        var client = HttpClientProvider.GetAuthenticatedClient();
-        var response = await client.GetAsync("api/guild");
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var json = await response.Content.ReadAsStringAsync();
-            var guilds = JsonSerializer.Deserialize<IEnumerable<GuildDto>>(json, 
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
-                ?? [];
-            return guilds;
-        }
-        else
-        {
-            Console.WriteLine(response.StatusCode);
-            return [];
-        }
     }
 }
