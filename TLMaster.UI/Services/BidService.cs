@@ -6,5 +6,5 @@ namespace TLMaster.UI.Services;
 
 public class BidService(HttpClientProvider httpClientProvider) : BaseService<BidDto, BidInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/bids";
 }

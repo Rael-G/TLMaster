@@ -9,22 +9,22 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class BidController(IBidService service) : BaseController<BidDto>(service)
+    public class CharactersController(ICharacterService service) : BaseController<CharacterDto>(service)
     {
         /// <summary>
-        /// Retrieves all bids.
+        /// Retrieves all characters.
         /// </summary>
-        /// <returns>Returns a list containing all bids.</returns>
+        /// <returns>Returns a list containing all characters.</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public new async Task<IActionResult> GetAll()
             => await base.GetAll();
 
         /// <summary>
-        /// Retrieves a specific bid by its ID.
+        /// Retrieves a specific character by its ID.
         /// </summary>
-        /// <param name="id">The ID of the bid to retrieve.</param>
-        /// <returns>Returns the bid if found, otherwise returns a 404 Not Found.</returns>
+        /// <param name="id">The ID of the character to retrieve.</param>
+        /// <returns>Returns the character if found, otherwise returns a 404 Not Found.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,33 +32,33 @@ namespace TLMaster.Api.Controllers
             => await base.Get(id);
 
         /// <summary>
-        /// Creates a new bid.
+        /// Creates a new character.
         /// </summary>
-        /// <param name="input">The input model containing data for the new bid.</param>
-        /// <returns>Returns the newly created bid.</returns>
+        /// <param name="input">The input model containing data for the new character.</param>
+        /// <returns>Returns the newly created character.</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] BidInputModel input)
+        public async Task<IActionResult> Post([FromBody] CharacterInputModel input)
             => await base.Post(input);
 
         /// <summary>
-        /// Updates an existing bid.
+        /// Updates an existing character.
         /// </summary>
-        /// <param name="id">The ID of the bid to update.</param>
-        /// <param name="input">The input model containing updated data for the bid.</param>
+        /// <param name="id">The ID of the character to update.</param>
+        /// <param name="input">The input model containing updated data for the character.</param>
         /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found or 400 Bad Request.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] BidInputModel input)
+        public async Task<IActionResult> Put(Guid id, [FromBody] CharacterInputModel input)
             => await base.Put(id, input);
 
         /// <summary>
-        /// Deletes a bid by its ID.
+        /// Deletes a character by its ID.
         /// </summary>
-        /// <param name="id">The ID of the bid to delete.</param>
+        /// <param name="id">The ID of the character to delete.</param>
         /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -6,5 +6,5 @@ namespace TLMaster.UI.Services;
 
 public class ItemService(HttpClientProvider httpClientProvider) : BaseService<ItemDto, ItemInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/items";
 }

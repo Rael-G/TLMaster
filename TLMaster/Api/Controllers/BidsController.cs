@@ -9,22 +9,22 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PartyController(IPartyService service) : BaseController<PartyDto>(service)
+    public class BidsController(IBidService service) : BaseController<BidDto>(service)
     {
         /// <summary>
-        /// Retrieves all parties.
+        /// Retrieves all bids.
         /// </summary>
-        /// <returns>Returns a list containing all parties.</returns>
+        /// <returns>Returns a list containing all bids.</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public new async Task<IActionResult> GetAll()
             => await base.GetAll();
 
         /// <summary>
-        /// Retrieves a specific party by its ID.
+        /// Retrieves a specific bid by its ID.
         /// </summary>
-        /// <param name="id">The ID of the party to retrieve.</param>
-        /// <returns>Returns the party if found, otherwise returns a 404 Not Found.</returns>
+        /// <param name="id">The ID of the bid to retrieve.</param>
+        /// <returns>Returns the bid if found, otherwise returns a 404 Not Found.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,33 +32,33 @@ namespace TLMaster.Api.Controllers
             => await base.Get(id);
 
         /// <summary>
-        /// Creates a new party.
+        /// Creates a new bid.
         /// </summary>
-        /// <param name="input">The input model containing data for the new party.</param>
-        /// <returns>Returns the newly created party.</returns>
+        /// <param name="input">The input model containing data for the new bid.</param>
+        /// <returns>Returns the newly created bid.</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] PartyInputModel input)
+        public async Task<IActionResult> Post([FromBody] BidInputModel input)
             => await base.Post(input);
 
         /// <summary>
-        /// Updates an existing party.
+        /// Updates an existing bid.
         /// </summary>
-        /// <param name="id">The ID of the party to update.</param>
-        /// <param name="input">The input model containing updated data for the party.</param>
+        /// <param name="id">The ID of the bid to update.</param>
+        /// <param name="input">The input model containing updated data for the bid.</param>
         /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found or 400 Bad Request.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] PartyInputModel input)
+        public async Task<IActionResult> Put(Guid id, [FromBody] BidInputModel input)
             => await base.Put(id, input);
 
         /// <summary>
-        /// Deletes a party by its ID.
+        /// Deletes a bid by its ID.
         /// </summary>
-        /// <param name="id">The ID of the party to delete.</param>
+        /// <param name="id">The ID of the bid to delete.</param>
         /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

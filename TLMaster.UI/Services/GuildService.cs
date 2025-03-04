@@ -7,5 +7,5 @@ namespace TLMaster.UI.Services;
 
 public class GuildService(HttpClientProvider httpClientProvider) : BaseService<GuildDto, GuildInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/guilds";
 }

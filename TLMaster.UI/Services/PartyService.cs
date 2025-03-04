@@ -6,5 +6,5 @@ namespace TLMaster.UI.Services;
 
 public class PartyService(HttpClientProvider httpClientProvider) : BaseService<PartyService, PartyInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/parties";
 }

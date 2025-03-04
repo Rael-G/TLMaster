@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
@@ -10,7 +9,7 @@ namespace TLMaster.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class ActivityController(IActivityService service) : BaseController<ActivityDto>(service)
+public class ActivitiesController(IActivityService service) : BaseController<ActivityDto>(service)
 {
     /// <summary>
     /// Retrieves all activities.

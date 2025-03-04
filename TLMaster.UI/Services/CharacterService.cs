@@ -6,5 +6,5 @@ namespace TLMaster.UI.Services;
 
 public class CharacterService(HttpClientProvider httpClientProvider) : BaseService<CharacterDto, CharacterInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/characters";
 }

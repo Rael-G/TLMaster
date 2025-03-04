@@ -6,5 +6,5 @@ namespace TLMaster.UI.Services;
 
 public class ActivityService(HttpClientProvider httpClientProvider) : BaseService<ActivityDto, ActivityInputModel>(httpClientProvider)
 {
-    protected override string Endpoint { get; set; } = "api/guild";
+    protected override string Endpoint { get; set; } = "api/activities";
 }
