@@ -1,10 +1,8 @@
 using System;
-using TLMaster.Application.Dtos.Summaries;
-using TLMaster.Application.Interfaces;
 
-namespace TLMaster.Application.Dtos;
+namespace TLMaster.Application.Dtos.Summaries;
 
-public class ActivityDto : IDto
+public class ActivitySummaryDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -14,6 +12,4 @@ public class ActivityDto : IDto
     public DateTime DateTime { get; set; }
     public bool IsPasswordRequired { get; set; }
     public string? Password { get; set; }
-    public GuildSummaryDto Guild { get; set; } = new();
-    public List<CharacterSummaryDto> Participants { get; set; } = [];
 }

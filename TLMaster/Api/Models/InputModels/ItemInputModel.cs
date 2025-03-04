@@ -10,18 +10,18 @@ public class ItemInputModel : IInputModel<ItemDto>
     public Guid GuildId { get; set;}
 
     public ItemDto InputToDto()
-        => new ()
+        => new()
         {
             Id = Guid.NewGuid(),
             Name = Name,
-            OwnerId = OwnerId,
-            GuildId = GuildId
+            Owner = OwnerId != null ? new () { Id = (Guid)OwnerId } : null,
+            Guild = new () { Id = GuildId }
         };
 
     public void InputToDto(ItemDto dto)
     {
         dto.Name = Name;
-        dto.OwnerId = OwnerId;
-        dto.GuildId = GuildId;
+        dto.Owner = OwnerId != null ? new () { Id = (Guid)OwnerId } : null;
+        dto.Guild = new () { Id = GuildId };
     }
 }

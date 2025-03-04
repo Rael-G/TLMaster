@@ -1,5 +1,6 @@
 using TLMaster.Api.Interfaces;
 using TLMaster.Application.Dtos;
+using TLMaster.Application.Dtos.Summaries;
 
 namespace TLMaster.Api.Models.InputModels;
 
@@ -9,19 +10,19 @@ public class PartyInputModel : IInputModel<PartyDto>
     public List<Guid> CharacterIds { get; set; } = [];
     public Guid GuildId { get; set; }
 
-    public PartyDto InputToDto()
-        => new ()
+     public PartyDto InputToDto()
+        => new()
         {
             Id = Guid.NewGuid(),
             Name = Name,
-            CharacterIds = CharacterIds,
-            GuildId = GuildId
+            Characters = [.. CharacterIds.Select(id => new CharacterSummaryDto() { Id = id })],
+            Guild = new () { Id = GuildId }
         };
 
     public void InputToDto(PartyDto dto)
     {
         dto.Name = Name;
-        dto.CharacterIds = CharacterIds;
-        dto.GuildId = GuildId;
+        dto.Characters = [.. CharacterIds.Select(id => new CharacterSummaryDto() { Id = id })];
+        dto.Guild = new () { Id = GuildId };
     }
 }

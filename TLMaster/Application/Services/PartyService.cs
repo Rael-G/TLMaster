@@ -16,7 +16,8 @@ public class PartyService(IPartyRepository partyRepository, IMapper mapper)
     public override async Task Update(PartyDto partyDto, Guid authenticatedUserId)
     {
         var party = Mapper.Map<Party>(partyDto);
-        await _partyRepository.Update(party, partyDto.CharacterIds);
+        var characterIds = partyDto.Characters.Select(c => c.Id).ToList();
+        await _partyRepository.Update(party, characterIds);
         await _partyRepository.Commit();
     }
 }

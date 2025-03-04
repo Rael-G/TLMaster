@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using TLMaster.Application.Dtos;
+using TLMaster.Application.Dtos.Summaries;
 using TLMaster.Core.Entities;
 
 namespace TLMaster.Application.Mappings;
@@ -10,35 +11,64 @@ public class DomainToDto : Profile
     public DomainToDto()
     {
         CreateMap<Auction, AuctionDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.WinnerId, opt => opt.MapFrom(src => src.Winner != null? src.Winner.Id : (Guid?)null))
+            .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Item.Id))
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.Guild.Id));
+
+         CreateMap<Auction, AuctionSummaryDto>()
             .ReverseMap();
 
         CreateMap<Bid, BidDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.BidderId, opt => opt.MapFrom(src => src.Bidder.Id))
+            .ForMember(dest => dest.AuctionId, opt => opt.MapFrom(src => src.Auction.Id));
+
+        CreateMap<Bid, BidSummaryDto>()
             .ReverseMap();
 
         CreateMap<Character, CharacterDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.Guild != null? src.Guild.Id : (Guid?)null))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id));
+        
+        CreateMap<Character, CharacterSummaryDto>()
             .ReverseMap();
 
         CreateMap<Guild, GuildDto>()
-            .ForMember(dest => dest.StaffIds, opt => opt.MapFrom(src => src.Staff.Select(u => u.Id)))
-            .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(c => c.Id)))
-            .ForMember(dest => dest.AuctionIds, opt => opt.MapFrom(src => src.Auctions.Select(a => a.Id)))
-            .ForMember(dest => dest.PartyIds, opt => opt.MapFrom(src => src.Parties.Select(p => p.Id)))
-            .ForMember(dest => dest.ItemIds, opt => opt.MapFrom(src => src.Itens.Select(i => i.Id)))
+            .ReverseMap()
+            .ForMember(dest => dest.GuildMasterId, opt => opt.MapFrom(src => src.GuildMaster.Id));
+
+        CreateMap<Guild, GuildSummaryDto>()
             .ReverseMap();
 
         CreateMap<Item, ItemDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Owner != null? src.Owner.Id : (Guid?)null))
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.Guild.Id));
+
+        CreateMap<Item, ItemSummaryDto>()
             .ReverseMap();
 
         CreateMap<Party, PartyDto>()
-            .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(c => c.Id)))
+            .ReverseMap()
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.Guild.Id));
+
+        CreateMap<Party, PartySummaryDto>()
             .ReverseMap();
 
         CreateMap<User, UserDto>()
-            .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(c => c.Id)))
+            .ReverseMap();
+
+        CreateMap<User, UserSummaryDto>()
             .ReverseMap();
 
         CreateMap<Activity, ActivityDto>()
-            .ForMember(dest => dest.ParticipantIds, opt => opt.MapFrom(src => src.Participants.Select(c => c.Id)))
+            .ForMember(dest => dest.Password, opt => opt.Ignore())
+            .ReverseMap()
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.Guild.Id));
+
+        CreateMap<Activity, ActivitySummaryDto>()
             .ReverseMap();
     }
 }

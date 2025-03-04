@@ -33,7 +33,7 @@ public class ActivityInputModel : IInputModel<ActivityDto>
         DateTime = DateTime,
         IsPasswordRequired = IsPasswordRequired,
         Password = Password,
-        GuildId = GuildId
+        Guild = new () { Id = GuildId }
     };
 
     public void InputToDto(ActivityDto dto)
@@ -45,6 +45,6 @@ public class ActivityInputModel : IInputModel<ActivityDto>
         dto.DateTime = DateTime;
         dto.IsPasswordRequired = IsPasswordRequired;
         dto.Password = Password;
-        dto.GuildId = GuildId;
+        dto.Guild = new () { Id = GuildId };
     }
 }
