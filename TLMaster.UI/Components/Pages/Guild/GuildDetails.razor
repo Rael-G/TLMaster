@@ -1,0 +1,48 @@
+﻿@page "/guilds/{GuildId:guid}"
+@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Services
+
+
+@inject GuildService GuildService
+@inject NavigationManager NavigationManager
+
+
+<h3>Detalhes da Guilda</h3>
+
+@if (guild == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <div>
+        <h4>@guild.Name</h4>
+        <p><strong>Descrição:</strong> @guild.Description</p>
+        <button class="btn btn-warning" @onclick="NavigateToEdit">Editar</button>
+        <button class="btn btn-danger" @onclick="DeleteGuild">Deletar</button>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid GuildId { get; set; }
+    private GuildDto guild;
+
+    protected override async Task OnInitializedAsync()
+    {
+        guild = await GuildService.GetByIdAsync(GuildId);
+    }
+
+    private void NavigateToEdit()
+    {
+        NavigationManager.NavigateTo($"/edit-guild/{GuildId}");
+    }
+
+    private async Task DeleteGuild()
+    {
+        var result = await GuildService.DeleteAsync(GuildId);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/guilds");
+        }
+    }
+}

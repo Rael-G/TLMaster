@@ -22,5 +22,7 @@ builder.Services.AddHttpClient("Authenticated", client => client.BaseAddress = n
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<HttpClientProvider>();
 builder.Services.AddScoped<TokenProvider>();
+builder.Services.AddScoped<GuildService>();
+builder.Services.AddScoped<UserProvider>();
 
 await builder.Build().RunAsync();

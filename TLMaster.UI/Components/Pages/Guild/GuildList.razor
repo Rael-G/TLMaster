@@ -1,0 +1,77 @@
+﻿@page "/guilds"
+@using System.Linq
+@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Services
+
+@inject GuildService GuildService
+@inject NavigationManager NavigationManager
+
+<h3>Guildas</h3>
+
+<button class="btn btn-primary" @onclick="NavigateToCreate">Criar Guilda</button>
+
+@if (guilds == null)
+{
+    <p>Carregando...</p>
+}
+else if (!guilds.Any())
+{
+    <p>Nenhuma guilda encontrada.</p>
+}
+else
+{
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var guild in guilds)
+            {
+                <tr>
+                    <td>@guild.Name</td>
+                    <td>
+                        <button class="btn btn-info" @onclick="() => NavigateToDetails(guild.Id)">Detalhes</button>
+                        <button class="btn btn-warning" @onclick="() => EditGuild(guild.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteGuild(guild.Id)">Deletar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GuildDto>? guilds;
+
+    protected override async Task OnInitializedAsync()
+    {
+        guilds = await GuildService.GetAllAsync();
+    }
+
+    private void NavigateToCreate()
+    {
+        NavigationManager.NavigateTo("/create-guild");
+    }
+
+    private void NavigateToDetails(Guid guildId)
+    {
+        NavigationManager.NavigateTo($"/guilds/{guildId}");
+    }
+
+    private void EditGuild(Guid guildId)
+    {
+        NavigationManager.NavigateTo($"/edit-guild/{guildId}");
+    }
+
+    private async Task DeleteGuild(Guid id)
+    {
+        var result = await GuildService.DeleteAsync(id);
+        if (result)
+        {
+            guilds = await GuildService.GetAllAsync();
+        }
+    }
+}
