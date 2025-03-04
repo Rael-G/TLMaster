@@ -95,7 +95,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Party
         modelBuilder.Entity<Party>()
             .HasMany(p => p.Characters)
-            .WithMany();
+            .WithMany(c => c.Parties);
 
         // User
         modelBuilder.Entity<User>()
@@ -108,14 +108,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Activity
         modelBuilder.Entity<Activity>()
             .HasOne(a => a.Guild)
-            .WithMany()
+            .WithMany(g => g.Activities)
             .HasForeignKey(a => a.GuildId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Activity>()
             .HasMany(a => a.Participants)
-            .WithMany();
+            .WithMany(c => c.Activities);
 
         // RefreshToken
         modelBuilder.Entity<RefreshToken>()
