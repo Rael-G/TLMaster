@@ -1,6 +1,6 @@
-using TLMaster.UI.Enums;
+using TLMaster.UI.Models.Enums;
 
-namespace TLMaster.UI.Dtos;
+namespace TLMaster.UI.Models.Dtos;
 
 public class CharacterDto
 {

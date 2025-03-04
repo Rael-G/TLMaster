@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using TLMaster.UI.Dtos;
+using TLMaster.UI.Models.Dtos;
 
 namespace TLMaster.UI.Providers;
 

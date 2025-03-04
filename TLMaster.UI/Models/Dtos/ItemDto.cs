@@ -1,4 +1,4 @@
-namespace TLMaster.UI.Dtos;
+namespace TLMaster.UI.Models.Dtos;
 
 public class ItemDto
 {
