@@ -30,6 +30,8 @@ public interface IBaseService<T> where T : IDto
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
     /// <param name="authenticatedUserId">The authenticated user id that requested this command.</param>
     /// <returns>The retrieved entity, or null if not found.</returns>
+    Task<T?> GetByIdFull(Guid id, Guid authenticatedUserId);
+
     Task<T?> GetById(Guid id, Guid authenticatedUserId);
 
     /// <summary>

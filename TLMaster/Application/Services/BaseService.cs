@@ -38,6 +38,12 @@ public abstract class BaseService<TDto, TEntity>
         return true;
     }
 
+    public virtual async Task<TDto?> GetByIdFull(Guid id, Guid authenticatedUserId)
+    {
+        var entity = await Repository.GetByIdFull(id);
+        return Mapper.Map<TDto>(entity);
+    }
+
     public virtual async Task<TDto?> GetById(Guid id, Guid authenticatedUserId)
     {
         var entity = await Repository.GetById(id);
