@@ -10,6 +10,7 @@ public class GuildDto : IDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public UserSummaryDto GuildMaster { get; set; } = new();
+    public Guid GuildMasterId { get; set; }
     public List<UserSummaryDto> Staff { get; set; } = [];
     public List<CharacterSummaryDto> Characters { get; set; } = [];
     public List<AuctionSummaryDto> Auctions { get; set; } = [];

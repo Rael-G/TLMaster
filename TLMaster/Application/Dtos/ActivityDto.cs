@@ -15,5 +15,6 @@ public class ActivityDto : IDto
     public bool IsPasswordRequired { get; set; }
     public string? Password { get; set; }
     public GuildSummaryDto Guild { get; set; } = new();
+    public Guid GuildId { get; set; }
     public List<CharacterSummaryDto> Participants { get; set; } = [];
 }

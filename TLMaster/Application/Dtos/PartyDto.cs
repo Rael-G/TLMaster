@@ -9,4 +9,5 @@ public class PartyDto : IDto
     public string Name { get; set; } = string.Empty;
     public List<CharacterSummaryDto> Characters { get; set; } = [];
     public GuildSummaryDto Guild { get; set; } = new();
+    public Guid GuildId { get; set; }
 }
