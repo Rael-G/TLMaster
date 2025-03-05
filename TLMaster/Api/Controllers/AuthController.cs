@@ -32,11 +32,11 @@ namespace TLMaster.Api.Controllers
         }
 
         /// <summary>
-        /// Generates and returns an authentication token.
+        /// Generates and sets authentication tokens as HTTP-only cookies.
         /// </summary>
         /// <returns>
-        /// A JSON response containing the authentication token if successful.
-        /// Returns a 401 Unauthorized if authentication fails.
+        /// Returns a 204 No Content response if the tokens are successfully generated and set as cookies.
+        /// Returns a 401 Unauthorized response if authentication fails.
         /// </returns>
         [HttpPost("generate-token")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -98,12 +98,12 @@ namespace TLMaster.Api.Controllers
         }
 
         /// <summary>
-        /// Regenerates an access token using a refresh token.
+        /// Regenerates and sets new authentication tokens using a refresh token.
         /// </summary>
         /// <param name="refreshToken">The refresh token provided by a previous authentication session.</param>
         /// <returns>
-        /// A JSON response containing a new access token and refresh token if successful.
-        /// Returns a 401 Unauthorized if the refresh token is invalid or expired.
+        /// Returns a 204 No Content response if new tokens are successfully generated and set as cookies.
+        /// Returns a 401 Unauthorized response if the refresh token is invalid or expired.
         /// </returns>
         [HttpPost("regen-token")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
