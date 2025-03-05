@@ -18,23 +18,23 @@ public class AuctionInputModel : IInputModel<AuctionDto>
         => new()
         {
             Id = Guid.NewGuid(),
-            Item = new() { Id = ItemId },
+            ItemId = ItemId,
             InitialPrice = InitialPrice,
             StartTime = StartTime,
             Duration = Duration,
-            Winner =  WinnerId != null ? new() { Id = (Guid)WinnerId } : null,
+            WinnerId = WinnerId,
             Status = Status,
-            Guild = new() { Id = GuildId }
+            GuildId = GuildId
         };
     
     public void InputToDto(AuctionDto dto)
     {
-        dto.Item = new() { Id = ItemId };
+        dto.ItemId = ItemId;
         dto.InitialPrice = InitialPrice;
         dto.StartTime = StartTime;
         dto.Duration = Duration;
-        dto.Winner =  WinnerId != null ? new() { Id = (Guid)WinnerId } : null;
+        dto.WinnerId = WinnerId;
         dto.Status = Status;
-        dto.Guild = new() { Id = GuildId };
+        dto.GuildId = GuildId;
     }
 }   

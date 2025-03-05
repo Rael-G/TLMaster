@@ -15,15 +15,15 @@ public class BidInputModel : IInputModel<BidDto>
         => new()
         {
             Id = Guid.NewGuid(),
-            Bidder = new() { Id = BidderId },
-            Auction = new() { Id = AuctionId },
+            BidderId = BidderId,
+            AuctionId = AuctionId,
             Amount = Amount
         };
 
     public void InputToDto(BidDto dto)
     {
-        dto.Bidder = new() { Id = BidderId };
-        dto.Auction = new() { Id = AuctionId };
+        dto.BidderId = BidderId;
+        dto.AuctionId = AuctionId;
         dto.Amount = Amount;
     }
 }

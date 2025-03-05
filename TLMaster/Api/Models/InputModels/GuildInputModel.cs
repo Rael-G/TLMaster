@@ -17,7 +17,7 @@ public class GuildInputModel : IInputModel<GuildDto>
             Id = Guid.NewGuid(),
             Name = Name,
             Description = Description,
-            GuildMaster = new() { Id = GuildMasterId },
+            GuildMasterId = GuildMasterId,
             Staff = [.. StaffIds.Select(id => new UserSummaryDto () { Id = id })]
         };
 
@@ -25,7 +25,7 @@ public class GuildInputModel : IInputModel<GuildDto>
     {
         dto.Name = Name;
         dto.Description = Description;
-        dto.GuildMaster = new() { Id = GuildMasterId };
+        dto.GuildMasterId = GuildMasterId;
         dto.Staff = [.. StaffIds.Select(id => new UserSummaryDto () { Id = id })];
     }
 }

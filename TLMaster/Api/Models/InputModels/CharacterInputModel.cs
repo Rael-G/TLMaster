@@ -18,20 +18,20 @@ public class CharacterInputModel : IInputModel<CharacterDto>
         {
             Id = Guid.NewGuid(),
             Name = Name,
-            Guild = GuildId != null ? new (){ Id = (Guid)GuildId } : null,
+            GuildId = GuildId,
             Coin = Coin,
             Role = Role,
             Weapons = Weapons,
-            User = new() { Id = UserId}
+            UserId = UserId,
         };
 
     public void InputToDto(CharacterDto dto)
     {
         dto.Name = Name;
-        dto.Guild = GuildId != null ? new (){ Id = (Guid)GuildId } : null;
+        dto.GuildId = GuildId;
         dto.Coin = Coin;
         dto.Role = Role;
         dto.Weapons = Weapons;
-        dto.User = new() { Id = UserId};
+        dto.UserId = UserId;
     }
 }

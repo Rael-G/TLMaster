@@ -16,13 +16,13 @@ public class PartyInputModel : IInputModel<PartyDto>
             Id = Guid.NewGuid(),
             Name = Name,
             Characters = [.. CharacterIds.Select(id => new CharacterSummaryDto() { Id = id })],
-            Guild = new () { Id = GuildId }
+            GuildId = GuildId
         };
 
     public void InputToDto(PartyDto dto)
     {
         dto.Name = Name;
         dto.Characters = [.. CharacterIds.Select(id => new CharacterSummaryDto() { Id = id })];
-        dto.Guild = new () { Id = GuildId };
+        dto.GuildId = GuildId;
     }
 }

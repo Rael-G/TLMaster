@@ -14,14 +14,14 @@ public class ItemInputModel : IInputModel<ItemDto>
         {
             Id = Guid.NewGuid(),
             Name = Name,
-            Owner = OwnerId != null ? new () { Id = (Guid)OwnerId } : null,
-            Guild = new () { Id = GuildId }
+            OwnerId = OwnerId,
+            GuildId = GuildId
         };
 
     public void InputToDto(ItemDto dto)
     {
         dto.Name = Name;
-        dto.Owner = OwnerId != null ? new () { Id = (Guid)OwnerId } : null;
-        dto.Guild = new () { Id = GuildId };
+        dto.OwnerId = OwnerId;
+        dto.GuildId = GuildId;
     }
 }
