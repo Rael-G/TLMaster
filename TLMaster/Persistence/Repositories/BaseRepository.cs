@@ -19,7 +19,7 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
     public virtual void Delete(T entity)
         => Context.Remove(entity);
 
-    public virtual async Task<T?> GetById(Guid id)
+    public virtual async Task<T?> GetByIdFull(Guid id)
     {
         IQueryable<T> query = Context.Set<T>().AsNoTracking();
 
@@ -35,6 +35,12 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
 
         return await query.FirstOrDefaultAsync(t => t.Id == id);
     }
+
+    public virtual async Task<T?> GetById(Guid id)
+        => await Context.Set<T>()
+        .Where(t => t.Id == id)
+        .AsNoTracking()
+        .FirstOrDefaultAsync();
 
     public virtual async Task<IEnumerable<T>> GetAll()
         => await Context.Set<T>()
