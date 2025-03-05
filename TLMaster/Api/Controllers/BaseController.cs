@@ -35,7 +35,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Get(Guid id)
     {
-        var entity = await Service.GetById(id, GetUserId(User));
+        var entity = await Service.GetByIdFull(id, GetUserId(User));
 
         if (entity is null)
             return NotFound(new {Id = id});
@@ -111,7 +111,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Delete(Guid id)
     {
-        var entity = await Service.GetById(id, GetUserId(User));
+        var entity = await Service.GetByIdFull(id, GetUserId(User));
 
         if (entity is null)
             return NotFound(new {Id = id});
