@@ -63,7 +63,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         }
         catch (Exception ex)
         {
-            return BadRequest(new { ex.Message });
+            return BadRequest(new { Message = ex.Message + " " + ex.InnerException?.Message });
         }
 
         return CreatedAtAction(nameof(Get), new { entity.Id }, entity);
@@ -95,7 +95,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message + "\n" + ex.InnerException?.Message });
+            return BadRequest(new { Message = ex.Message + " " + ex.InnerException?.Message });
         }
 
         return NoContent();
@@ -111,7 +111,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Delete(Guid id)
     {
-        var entity = await Service.GetByIdFull(id, GetUserId(User));
+        var entity = await Service.GetById(id, GetUserId(User));
 
         if (entity is null)
             return NotFound(new {Id = id});
