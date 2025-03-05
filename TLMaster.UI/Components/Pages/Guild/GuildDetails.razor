@@ -2,7 +2,6 @@
 @using TLMaster.UI.Models.Dtos
 @using TLMaster.UI.Services
 
-
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
 
@@ -18,6 +17,7 @@ else
     <div>
         <h4>@guild.Name</h4>
         <p><strong>Descrição:</strong> @guild.Description</p>
+        <p><strong>Guild Master:</strong> @guild.GuildMaster.UserName</p>
         <button class="btn btn-warning" @onclick="NavigateToEdit">Editar</button>
         <button class="btn btn-danger" @onclick="DeleteGuild">Deletar</button>
     </div>

@@ -120,7 +120,22 @@ namespace TLMaster.Api.Controllers
                 return Unauthorized(e.Message);
             }
 
-            return Ok(token);
+            Response.Cookies.Append("AccessToken", token.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+            });
+            Response.Cookies.Append("RefreshToken", token.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            });
+
+            return NoContent();
         }
 
         /// <summary>

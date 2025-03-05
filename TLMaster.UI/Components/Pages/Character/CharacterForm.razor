@@ -1,0 +1,101 @@
+﻿@using TLMaster.UI.Models.Enums
+@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
+@using TLMaster.UI.Services
+
+@inject CharacterService CharacterService
+@inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+<h3>@(CharacterId.HasValue ? "Editar Charactera" : "Criar Charactera")</h3>
+
+<EditForm Model="@characterInput" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Nome</label>
+        <InputText id="name" class="form-control" @bind-Value="characterInput.Name" />
+    </div>
+
+    <!-- Role - InputSelect para Enum -->
+    <div class="form-group">
+        <label for="role">Função</label>
+        <InputSelect id="role" class="form-control" @bind-Value="characterInput.Role">
+            @foreach (var role in Enum.GetValues(typeof(Role)))
+            {
+                <option value="@role">@role</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label>Weapons</label>
+        <select class="form-control" @onchange="OnWeaponSelectionChanged" multiple>
+            @foreach (var weapon in Enum.GetValues(typeof(Weapon)))
+            {
+                <option value="@weapon">@weapon</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        @(CharacterId.HasValue ? "Salvar Alterações" : "Criar Charactera")
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public Guid? CharacterId { get; set; }
+
+    private CharacterInputModel characterInput = new CharacterInputModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CharacterId.HasValue)
+        {
+            var character = await CharacterService.GetByIdAsync(CharacterId.Value);
+            if (character != null)
+            {
+                characterInput = new CharacterInputModel
+                {
+                    Name = character.Name,
+                    Role = character.Role,
+                    Weapons = character.Weapons
+                };
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool result;
+        var stringId = await UserProvider.GetUserId();    
+        Guid.TryParse(stringId, out var guid);
+        characterInput.UserId = guid;
+
+        if (CharacterId.HasValue)
+        {
+            result = await CharacterService.UpdateAsync(CharacterId.Value, characterInput);
+        }
+        else
+        {
+            result = await CharacterService.CreateAsync(characterInput);
+        }
+
+        NavigationManager.NavigateTo("/characters");
+    }
+
+    private void OnWeaponSelectionChanged(ChangeEventArgs e)
+    {
+        characterInput.Weapons.Clear();
+        var selectedValues = (string[]?)e.Value?? [];
+
+        foreach (var value in selectedValues)
+        {
+            if (Enum.TryParse(value, out Weapon parsedWeapoin))
+            {
+                characterInput.Weapons.Add(parsedWeapoin);
+            }
+        }
+    }
+}

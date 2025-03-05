@@ -1,0 +1,55 @@
+﻿@page "/characters/{CharacterId:guid}"
+@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Services
+
+@inject CharacterService CharacterService
+@inject NavigationManager NavigationManager
+
+
+<h3>Detalhes da Charactera</h3>
+
+@if (character == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <div>
+        <h4>@character.Name</h4>
+        <p><strong>Role:</strong> @character.Role</p>
+        <p><strong>Coins:</strong> @character.Coin</p>
+        <ul>
+            <li><strong>Weapons:</strong></li>
+            @foreach(var w in character.Weapons)
+            {
+                <li>@w.ToString()</li>
+            }
+        </ul>
+        <button class="btn btn-warning" @onclick="NavigateToEdit">Editar</button>
+        <button class="btn btn-danger" @onclick="DeleteCharacter">Deletar</button>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid CharacterId { get; set; }
+    private CharacterDto character;
+
+    protected override async Task OnInitializedAsync()
+    {
+        character = await CharacterService.GetByIdAsync(CharacterId);
+    }
+
+    private void NavigateToEdit()
+    {
+        NavigationManager.NavigateTo($"/edit-character/{CharacterId}");
+    }
+
+    private async Task DeleteCharacter()
+    {
+        var result = await CharacterService.DeleteAsync(CharacterId);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/characters");
+        }
+    }
+}

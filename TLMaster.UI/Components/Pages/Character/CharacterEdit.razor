@@ -1,0 +1,7 @@
+﻿@page "/edit-character/{CharacterId:guid?}"
+
+<CharacterForm CharacterId=CharacterId></CharacterForm>
+
+@code {
+    [Parameter] public Guid? CharacterId { get; set; }
+}

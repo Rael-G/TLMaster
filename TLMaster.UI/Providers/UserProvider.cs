@@ -10,7 +10,7 @@ public class UserProvider(HttpClientProvider httpClientProvider, TokenProvider t
     private readonly TokenProvider _tokenProvider = tokenProvider;
 
     public async Task<UserDto?> GetUser() => await (
-        await _httpClient.GetAsync($"api/user/{await GetUserId()}"))
+        await _httpClient.GetAsync($"api/users/{await GetUserId()}"))
         .Content.ReadFromJsonAsync<UserDto>();
 
     public async Task<string?> GetUserId()

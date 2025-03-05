@@ -39,7 +39,7 @@ public class AuthService(IConfiguration configuration, NavigationManager navigat
     {
         var client = _httpClientProvider.GetCredentialsClient();
         var refreshToken = await _tokenProvider.GetRefreshToken();
-        var result = await client.PostAsJsonAsync("api/auth/regen-token", new { refreshToken });
+        var result = await client.PostAsJsonAsync("api/auth/regen-token", refreshToken);
 
         if (result.IsSuccessStatusCode)
         {

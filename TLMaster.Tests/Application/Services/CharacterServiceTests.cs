@@ -64,7 +64,7 @@ public class CharacterServiceTests
         var characterDto = new CharacterDto { Id = Guid.NewGuid(), Name = "Updated Hero", UserId = userId };
         var character = new Character(characterDto.Id, "Hero", Role.Healer, [], new User { Id = userId });
 
-        _characterRepositoryMock.Setup(r => r.GetById(characterDto.Id)).ReturnsAsync(character);
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(characterDto.Id)).ReturnsAsync(character);
         _mapperMock.Setup(m => m.Map(characterDto, character));
         _characterRepositoryMock.Setup(r => r.Commit()).Returns(Task.CompletedTask);
 
@@ -84,7 +84,7 @@ public class CharacterServiceTests
         var characterDto = new CharacterDto { Id = Guid.NewGuid(), Name = "Updated Hero", UserId = ownerId };
         var character = new Character(characterDto.Id, "Hero", Role.Healer, [], new User { Id = ownerId });
 
-        _characterRepositoryMock.Setup(r => r.GetById(characterDto.Id)).ReturnsAsync(character);
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(characterDto.Id)).ReturnsAsync(character);
 
         // Act
         var act = async () => await _characterService.Update(characterDto, anotherUserId);
@@ -101,7 +101,7 @@ public class CharacterServiceTests
         var characterDto = new CharacterDto { Id = Guid.NewGuid() };
         var character = new Character(characterDto.Id, "Hero", Role.Tank, new List<Weapon>(), new User { Id = userId });
 
-        _characterRepositoryMock.Setup(r => r.GetById(character.Id)).ReturnsAsync(character);
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(character.Id)).ReturnsAsync(character);
         _characterRepositoryMock.Setup(r => r.Commit()).Returns(Task.CompletedTask);
         _mapperMock.Setup(m => m.Map<Character>(characterDto)).Returns(character);
 
@@ -123,7 +123,7 @@ public class CharacterServiceTests
         var characterDto = new CharacterDto { Id = Guid.NewGuid() };
         var character = new Character(characterDto.Id, "Hero", Role.Tank, [], new User { Id = ownerId });
 
-        _characterRepositoryMock.Setup(r => r.GetById(character.Id)).ReturnsAsync(character);
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(character.Id)).ReturnsAsync(character);
 
         // Act
         var act = async () => await _characterService.Delete(characterDto, anotherUserId);
@@ -140,12 +140,12 @@ public class CharacterServiceTests
         var character = new Character(Guid.NewGuid(), "Hero", Role.Dps, [], owner);
         var characterDto = new CharacterDto { Id = character.Id };
 
-        _characterRepositoryMock.Setup(r => r.GetById(character.Id))
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(character.Id))
             .ReturnsAsync(character);
         _mapperMock.Setup(m => m.Map<CharacterDto>(character)).Returns(characterDto);
             
         // Act
-        var result = await _characterService.GetById(character.Id, owner.Id);
+        var result = await _characterService.GetByIdFull(character.Id, owner.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -160,11 +160,11 @@ public class CharacterServiceTests
         var anotherUser = new User { Id = Guid.NewGuid() };
         var character = new Character(Guid.NewGuid(), "Hero", Role.Dps, [], owner);
 
-        _characterRepositoryMock.Setup(r => r.GetById(character.Id))
+        _characterRepositoryMock.Setup(r => r.GetByIdFull(character.Id))
             .ReturnsAsync(character);
 
         // Act
-        var act = async () => await _characterService.GetById(character.Id, anotherUser.Id);
+        var act = async () => await _characterService.GetByIdFull(character.Id, anotherUser.Id);
 
         // Assert
         await act.Should().ThrowAsync<ForbiddenAccessException>();

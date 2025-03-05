@@ -31,7 +31,6 @@
     [Parameter] public Guid? GuildId { get; set; }
 
     private GuildInputModel guildInput = new GuildInputModel();
-    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,7 +46,6 @@
                 };
             }
         }
-        isLoading = false;
     }
 
     private async Task HandleValidSubmit()

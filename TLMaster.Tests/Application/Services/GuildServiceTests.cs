@@ -58,7 +58,7 @@ public class GuildServiceTests
         var guildDto = new GuildDto { Id = Guid.NewGuid(), Name = "Updated Guild", GuildMasterId = userId };
         var guild = new Guild(guildDto.Id, "Guild Name", "", new User { Id = userId });
 
-        _guildRepositoryMock.Setup(r => r.GetById(guildDto.Id)).ReturnsAsync(guild);
+        _guildRepositoryMock.Setup(r => r.GetByIdFull(guildDto.Id)).ReturnsAsync(guild);
         _mapperMock.Setup(m => m.Map(guildDto, guild));
         _guildRepositoryMock.Setup(r => r.Commit()).Returns(Task.CompletedTask);
 
@@ -79,7 +79,7 @@ public class GuildServiceTests
         var guildDto = new GuildDto { Id = Guid.NewGuid(), Name = "Updated Guild", GuildMasterId = ownerId };
         var guild = new Guild(guildDto.Id, "Guild Name", "", new User { Id = ownerId });
 
-        _guildRepositoryMock.Setup(r => r.GetById(guildDto.Id)).ReturnsAsync(guild);
+        _guildRepositoryMock.Setup(r => r.GetByIdFull(guildDto.Id)).ReturnsAsync(guild);
 
         // Act
         var act = async () => await _guildService.Update(guildDto, anotherUserId);
@@ -96,7 +96,7 @@ public async Task DeleteGuild_ShouldSucceed_IfOwner()
     var guildDto = new GuildDto { Id = Guid.NewGuid() };
     var guild = new Guild(guildDto.Id, "Guild Name", "", new User { Id = userId });
 
-    _guildRepositoryMock.Setup(r => r.GetById(guild.Id)).ReturnsAsync(guild);
+    _guildRepositoryMock.Setup(r => r.GetByIdFull(guild.Id)).ReturnsAsync(guild);
     _guildRepositoryMock.Setup(r => r.Commit()).Returns(Task.CompletedTask);
     _mapperMock.Setup(m => m.Map<Guild>(guildDto)).Returns(guild);
 
@@ -118,7 +118,7 @@ public async Task DeleteGuild_ShouldThrowException_IfNotOwner()
     var guildDto = new GuildDto { Id = Guid.NewGuid() };
     var guild = new Guild(guildDto.Id, "Guild Name", "", new User { Id = ownerId });
 
-    _guildRepositoryMock.Setup(r => r.GetById(guild.Id)).ReturnsAsync(guild);
+    _guildRepositoryMock.Setup(r => r.GetByIdFull(guild.Id)).ReturnsAsync(guild);
 
     // Act
     var act = async () => await _guildService.Delete(guildDto, anotherUserId);
@@ -135,12 +135,12 @@ public async Task DeleteGuild_ShouldThrowException_IfNotOwner()
         var guild = new Guild(Guid.NewGuid(), "Guild Name", "", owner);
         var guildDto = new GuildDto { Id = guild.Id };
 
-        _guildRepositoryMock.Setup(r => r.GetById(guild.Id))
+        _guildRepositoryMock.Setup(r => r.GetByIdFull(guild.Id))
             .ReturnsAsync(guild);
         _mapperMock.Setup(m => m.Map<GuildDto>(guild)).Returns(guildDto);
             
         // Act
-        var result = await _guildService.GetById(guild.Id, owner.Id);
+        var result = await _guildService.GetByIdFull(guild.Id, owner.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -155,11 +155,11 @@ public async Task DeleteGuild_ShouldThrowException_IfNotOwner()
         var anotherUser = new User { Id = Guid.NewGuid() };
         var guild = new Guild(Guid.NewGuid(), "Guild Name", "", owner);
 
-        _guildRepositoryMock.Setup(r => r.GetById(guild.Id))
+        _guildRepositoryMock.Setup(r => r.GetByIdFull(guild.Id))
             .ReturnsAsync(guild);
 
         // Act
-        var act = async () => await _guildService.GetById(guild.Id, anotherUser.Id);
+        var act = async () => await _guildService.GetByIdFull(guild.Id, anotherUser.Id);
 
         // Assert
         await act.Should().ThrowAsync<ForbiddenAccessException>();
