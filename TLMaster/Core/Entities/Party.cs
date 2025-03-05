@@ -12,12 +12,6 @@ public class Party : BaseEntity
 
     public Guid GuildId { get; set; }
 
-    public Party(Guid id, string name, Guild guild) : base(id)
-    {
-        Name = name;
-        Guild = guild;
-    }
-
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Party()

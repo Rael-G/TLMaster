@@ -28,15 +28,6 @@ public class Character : BaseEntity
 
     public List<Party> Parties { get; set; } = [];
 
-    public Character(Guid id, string name, Role role, List<Weapon> weapons, User user) : base(id)
-    {
-        Name = name;
-        Role = role;
-        Weapons = weapons;
-        User = user;
-        UserId = user.Id;
-    }
-
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Character()

@@ -24,13 +24,6 @@ public class Guild : BaseEntity
 
     public List<Activity> Activities { get; set; } = [];
 
-    public Guild(Guid id, string name, string description, User guildMaster) : base(id)
-    {
-        Name = name;
-        Description = description;
-        GuildMaster = guildMaster;
-    }
-
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Guild()

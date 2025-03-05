@@ -24,13 +24,6 @@ public class Bid : BaseEntity, IComparable<Bid>
         }  
     }
 
-    public Bid(Guid id, Character bidder, Auction auction, int amount)
-        : base(id)
-    {
-        Bidder = bidder;
-        Auction = auction;
-        Amount = amount;
-    }
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Bid()

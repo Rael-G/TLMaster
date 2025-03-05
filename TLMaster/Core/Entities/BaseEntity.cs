@@ -16,11 +16,6 @@ public class BaseEntity
         }
     }
 
-    public BaseEntity(Guid id)
-    {
-        _id = id;
-    }
-
     public BaseEntity()
     {
         

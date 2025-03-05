@@ -24,19 +24,6 @@ public class Activity : BaseEntity
 
     public List<Character> Participants { get; set; } = [];
 
-    public Activity(Guid id, string name, string description, int payout, DateTime dateTime, bool isPasswordRequired, string? password, Guild guild)
-        : base(id)
-    {
-        Id = id;
-        Name = name;
-        Description = description;
-        Payout = payout;
-        DateTime = dateTime;
-        IsPasswordRequired = isPasswordRequired;
-        Password = password;
-        Guild = guild;
-    }
-
     // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Activity()
