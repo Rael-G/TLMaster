@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
-using TLMaster.UI.Models.Dtos;
+using TLMaster.UI.Model.Models;
 
 namespace TLMaster.UI.Providers;
 
@@ -9,9 +9,21 @@ public class UserProvider(HttpClientProvider httpClientProvider, TokenProvider t
     private readonly HttpClient _httpClient = httpClientProvider.GetAuthenticatedClient();
     private readonly TokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<UserDto?> GetUser() => await (
-        await _httpClient.GetAsync($"api/users/{await GetUserId()}"))
-        .Content.ReadFromJsonAsync<UserDto>();
+    public async Task<UserModel?> GetUser()
+    {
+        var userId = await GetUserId();
+        if (userId != null)
+        {
+            var result =  await _httpClient.GetAsync($"api/users/{userId}");
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadFromJsonAsync<UserModel>();
+            }
+        }
+
+        return null;
+    }
+        
 
     public async Task<string?> GetUserId()
     {

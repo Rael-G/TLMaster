@@ -26,5 +26,12 @@ builder.Services.AddScoped<UserProvider>();
 
 builder.Services.AddScoped<GuildService>();
 builder.Services.AddScoped<CharacterService>();
+builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<ActivityService>();
+builder.Services.AddScoped<AuctionService>();
+builder.Services.AddScoped<BidService>();
+builder.Services.AddScoped<PartyService>();
+
+
 
 await builder.Build().RunAsync();

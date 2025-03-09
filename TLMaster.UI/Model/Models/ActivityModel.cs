@@ -1,10 +1,8 @@
-using TLMaster.UI.Models.Dtos.Summaries;
+namespace TLMaster.UI.Model.Models;
 
-namespace TLMaster.UI.Models.Dtos;
-
-public class ActivityDto
+public class ActivityModel
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int Payout { get; set; }
@@ -12,6 +10,7 @@ public class ActivityDto
     public DateTime DateTime { get; set; }
     public bool IsPasswordRequired { get; set; }
     public string? Password { get; set; }
-    public GuildSummaryDto Guild { get; set; } = new();
-    public List<CharacterSummaryDto> Participants { get; set; } = [];
+    public GuildModel Guild { get; set; } = new();
+    public string GuildId { get; set; } = string.Empty;
+    public List<CharacterModel> Participants { get; set; } = [];
 }

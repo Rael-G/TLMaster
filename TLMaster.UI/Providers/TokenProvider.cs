@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using TLMaster.UI.Models.Dtos;
+using TLMaster.UI.Model.Models;
 
 namespace TLMaster.UI.Providers;
 
@@ -13,7 +13,7 @@ public class TokenProvider(HttpClientProvider httpProvider)
         var result = await client.GetAsync("api/auth/get-token");
         if (result.IsSuccessStatusCode)
         {
-            return (await result.Content.ReadFromJsonAsync<TokenDto>())?.AccessToken;
+            return (await result.Content.ReadFromJsonAsync<TokenModel>())?.AccessToken;
         }
 
         return null;
@@ -25,7 +25,7 @@ public class TokenProvider(HttpClientProvider httpProvider)
         var result = await client.GetAsync("api/auth/get-token");
         if (result.IsSuccessStatusCode)
         {
-            return (await result.Content.ReadFromJsonAsync<TokenDto>())?.RefreshToken;
+            return (await result.Content.ReadFromJsonAsync<TokenModel>())?.RefreshToken;
         }
 
         return null;

@@ -15,7 +15,7 @@ public abstract class BaseService<TDto, TInput>(HttpClientProvider httpClientPro
             ?? [];
     }
 
-    public virtual async Task<TDto?> GetByIdAsync(Guid id)
+    public virtual async Task<TDto?> GetByIdAsync(string id)
     {
         return await HttpClient.GetFromJsonAsync<TDto>($"{Endpoint}/{id}");
     }
@@ -26,13 +26,13 @@ public abstract class BaseService<TDto, TInput>(HttpClientProvider httpClientPro
         return response.IsSuccessStatusCode;
     }
 
-    public virtual async Task<bool> UpdateAsync(Guid id, TInput input)
+    public virtual async Task<bool> UpdateAsync(string id, TInput input)
     {
         var response = await HttpClient.PutAsJsonAsync($"{Endpoint}/{id}", input);
         return response.IsSuccessStatusCode;
     }
 
-    public virtual async Task<bool> DeleteAsync(Guid id)
+    public virtual async Task<bool> DeleteAsync(string id)
     {
         var response = await HttpClient.DeleteAsync($"{Endpoint}/{id}");
         return response.IsSuccessStatusCode;
