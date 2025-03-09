@@ -11,13 +11,17 @@ public class DomainToDto : Profile
     public DomainToDto()
     {
         CreateMap<Auction, AuctionDto>()
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.Item, opt => opt.Ignore())
+            .ForMember(dest => dest.Guild, opt => opt.Ignore());
 
          CreateMap<Auction, AuctionSummaryDto>()
             .ReverseMap();
 
         CreateMap<Bid, BidDto>()
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.Bidder, opt => opt.Ignore())
+            .ForMember(dest => dest.Auction, opt => opt.Ignore());
 
         CreateMap<Bid, BidSummaryDto>()
             .ReverseMap();
@@ -35,13 +39,15 @@ public class DomainToDto : Profile
             .ReverseMap();
 
         CreateMap<Item, ItemDto>()
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.Guild, opt => opt.Ignore());
 
         CreateMap<Item, ItemSummaryDto>()
             .ReverseMap();
 
         CreateMap<Party, PartyDto>()
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.Guild, opt => opt.Ignore());
 
         CreateMap<Party, PartySummaryDto>()
             .ReverseMap();
@@ -54,7 +60,8 @@ public class DomainToDto : Profile
 
         CreateMap<Activity, ActivityDto>()
             .ForMember(dest => dest.Password, opt => opt.Ignore())
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.Guild, opt => opt.Ignore());
 
         CreateMap<Activity, ActivitySummaryDto>()
             .ReverseMap();
