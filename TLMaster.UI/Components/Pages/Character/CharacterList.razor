@@ -1,50 +1,24 @@
 ﻿@page "/characters"
-@using System.Linq
-@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
 @inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
 
-<h3>Characteras</h3>
-
-<button class="btn btn-primary" @onclick="NavigateToCreate">Criar Character</button>
-
-@if (characters == null)
-{
-    <p>Carregando...</p>
-}
-else if (!characters.Any())
-{
-    <p>Nenhuma charactera encontrada.</p>
-}
-else
-{
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var character in characters)
-            {
-                <tr>
-                    <td>@character.Name</td>
-                    <td>
-                        <button class="btn btn-info" @onclick="() => NavigateToDetails(character.Id)">Detalhes</button>
-                        <button class="btn btn-warning" @onclick="() => EditCharacter(character.Id)">Editar</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteCharacter(character.Id)">Deletar</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<Listing TItem="CharacterModel" TBug="object"
+          Title="Characters"
+          ItemName="Character"
+          Items="characters"
+          GetItemName="@(c => c.Name)"
+          GetItemId="@(c => c.Id)"
+          NavigateToCreate="NavigateToCreate"
+          NavigateToDetails="NavigateToDetails"
+          EditItem="EditCharacter"
+          DeleteItem="DeleteCharacter">
+</Listing>
 
 @code {
-    private List<CharacterDto>? characters;
+    private List<CharacterModel>? characters;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,17 +30,17 @@ else
         NavigationManager.NavigateTo("/create-character");
     }
 
-    private void NavigateToDetails(Guid characterId)
+    private void NavigateToDetails(string characterId)
     {
         NavigationManager.NavigateTo($"/characters/{characterId}");
     }
 
-    private void EditCharacter(Guid characterId)
+    private void EditCharacter(string characterId)
     {
         NavigationManager.NavigateTo($"/edit-character/{characterId}");
     }
 
-    private async Task DeleteCharacter(Guid id)
+    private async Task DeleteCharacter(string id)
     {
         var result = await CharacterService.DeleteAsync(id);
         if (result)

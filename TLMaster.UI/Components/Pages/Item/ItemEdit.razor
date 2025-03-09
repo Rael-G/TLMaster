@@ -1,0 +1,7 @@
+﻿@page "/edit-item/{ItemId}"
+
+<ItemForm ItemId=@ItemId></ItemForm>
+
+@code {
+    [Parameter] public string? ItemId { get; set; }
+}

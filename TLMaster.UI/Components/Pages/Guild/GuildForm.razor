@@ -6,37 +6,34 @@
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
 
-<h3>@(GuildId.HasValue ? "Editar Guilda" : "Criar Guilda")</h3>
+<GenericForm TInputModel="GuildInputModel"
+             InputModel="guildInput"
+             Id="@GuildId"
+             ItemName="Guilda"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <InputText id="name" class="form-control" @bind-Value="guildInput.Name" />
+        </div>
 
-<EditForm Model="@guildInput" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="form-group">
-        <label for="name">Nome</label>
-        <InputText id="name" class="form-control" @bind-Value="guildInput.Name" />
-    </div>
-
-    <div class="form-group">
-        <label for="description">Descrição</label>
-        <InputTextArea id="description" class="form-control" @bind-Value="guildInput.Description" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">
-        @(GuildId.HasValue ? "Salvar Alterações" : "Criar Guilda")
-    </button>
-</EditForm>
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <InputTextArea id="description" class="form-control" @bind-Value="guildInput.Description" />
+        </div>
+    </ChildContent>
+</GenericForm>
 
 @code {
-    [Parameter] public Guid? GuildId { get; set; }
+    [Parameter] public string? GuildId { get; set; }
 
     private GuildInputModel guildInput = new GuildInputModel();
 
     protected override async Task OnInitializedAsync()
     {
-        if (GuildId.HasValue)
+        if (GuildId != null)
         {
-            var guild = await GuildService.GetByIdAsync(GuildId.Value);
+            var guild = await GuildService.GetByIdAsync(GuildId);
             if (guild != null)
             {
                 guildInput = new GuildInputModel
@@ -51,14 +48,11 @@
     private async Task HandleValidSubmit()
     {
         bool result;
-        var stringId = await UserProvider.GetUserId();    
-        Guid.TryParse(stringId, out var guid);
-        guildInput.GuildMasterId = guid;
+        guildInput.GuildMasterId = await UserProvider.GetUserId();
 
-        if (GuildId.HasValue)
+        if (GuildId != null)
         {
-            
-            result = await GuildService.UpdateAsync(GuildId.Value, guildInput);
+            result = await GuildService.UpdateAsync(GuildId, guildInput);
         }
         else
         {

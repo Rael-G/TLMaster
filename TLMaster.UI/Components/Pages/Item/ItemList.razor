@@ -1,0 +1,51 @@
+﻿@page "/items"
+@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Services
+
+@inject ItemService ItemService
+@inject NavigationManager NavigationManager
+
+<Listing TItem="ItemModel" TBug="object"
+          Title="Items"
+          ItemName="Item"
+          Items="items"
+          GetItemName="@(c => c.Name)"
+          GetItemId="@(c => c.Id)"
+          NavigateToCreate="NavigateToCreate"
+          NavigateToDetails="NavigateToDetails"
+          EditItem="EditItem"
+          DeleteItem="DeleteItem">
+</Listing>
+
+@code {
+    private List<ItemModel>? items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await ItemService.GetAllAsync();
+    }
+
+    private void NavigateToCreate()
+    {
+        NavigationManager.NavigateTo("/create-item");
+    }
+
+    private void NavigateToDetails(string itemId)
+    {
+        NavigationManager.NavigateTo($"/items/{itemId}");
+    }
+
+    private void EditItem(string itemId)
+    {
+        NavigationManager.NavigateTo($"/edit-item/{itemId}");
+    }
+
+    private async Task DeleteItem(string id)
+    {
+        var result = await ItemService.DeleteAsync(id);
+        if (result)
+        {
+            items = await ItemService.GetAllAsync();
+        }
+    }
+}

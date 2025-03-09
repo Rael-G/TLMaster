@@ -1,7 +1,7 @@
-﻿@page "/edit-guild/{GuildId:guid?}"
+﻿@page "/edit-guild/{GuildId}"
 
-<GuildForm GuildId=GuildId></GuildForm>
+<GuildForm GuildId=@GuildId></GuildForm>
 
 @code {
-    [Parameter] public Guid? GuildId { get; set; }
+    [Parameter] public string? GuildId { get; set; }
 }

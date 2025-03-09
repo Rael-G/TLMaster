@@ -1,0 +1,7 @@
+﻿@page "/edit-auction/{AuctionId}"
+
+<AuctionForm AuctionId=@AuctionId></AuctionForm>
+
+@code {
+    [Parameter] public string? AuctionId { get; set; }
+}

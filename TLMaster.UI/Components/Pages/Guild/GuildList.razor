@@ -1,50 +1,24 @@
 ﻿@page "/guilds"
-@using System.Linq
-@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
 
-<h3>Guildas</h3>
-
-<button class="btn btn-primary" @onclick="NavigateToCreate">Criar Guilda</button>
-
-@if (guilds == null)
-{
-    <p>Carregando...</p>
-}
-else if (!guilds.Any())
-{
-    <p>Nenhuma guilda encontrada.</p>
-}
-else
-{
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var guild in guilds)
-            {
-                <tr>
-                    <td>@guild.Name</td>
-                    <td>
-                        <button class="btn btn-info" @onclick="() => NavigateToDetails(guild.Id)">Detalhes</button>
-                        <button class="btn btn-warning" @onclick="() => EditGuild(guild.Id)">Editar</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteGuild(guild.Id)">Deletar</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<Listing TItem="GuildModel" TBug="object"
+          Title="Guilds"
+          ItemName="Guild"
+          Items="guilds"
+          GetItemName="@(c => c.Name)"
+          GetItemId="@(c => c.Id)"
+          NavigateToCreate="NavigateToCreate"
+          NavigateToDetails="NavigateToDetails"
+          EditItem="EditGuild"
+          DeleteItem="DeleteGuild">
+</Listing>
 
 @code {
-    private List<GuildDto>? guilds;
+    private List<GuildModel>? guilds;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,17 +30,17 @@ else
         NavigationManager.NavigateTo("/create-guild");
     }
 
-    private void NavigateToDetails(Guid guildId)
+    private void NavigateToDetails(string guildId)
     {
         NavigationManager.NavigateTo($"/guilds/{guildId}");
     }
 
-    private void EditGuild(Guid guildId)
+    private void EditGuild(string guildId)
     {
         NavigationManager.NavigateTo($"/edit-guild/{guildId}");
     }
 
-    private async Task DeleteGuild(Guid id)
+    private async Task DeleteGuild(string id)
     {
         var result = await GuildService.DeleteAsync(id);
         if (result)

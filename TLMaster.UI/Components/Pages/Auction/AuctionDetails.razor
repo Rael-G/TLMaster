@@ -1,0 +1,43 @@
+﻿@page "/auctions/{AuctionId}"
+@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Services
+
+@inject AuctionService AuctionService
+@inject NavigationManager NavigationManager
+
+<Details TItem="AuctionModel" TId="string"
+         ItemName="Auction"
+         Item="auction"
+         GetItemName="@(a => a.Status.ToString())"
+         NavigateToEdit="NavigateToEdit"
+         DeleteItem="DeleteAuction">
+    <ChildContent>
+        <p><strong>StartTime:</strong> @context.StartTime</p>
+        <p><strong>Duration:</strong> @context.Duration</p>
+        <p><strong>Id:</strong> @context.Id</p>
+    </ChildContent>
+</Details>
+
+@code {
+    [Parameter] public string AuctionId { get; set; } = string.Empty;
+    private AuctionModel? auction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        auction = await AuctionService.GetByIdAsync(AuctionId);
+    }
+
+    private void NavigateToEdit()
+    {
+        NavigationManager.NavigateTo($"/edit-auction/{AuctionId}");
+    }
+
+    private async Task DeleteAuction()
+    {
+        var result = await AuctionService.DeleteAsync(AuctionId);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/activities");
+        }
+    }
+}

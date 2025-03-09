@@ -1,0 +1,62 @@
+﻿@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
+@using TLMaster.UI.Services
+
+@inject PartyService PartyService
+@inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+<GenericForm TInputModel="PartyInputModel"
+             InputModel="partyInput"
+             Id="@PartyId"
+             ItemName="Party"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <InputText id="name" class="form-control" @bind-Value="partyInput.Name" />
+        </div>
+
+        <div class="form-group">
+            <label for="guild">Guild</label>
+            <InputText id="guild" class="form-control" @bind-Value="partyInput.GuildId" />
+        </div>
+    </ChildContent>
+</GenericForm>
+
+@code {
+    [Parameter] public string? PartyId { get; set; }
+
+    private PartyInputModel partyInput = new PartyInputModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PartyId != null)
+        {
+            var party = await PartyService.GetByIdAsync(PartyId);
+            if (party != null)
+            {
+                partyInput = new PartyInputModel
+                {
+                    Name = party.Name,
+                };
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool result;
+
+        if (PartyId != null)
+        {
+            result = await PartyService.UpdateAsync(PartyId, partyInput);
+        }
+        else
+        {
+            result = await PartyService.CreateAsync(partyInput);
+        }
+
+        NavigationManager.NavigateTo("/parties");
+    }
+}

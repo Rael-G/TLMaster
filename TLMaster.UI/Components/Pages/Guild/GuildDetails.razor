@@ -1,31 +1,26 @@
-﻿@page "/guilds/{GuildId:guid}"
-@using TLMaster.UI.Models.Dtos
+﻿@page "/guilds/{GuildId}"
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
 
-
-<h3>Detalhes da Guilda</h3>
-
-@if (guild == null)
-{
-    <p>Carregando...</p>
-}
-else
-{
-    <div>
-        <h4>@guild.Name</h4>
-        <p><strong>Descrição:</strong> @guild.Description</p>
-        <p><strong>Guild Master:</strong> @guild.GuildMaster.UserName</p>
-        <button class="btn btn-warning" @onclick="NavigateToEdit">Editar</button>
-        <button class="btn btn-danger" @onclick="DeleteGuild">Deletar</button>
-    </div>
-}
+<Details TItem="GuildModel" TId="string"
+         ItemName="Guild"
+         Item="guild"
+         GetItemName="@(c => c.Name)"
+         NavigateToEdit="NavigateToEdit"
+         DeleteItem="DeleteGuild">
+    <ChildContent>
+        <p><strong>Descrição:</strong> @context.Description</p>
+        <p><strong>Guild Master:</strong> @context.GuildMaster.UserName</p>
+        <p><strong>Id:</strong> @context.Id</p>
+    </ChildContent>
+</Details>
 
 @code {
-    [Parameter] public Guid GuildId { get; set; }
-    private GuildDto guild;
+    [Parameter] public string GuildId { get; set; } = string.Empty;
+    private GuildModel? guild;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,3 +41,6 @@ else
         }
     }
 }
+    <div>
+
+    </div>

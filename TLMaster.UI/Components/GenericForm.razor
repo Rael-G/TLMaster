@@ -1,0 +1,29 @@
+﻿@typeparam TInputModel
+
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3>@(Id != null ? $"Editar {ItemName}" : $"Criar {ItemName}")</h3>
+
+<EditForm Model="@InputModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    @ChildContent
+
+    <button type="submit" class="btn btn-primary">
+        @(Id != null ? $"Salvar Alterações" : $"Criar {ItemName}")
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public TInputModel InputModel { get; set; } = default!;
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string ItemName { get; set; } = string.Empty;
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+
+    private async Task HandleValidSubmit()
+    {
+        await OnValidSubmit.InvokeAsync();
+    }
+}

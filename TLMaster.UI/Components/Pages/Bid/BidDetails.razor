@@ -1,0 +1,42 @@
+﻿@page "/bids/{BidId}"
+@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Services
+
+@inject BidService BidService
+@inject NavigationManager NavigationManager
+
+<Details TItem="BidModel" TId="string"
+         ItemName="Bid"
+         Item="bid"
+         GetItemName="@(c => c.Amount.ToString())"
+         NavigateToEdit="NavigateToEdit"
+         DeleteItem="DeleteBid">
+    <ChildContent>
+        <p><strong>Bidder:</strong> @context.Bidder.Name</p>
+        <p><strong>Bidder:</strong> @context.Auction.Id</p>
+    </ChildContent>
+</Details>
+
+@code {
+    [Parameter] public string BidId { get; set; } = string.Empty;
+    private BidModel? bid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        bid = await BidService.GetByIdAsync(BidId);
+    }
+
+    private void NavigateToEdit()
+    {
+        NavigationManager.NavigateTo($"/edit-bid/{BidId}");
+    }
+
+    private async Task DeleteBid()
+    {
+        var result = await BidService.DeleteAsync(BidId);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/bids");
+        }
+    }
+}

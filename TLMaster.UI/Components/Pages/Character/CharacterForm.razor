@@ -7,53 +7,49 @@
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
 
-<h3>@(CharacterId.HasValue ? "Editar Charactera" : "Criar Charactera")</h3>
+<GenericForm TInputModel="CharacterInputModel"
+             InputModel="characterInput"
+             Id="@CharacterId"
+             ItemName="Charactera"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <InputText id="name" class="form-control" @bind-Value="characterInput.Name" />
+        </div>
 
-<EditForm Model="@characterInput" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <div class="form-group">
+            <label for="role">Função</label>
+            <InputSelect id="role" class="form-control" @bind-Value="characterInput.Role">
+                @foreach (var role in Enum.GetValues(typeof(Role)))
+                {
+                    <option value="@role">@role</option>
+                }
+            </InputSelect>
+        </div>
 
-    <div class="form-group">
-        <label for="name">Nome</label>
-        <InputText id="name" class="form-control" @bind-Value="characterInput.Name" />
-    </div>
-
-    <!-- Role - InputSelect para Enum -->
-    <div class="form-group">
-        <label for="role">Função</label>
-        <InputSelect id="role" class="form-control" @bind-Value="characterInput.Role">
-            @foreach (var role in Enum.GetValues(typeof(Role)))
-            {
-                <option value="@role">@role</option>
-            }
-        </InputSelect>
-    </div>
-
-    <div class="form-group">
-        <label>Weapons</label>
-        <select class="form-control" @onchange="OnWeaponSelectionChanged" multiple>
-            @foreach (var weapon in Enum.GetValues(typeof(Weapon)))
-            {
-                <option value="@weapon">@weapon</option>
-            }
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">
-        @(CharacterId.HasValue ? "Salvar Alterações" : "Criar Charactera")
-    </button>
-</EditForm>
+        <div class="form-group">
+            <label>Weapons</label>
+            <select class="form-control" @onchange="OnWeaponSelectionChanged" multiple>
+                @foreach (var weapon in Enum.GetValues(typeof(Weapon)))
+                {
+                    <option value="@weapon">@weapon</option>
+                }
+            </select>
+        </div>
+    </ChildContent>
+</GenericForm>
 
 @code {
-    [Parameter] public Guid? CharacterId { get; set; }
+    [Parameter] public string? CharacterId { get; set; }
 
     private CharacterInputModel characterInput = new CharacterInputModel();
 
     protected override async Task OnInitializedAsync()
     {
-        if (CharacterId.HasValue)
+        if (CharacterId != null)
         {
-            var character = await CharacterService.GetByIdAsync(CharacterId.Value);
+            var character = await CharacterService.GetByIdAsync(CharacterId);
             if (character != null)
             {
                 characterInput = new CharacterInputModel
@@ -69,13 +65,11 @@
     private async Task HandleValidSubmit()
     {
         bool result;
-        var stringId = await UserProvider.GetUserId();    
-        Guid.TryParse(stringId, out var guid);
-        characterInput.UserId = guid;
+        characterInput.UserId = await UserProvider.GetUserId();
 
-        if (CharacterId.HasValue)
+        if (CharacterId != null)
         {
-            result = await CharacterService.UpdateAsync(CharacterId.Value, characterInput);
+            result = await CharacterService.UpdateAsync(CharacterId, characterInput);
         }
         else
         {
@@ -88,13 +82,13 @@
     private void OnWeaponSelectionChanged(ChangeEventArgs e)
     {
         characterInput.Weapons.Clear();
-        var selectedValues = (string[]?)e.Value?? [];
+        var selectedValues = (string[]?)e.Value ?? [];
 
         foreach (var value in selectedValues)
         {
-            if (Enum.TryParse(value, out Weapon parsedWeapoin))
+            if (Enum.TryParse(value, out Weapon parsedWeapon))
             {
-                characterInput.Weapons.Add(parsedWeapoin);
+                characterInput.Weapons.Add(parsedWeapon);
             }
         }
     }

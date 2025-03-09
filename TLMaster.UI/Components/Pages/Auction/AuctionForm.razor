@@ -1,0 +1,93 @@
+﻿@using TLMaster.UI.Models.Enums
+@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
+@using TLMaster.UI.Services
+
+@inject AuctionService AuctionService
+@inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+<GenericForm TInputModel="AuctionInputModel"
+             InputModel="AuctionInput"
+             Id="@AuctionId"
+             ItemName="Auction"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="item">Item</label>
+            <InputText id="item" class="form-control" @bind-Value="AuctionInput.ItemId" />
+        </div>
+
+        <div class="form-group">
+            <label for="initialPrice">Initial Price</label>
+            <InputNumber id="initialPrice" class="form-control" @bind-Value="AuctionInput.InitialPrice" />
+        </div>
+
+        <div>
+            <label for="dateTime">Escolha a data e hora de inicio:</label>
+            <InputDate id="dateTime" class="form-control" @bind-Value="AuctionInput.StartTime"></InputDate>
+        </div>
+
+        <div>
+            <label>Duração (Horas)</label>
+            <InputNumber @bind-Value="hours" />
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <InputSelect id="status" class="form-control" @bind-Value="AuctionInput.Status">
+                @foreach (var status in Enum.GetValues(typeof(AuctionStatus)))
+                {
+                    <option value="@status">@status</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            <label for="guild">Guild</label>
+            <InputText id="guild" class="form-control" @bind-Value="AuctionInput.GuildId" />
+        </div>
+    </ChildContent>
+</GenericForm>
+
+@code {
+    [Parameter] public string? AuctionId { get; set; }
+    private int hours;
+
+    private AuctionInputModel AuctionInput = new AuctionInputModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuctionId != null)
+        {
+            var Auction = await AuctionService.GetByIdAsync(AuctionId);
+            if (Auction != null)
+            {
+                AuctionInput = new AuctionInputModel
+                {
+                    ItemId = Auction.ItemId, 
+                    InitialPrice = Auction.InitialPrice,
+                    StartTime = Auction.StartTime,
+                    Duration = Auction.Duration,
+                    GuildId = Auction.GuildId,
+                    Status = Auction.Status
+                };
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool result;
+        if (AuctionId != null)
+        {
+            result = await AuctionService.UpdateAsync(AuctionId, AuctionInput);
+        }
+        else
+        {
+            result = await AuctionService.CreateAsync(AuctionInput);
+        }
+
+        NavigationManager.NavigateTo("/Auctions");
+    }
+}

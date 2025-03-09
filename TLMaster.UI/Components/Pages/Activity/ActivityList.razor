@@ -1,0 +1,51 @@
+﻿@page "/activities"
+@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Services
+
+@inject ActivityService ActivityService
+@inject NavigationManager NavigationManager
+
+<Listing TItem="ActivityModel" TBug="object"
+          Title="Activities"
+          ItemName="Activity"
+          Items="activities"
+          GetItemName="@(a => a.Name)"
+          GetItemId="@(a => a.Id)"
+          NavigateToCreate="NavigateToCreate"
+          NavigateToDetails="NavigateToDetails"
+          EditItem="EditActivity"
+          DeleteItem="DeleteActivity">
+</Listing>
+
+@code {
+    private List<ActivityModel>? activities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        activities = await ActivityService.GetAllAsync();
+    }
+
+    private void NavigateToCreate()
+    {
+        NavigationManager.NavigateTo("/create-activity");
+    }
+
+    private void NavigateToDetails(string activityId)
+    {
+        NavigationManager.NavigateTo($"/activities/{activityId}");
+    }
+
+    private void EditActivity(string activityId)
+    {
+        NavigationManager.NavigateTo($"/edit-activity/{activityId}");
+    }
+
+    private async Task DeleteActivity(string id)
+    {
+        var result = await ActivityService.DeleteAsync(id);
+        if (result)
+        {
+            activities = await ActivityService.GetAllAsync();
+        }
+    }
+}

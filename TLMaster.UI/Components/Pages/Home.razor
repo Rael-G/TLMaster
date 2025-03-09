@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using System.Text.Json
-@using TLMaster.UI.Models.Dtos
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
@@ -25,7 +25,7 @@ else
 }
 
 @code {
-    private UserDto? User = null;
+    private UserModel? User = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

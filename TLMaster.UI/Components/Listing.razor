@@ -1,0 +1,54 @@
+﻿@typeparam TItem
+@typeparam TBug
+
+@using System.Linq
+@using Microsoft.AspNetCore.Components
+
+<h3>@Title</h3>
+
+<button class="btn btn-primary" @onclick="NavigateToCreate">Criar @ItemName</button>
+
+@if (Items == null)
+{
+    <p>Carregando...</p>
+}
+else if (!Items.Any())
+{
+    <p>Nenhum @ItemName encontrado.</p>
+}
+else
+{
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <td>@GetItemName(item)</td>
+                    <td>
+                        <button class="btn btn-info" @onclick=" async () => await NavigateToDetails.InvokeAsync(GetItemId(item))">Detalhes</button>
+                        <button class="btn btn-warning" @onclick=" async () => await EditItem.InvokeAsync(GetItemId(item))">Editar</button>
+                        <button class="btn btn-danger" @onclick=" async() => await DeleteItem.InvokeAsync(GetItemId(item))">Deletar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string ItemName { get; set; } = string.Empty;
+    [Parameter] public List<TItem>? Items { get; set; }
+    [Parameter] public Func<TItem, string> GetItemName { get; set; } = default!;
+    [Parameter] public Func<TItem, string> GetItemId { get; set; } = default!;
+    [Parameter] public EventCallback NavigateToCreate { get; set; }
+    [Parameter] public EventCallback<string> NavigateToDetails { get; set; }
+    [Parameter] public EventCallback<string> EditItem { get; set; }
+    [Parameter] public EventCallback<string> DeleteItem { get; set; }
+}

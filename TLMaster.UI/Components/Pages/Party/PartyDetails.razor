@@ -1,0 +1,45 @@
+﻿@page "/partys/{PartyId}"
+@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Services
+
+@inject PartyService PartyService
+@inject NavigationManager NavigationManager
+
+<Details TItem="PartyModel" TId="string"
+         ItemName="Party"
+         Item="party"
+         GetItemName="@(c => c.Name)"
+         NavigateToEdit="NavigateToEdit"
+         DeleteItem="DeleteParty">
+    <ChildContent>
+        <p><strong>Name:</strong> @context.Name</p>
+        <p><strong>Id:</strong> @context.Id</p>
+    </ChildContent>
+</Details>
+
+@code {
+    [Parameter] public string PartyId { get; set; } = string.Empty;
+    private PartyModel? party;
+
+    protected override async Task OnInitializedAsync()
+    {
+        party = await PartyService.GetByIdAsync(PartyId);
+    }
+
+    private void NavigateToEdit()
+    {
+        NavigationManager.NavigateTo($"/edit-party/{PartyId}");
+    }
+
+    private async Task DeleteParty()
+    {
+        var result = await PartyService.DeleteAsync(PartyId);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/partys");
+        }
+    }
+}
+    <div>
+
+    </div>

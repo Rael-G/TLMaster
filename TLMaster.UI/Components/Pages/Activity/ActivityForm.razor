@@ -1,0 +1,99 @@
+﻿@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
+@using TLMaster.UI.Services
+
+@inject ActivityService ActivityService
+@inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+<GenericForm TInputModel="ActivityInputModel"
+             InputModel="activityInput"
+             Id="@ActivityId"
+             ItemName="Activity"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <InputText id="name" class="form-control" @bind-Value="activityInput.Name" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputText id="description" class="form-control" @bind-Value="activityInput.Description" />
+        </div>
+
+        <div>
+            <label for="dateTime">Escolha a data e hora:</label>
+            <InputDate id="dateTime" class="form-control" @bind-Value="activityInput.DateTime"></InputDate>
+        </div>
+
+        <div class="form-group">
+            <label for="payout">Payout</label>
+            <InputNumber id="payout" class="form-control" @bind-Value="activityInput.Payout" />
+        </div>
+
+        <div class="form-group">
+            <label for="isPasswordRequired">Is Password Required</label>
+            <InputCheckbox id="isPasswordRequired" class="form-control" @bind-Value="activityInput.IsPasswordRequired" />
+        </div>
+
+        @if (activityInput.IsPasswordRequired)
+        {
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText type="password" id="password" class="form-control" @bind-Value="activityInput.Password" />
+            </div>
+        }
+
+        <div class="form-group">
+            <label for="guildId">Guild</label>
+            <InputText id="guildId" class="form-control" @bind-Value="guildId" />
+        </div>
+    </ChildContent>
+</GenericForm>
+
+@code {
+    [Parameter] public string? ActivityId { get; set; }
+
+    private ActivityInputModel activityInput = new ActivityInputModel();
+    private string guildId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(ActivityId))
+        {
+            var activity = await ActivityService.GetByIdAsync(ActivityId);
+            if (activity != null)
+            {
+                activityInput = new ActivityInputModel
+                {
+                    Name = activity.Name,
+                    Description = activity.Description,
+                    DateTime = activity.DateTime,
+                    Payout = activity.Payout,
+                    IsPasswordRequired = activity.IsPasswordRequired,
+                    Password = activity.Password,
+                    GuildId = activity.GuildId
+                };
+                guildId = activity.GuildId;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool result;
+
+        if (!string.IsNullOrEmpty(ActivityId))
+        {
+            result = await ActivityService.UpdateAsync(ActivityId, activityInput);
+        }
+        else
+        {
+            activityInput.GuildId = guildId;
+            result = await ActivityService.CreateAsync(activityInput);
+        }
+
+        NavigationManager.NavigateTo("/activities");
+    }
+}

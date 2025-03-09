@@ -1,0 +1,7 @@
+﻿@page "/edit-activity/{ActivityId}"
+
+<ActivityForm ActivityId=@ActivityId></ActivityForm>
+
+@code {
+    [Parameter] public string? ActivityId { get; set; }
+}

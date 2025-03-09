@@ -1,0 +1,66 @@
+﻿@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
+@using TLMaster.UI.Services
+
+@inject ItemService ItemService
+@inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+<GenericForm TInputModel="ItemInputModel"
+             InputModel="itemInput"
+             Id="@ItemId"
+             ItemName="Item"
+             OnValidSubmit="HandleValidSubmit">
+    <ChildContent>
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <InputText id="name" class="form-control" @bind-Value="itemInput.Name" />
+        </div>
+
+        <div class="form-group">
+            <label for="guildId">Guild</label>
+            <InputText id="guildId" class="form-control" @bind-Value="guildId" />
+        </div>
+    </ChildContent>
+</GenericForm>
+
+@code {
+    [Parameter] public string? ItemId { get; set; }
+
+    private ItemInputModel itemInput = new ItemInputModel();
+    private string guildId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ItemId != null)
+        {
+            var item = await ItemService.GetByIdAsync(ItemId);
+            if (item != null)
+            {
+                itemInput = new ItemInputModel
+                {
+                    Name = item.Name,
+                    GuildId = item.GuildId
+                };
+                guildId = item.GuildId.ToString();
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool result;
+        itemInput.GuildId = guildId;
+
+        if (ItemId != null)
+        {
+            result = await ItemService.UpdateAsync(ItemId, itemInput);
+        }
+        else
+        {
+            result = await ItemService.CreateAsync(itemInput);
+        }
+
+        NavigationManager.NavigateTo("/items");
+    }
+}

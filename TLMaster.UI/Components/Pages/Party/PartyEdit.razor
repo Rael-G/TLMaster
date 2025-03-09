@@ -1,0 +1,7 @@
+﻿@page "/edit-party/{PartyId}"
+
+<PartyForm PartyId=@PartyId></PartyForm>
+
+@code {
+    [Parameter] public string? PartyId { get; set; }
+}
