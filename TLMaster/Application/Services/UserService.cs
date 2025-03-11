@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TLMaster.Application.Dtos;
 using TLMaster.Application.Enums;
 using TLMaster.Application.Exceptions;
@@ -27,7 +28,13 @@ public class UserService(UserManager<User> userManager, IMapper mapper)
     {
         await ValidateIdentity(id, authenticatedUserId);
 
-        var user = await _userManager.FindByIdAsync(id.ToString());
+        var user = await _userManager.Users
+            .Include(u => u.Characters)
+            .Include(u => u.OwnedGuilds)
+            .Include(u => u.StaffGuilds)
+            .Where(u => u.Id == id)
+            .FirstOrDefaultAsync();
+            
         return user is not null ? _mapper.Map<UserDto>(user) : null;
     }
 
