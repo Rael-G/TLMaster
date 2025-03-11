@@ -1,14 +1,15 @@
-﻿@page "/parties"
+﻿@page "/{GuildId}/parties"
 @using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
+@inject GuildService GuildService
 @inject PartyService PartyService
 @inject NavigationManager NavigationManager
 
 <Listing TItem="PartyModel" TBug="object"
           Title="Partys"
           ItemName="Party"
-          Items="partys"
+          Items="parties"
           GetItemName="@(c => c.Name)"
           GetItemId="@(c => c.Id)"
           NavigateToCreate="NavigateToCreate"
@@ -18,11 +19,13 @@
 </Listing>
 
 @code {
-    private List<PartyModel>? partys;
+    [Parameter] public string GuildId { get; set; } = string.Empty;
+    private List<PartyModel>? parties;
 
     protected override async Task OnInitializedAsync()
     {
-        partys = await PartyService.GetAllAsync();
+        var guild = await GuildService.GetByIdAsync(GuildId);
+        parties = guild?.Parties;
     }
 
     private void NavigateToCreate()
@@ -45,7 +48,7 @@
         var result = await PartyService.DeleteAsync(id);
         if (result)
         {
-            partys = await PartyService.GetAllAsync();
+            parties = await PartyService.GetAllAsync();
         }
     }
 }

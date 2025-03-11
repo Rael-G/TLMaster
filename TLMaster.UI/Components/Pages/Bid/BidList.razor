@@ -1,7 +1,8 @@
-﻿@page "/bids"
+﻿@page "/{AuctionId}/bids"
 @using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
+@inject AuctionService AuctionService
 @inject BidService BidService
 @inject NavigationManager NavigationManager
 
@@ -18,11 +19,14 @@
 </Listing>
 
 @code {
+    [Parameter] public string AuctionId { get; set; } = string.Empty;
+
     private List<BidModel>? bids;
 
     protected override async Task OnInitializedAsync()
     {
-        bids = await BidService.GetAllAsync();
+        var auction = await AuctionService.GetByIdAsync(AuctionId);
+        bids = auction?.Bids;
     }
 
     private void NavigateToCreate()
@@ -32,7 +36,7 @@
 
     private void NavigateToDetails(string bidId)
     {
-        NavigationManager.NavigateTo($"/bids/{bidId}");
+        NavigationManager.NavigateTo($"/{AuctionId}/bids/{bidId}");
     }
 
     private void EditBid(string bidId)

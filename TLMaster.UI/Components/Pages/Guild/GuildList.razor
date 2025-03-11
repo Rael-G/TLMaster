@@ -1,9 +1,11 @@
 ﻿@page "/guilds"
 @using TLMaster.UI.Model.Models
+@using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
 
 <Listing TItem="GuildModel" TBug="object"
           Title="Guilds"
@@ -22,7 +24,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        guilds = await GuildService.GetAllAsync();
+        var user = await UserProvider.GetUser();
+        if (user is not null)
+        {
+            guilds = user.OwnedGuilds;
+            guilds.AddRange(user.StaffGuilds);
+        }
     }
 
     private void NavigateToCreate()

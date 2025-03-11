@@ -1,9 +1,11 @@
 ﻿@page "/characters"
 @using TLMaster.UI.Model.Models
+@using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
 
 <Listing TItem="CharacterModel" TBug="object"
           Title="Characters"
@@ -22,7 +24,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        characters = await CharacterService.GetAllAsync();
+        var user = await UserProvider.GetUser();
+        if (user is not null)
+        {
+            characters = user.Characters;
+        }
     }
 
     private void NavigateToCreate()

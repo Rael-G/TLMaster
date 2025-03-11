@@ -1,7 +1,8 @@
-﻿@page "/activities"
+﻿@page "/{GuildId}/activities"
 @using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
+@inject GuildService GuildService
 @inject ActivityService ActivityService
 @inject NavigationManager NavigationManager
 
@@ -18,11 +19,13 @@
 </Listing>
 
 @code {
+    [Parameter] public string GuildId { get; set; } = string.Empty;
     private List<ActivityModel>? activities;
 
     protected override async Task OnInitializedAsync()
     {
-        activities = await ActivityService.GetAllAsync();
+        var guild = await GuildService.GetByIdAsync(GuildId);
+        activities = guild?.Activities;
     }
 
     private void NavigateToCreate()

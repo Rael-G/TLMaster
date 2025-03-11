@@ -26,45 +26,10 @@
             }
         </ul>
 
-        <p><strong>Auctions:</strong></p>
-        <ul>
-            @foreach(var auction in @context.Auctions)
-            {
-                <li>
-                    <a href="/auctions/@auction.Id">@auction.Status</a> 
-                </li>
-            }
-        </ul>
-
-        <p><strong>Parties:</strong></p>
-        <ul>
-            @foreach(var party in @context.Parties)
-            {
-                <li>
-                    <a href="/parties/@party.Id">@party.Name</a> 
-                </li>
-            }
-        </ul>
-
-        <p><strong>Items:</strong></p>
-        <ul>
-            @foreach(var item in @context.Items)
-            {
-                <li>
-                    <a href="/items/@item.Id">@item.Name</a> 
-                </li>
-            }
-        </ul>
-
-        <p><strong>Activities:</strong></p>
-        <ul>
-            @foreach(var activity in @context.Activities)
-            {
-                <li>
-                    <a href="/activities/@activity.Id">@activity.Name</a> 
-                </li>
-            }
-        </ul>
+        <a href="@context.Id/auctions/">Auctions</a>
+        <a href="@context.Id/parties/">Parties</a>
+        <a href="@context.Id/items/">Items</a>
+        <a href="@context.Id/activities/">Activities</a>
 
         <p><strong>Staff:</strong></p>
         <ul>
