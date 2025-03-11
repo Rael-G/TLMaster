@@ -11,29 +11,30 @@ public class UserProvider(HttpClientProvider httpClientProvider, TokenProvider t
 
     public async Task<UserModel?> GetUser()
     {
-        var userId = await GetUserId();
-        if (userId != null)
+        var userId = await GetUserId()?? string.Empty;
+        var result =  await _httpClient.GetAsync($"api/users/{userId}");
+        if (result.IsSuccessStatusCode)
         {
-            var result =  await _httpClient.GetAsync($"api/users/{userId}");
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadFromJsonAsync<UserModel>();
-            }
+            return await result.Content.ReadFromJsonAsync<UserModel>();
         }
-
-        return null;
+        else
+        {
+            return null;
+        }
     }
         
 
     public async Task<string?> GetUserId()
     {
-        var token = await _tokenProvider.GetAccessToken();
-        var handler = new JwtSecurityTokenHandler();
-        
-        if (token == null) return null;
-        
-        var jwtSecurityToken = handler.ReadJwtToken(token);
+        var result = await _httpClient.GetAsync("api/users/id");
 
-        return jwtSecurityToken?.Claims?.FirstOrDefault(c => c.Type == "nameid")?.Value;
+        if (result.IsSuccessStatusCode)
+        {
+            return await result.Content.ReadFromJsonAsync<string>();
+        }
+        else
+        {
+            return null;
+        }
     }
 }
