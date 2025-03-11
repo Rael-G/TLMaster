@@ -161,6 +161,12 @@ namespace TLMaster.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("id")]
+        public IActionResult GetCurrentUserId()
+        {
+            return Ok(GetUserId(User));
+        }
+
         protected static Guid GetUserId(ClaimsPrincipal user)
         {
             var userIdClaim = (user.FindFirst(ClaimTypes.NameIdentifier)?.Value)
