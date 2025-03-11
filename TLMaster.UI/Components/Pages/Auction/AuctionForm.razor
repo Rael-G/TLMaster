@@ -1,31 +1,38 @@
-﻿@using TLMaster.UI.Models.Enums
+﻿@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Models.Enums
 @using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject AuctionService AuctionService
+@inject GuildService GuildService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
 
 <GenericForm TInputModel="AuctionInputModel"
-             InputModel="AuctionInput"
+             InputModel="auctionInput"
              Id="@AuctionId"
              ItemName="Auction"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
         <div class="form-group">
             <label for="item">Item</label>
-            <InputText id="item" class="form-control" @bind-Value="AuctionInput.ItemId" />
+            <InputSelect id="item" class="form-control" @bind-Value="auctionInput.ItemId">
+                @foreach (var item in items)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
         </div>
 
         <div class="form-group">
             <label for="initialPrice">Initial Price</label>
-            <InputNumber id="initialPrice" class="form-control" @bind-Value="AuctionInput.InitialPrice" />
+            <InputNumber id="initialPrice" class="form-control" @bind-Value="auctionInput.InitialPrice" />
         </div>
 
         <div>
             <label for="dateTime">Escolha a data e hora de inicio:</label>
-            <InputDate id="dateTime" class="form-control" @bind-Value="AuctionInput.StartTime"></InputDate>
+            <InputDate id="dateTime" class="form-control" @bind-Value="auctionInput.StartTime"></InputDate>
         </div>
 
         <div>
@@ -35,44 +42,55 @@
 
         <div class="form-group">
             <label for="status">Status</label>
-            <InputSelect id="status" class="form-control" @bind-Value="AuctionInput.Status">
+            <InputSelect id="status" class="form-control" @bind-Value="auctionInput.Status">
                 @foreach (var status in Enum.GetValues(typeof(AuctionStatus)))
                 {
                     <option value="@status">@status</option>
                 }
             </InputSelect>
         </div>
-
-        <div class="form-group">
-            <label for="guild">Guild</label>
-            <InputText id="guild" class="form-control" @bind-Value="AuctionInput.GuildId" />
-        </div>
     </ChildContent>
 </GenericForm>
 
 @code {
+    [Parameter] public string? GuildId { get; set; }
     [Parameter] public string? AuctionId { get; set; }
-    private int hours;
 
-    private AuctionInputModel AuctionInput = new AuctionInputModel();
+    private int hours;
+    private List<ItemModel> items = [];
+
+    private AuctionInputModel auctionInput = new AuctionInputModel();
 
     protected override async Task OnInitializedAsync()
     {
         if (AuctionId != null)
         {
-            var Auction = await AuctionService.GetByIdAsync(AuctionId);
-            if (Auction != null)
+            var auction = await AuctionService.GetByIdAsync(AuctionId);
+            if (auction != null)
             {
-                AuctionInput = new AuctionInputModel
+                auctionInput = new AuctionInputModel
                 {
-                    ItemId = Auction.ItemId, 
-                    InitialPrice = Auction.InitialPrice,
-                    StartTime = Auction.StartTime,
-                    Duration = Auction.Duration,
-                    GuildId = Auction.GuildId,
-                    Status = Auction.Status
+                    ItemId = auction.ItemId, 
+                    InitialPrice = auction.InitialPrice,
+                    StartTime = auction.StartTime,
+                    Duration = auction.Duration,
+                    Status = auction.Status,
+                    GuildId = auction.GuildId
                 };
+
             }
+        }
+
+        var guildId = GuildId?? auctionInput.GuildId;  
+        if (guildId != null)
+        {
+            var guild = await GuildService.GetByIdAsync(guildId);
+
+            items = guild?.Items
+                .Where(i => !guild.Auctions.Any(a => a.ItemId == i.Id))
+                .ToList() ?? [];
+            
+            auctionInput.ItemId = items.FirstOrDefault()?.Id ?? string.Empty;
         }
     }
 
@@ -81,13 +99,14 @@
         bool result;
         if (AuctionId != null)
         {
-            result = await AuctionService.UpdateAsync(AuctionId, AuctionInput);
+            GuildId = auctionInput.GuildId;
         }
-        else
+        else if (GuildId != null)
         {
-            result = await AuctionService.CreateAsync(AuctionInput);
+            auctionInput.GuildId = GuildId;
+            result = await AuctionService.CreateAsync(auctionInput);
         }
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/{GuildId}/auctions");
     }
 }

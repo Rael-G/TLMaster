@@ -1,8 +1,10 @@
-﻿@using TLMaster.UI.Models.InputModels
+﻿@using TLMaster.UI.Model.Models
+@using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject PartyService PartyService
+@inject GuildService GuildService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
 
@@ -18,19 +20,55 @@
         </div>
 
         <div class="form-group">
-            <label for="guild">Guild</label>
-            <InputText id="guild" class="form-control" @bind-Value="partyInput.GuildId" />
+            <label for="character">Adicionar Personagem</label>
+            <div class="d-flex">
+                <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
+                    @foreach (var character in availableCharacters)
+                    {
+                        <option value="@character.Id">@character.Name</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn btn-primary" @onclick="AddCharacter">Adicionar</button>
+            </div>
         </div>
+
+        <h5>Personagens Selecionados</h5>
+        <ul class="list-group">
+            @foreach (var character in selectedCharacters)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @character.Name
+                    <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveCharacter(character.Id)">Remover</button>
+                </li>
+            }
+</ul>
     </ChildContent>
 </GenericForm>
 
+
 @code {
     [Parameter] public string? PartyId { get; set; }
+    [Parameter] public string? GuildId { get; set; }
 
     private PartyInputModel partyInput = new PartyInputModel();
 
+    private List<CharacterModel> availableCharacters = new();
+    private List<CharacterModel> selectedCharacters = new();
+    private string selectedCharacterId = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
+        if (GuildId != null)
+        {
+            var guild = await GuildService.GetByIdAsync(GuildId);
+            if (guild?.Characters != null)
+            {
+                availableCharacters = guild.Characters
+                    .Where(c => !partyInput.CharacterIds.Contains(c.Id))
+                    .ToList();
+            }
+        }
+
         if (PartyId != null)
         {
             var party = await PartyService.GetByIdAsync(PartyId);
@@ -39,7 +77,11 @@
                 partyInput = new PartyInputModel
                 {
                     Name = party.Name,
+                    GuildId = party.GuildId,
+                    CharacterIds = party.Characters.Select(c => c.Id).ToList()
                 };
+
+                selectedCharacters = party.Characters;
             }
         }
     }
@@ -50,13 +92,35 @@
 
         if (PartyId != null)
         {
+            GuildId = partyInput.GuildId;
             result = await PartyService.UpdateAsync(PartyId, partyInput);
         }
-        else
+        else if (GuildId != null)
         {
+            partyInput.GuildId = GuildId;
             result = await PartyService.CreateAsync(partyInput);
         }
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/{GuildId}/parties");
+    }
+
+    private void AddCharacter()
+    {
+        var character = availableCharacters.FirstOrDefault(c => c.Id == selectedCharacterId);
+        if (character != null && !selectedCharacters.Any(c => c.Id == selectedCharacterId))
+        {
+            selectedCharacters.Add(character);
+            partyInput.CharacterIds.Add(selectedCharacterId);
+        }
+    }
+
+    private void RemoveCharacter(string characterId)
+    {
+        var character = selectedCharacters.FirstOrDefault(c => c.Id == characterId);
+        if (character != null)
+        {
+            selectedCharacters.Remove(character);
+            partyInput.CharacterIds.Remove(characterId);
+        }
     }
 }

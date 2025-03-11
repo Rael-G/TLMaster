@@ -31,12 +31,12 @@
 
     private void NavigateToCreate()
     {
-        NavigationManager.NavigateTo("/create-auction");
+        NavigationManager.NavigateTo($"/{GuildId}/create-auction");
     }
 
     private void NavigateToDetails(string auctionId)
     {
-        NavigationManager.NavigateTo($"/{GuildId}/auctions/{auctionId}");
+        NavigationManager.NavigateTo($"/auctions/{auctionId}");
     }
 
     private void EditAuction(string auctionId)

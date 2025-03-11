@@ -16,19 +16,14 @@
             <label for="name">Nome</label>
             <InputText id="name" class="form-control" @bind-Value="itemInput.Name" />
         </div>
-
-        <div class="form-group">
-            <label for="guildId">Guild</label>
-            <InputText id="guildId" class="form-control" @bind-Value="guildId" />
-        </div>
     </ChildContent>
 </GenericForm>
 
 @code {
+    [Parameter] public string? GuildId { get; set; }
     [Parameter] public string? ItemId { get; set; }
 
     private ItemInputModel itemInput = new ItemInputModel();
-    private string guildId = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,7 +37,6 @@
                     Name = item.Name,
                     GuildId = item.GuildId
                 };
-                guildId = item.GuildId.ToString();
             }
         }
     }
@@ -50,17 +44,18 @@
     private async Task HandleValidSubmit()
     {
         bool result;
-        itemInput.GuildId = guildId;
 
         if (ItemId != null)
         {
+            GuildId = itemInput.GuildId;
             result = await ItemService.UpdateAsync(ItemId, itemInput);
         }
-        else
+        else if(GuildId != null)
         {
+            itemInput.GuildId = GuildId;
             result = await ItemService.CreateAsync(itemInput);
         }
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/{GuildId}/items");
     }
 }

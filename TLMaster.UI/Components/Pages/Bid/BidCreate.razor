@@ -1,4 +1,4 @@
-﻿@page "/create-bid"
+﻿@page "/{AuctionId}/create-bid"
 
 @using TLMaster.UI.Models.Enums
 @using TLMaster.UI.Models.InputModels
@@ -21,11 +21,6 @@
         </div>
 
         <div class="form-group">
-            <label for="auction">Auction</label>
-            <InputText id="auction" class="form-control" @bind-Value="bidInput.AuctionId" />
-        </div>
-
-        <div class="form-group">
             <label for="bidder">Bidder</label>
             <InputText id="bidder" class="form-control" @bind-Value="bidInput.BidderId" />
         </div>
@@ -34,16 +29,19 @@
 </GenericForm>
 
 @code {
+    [Parameter] public string AuctionId { get; set; } = string.Empty;
     [Parameter] public string? BidId { get; set; } = null;
 
     private BidInputModel bidInput = new BidInputModel();
 
     private async Task HandleValidSubmit()
     {
+        bidInput.AuctionId = AuctionId;
+
         bool result;
 
         result = await BidService.CreateAsync(bidInput);
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/{AuctionId}/bids");
     }
 }

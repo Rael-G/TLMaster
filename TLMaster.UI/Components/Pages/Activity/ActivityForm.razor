@@ -44,19 +44,14 @@
                 <InputText type="password" id="password" class="form-control" @bind-Value="activityInput.Password" />
             </div>
         }
-
-        <div class="form-group">
-            <label for="guildId">Guild</label>
-            <InputText id="guildId" class="form-control" @bind-Value="guildId" />
-        </div>
     </ChildContent>
 </GenericForm>
 
 @code {
+    [Parameter] public string? GuildId { get; set; }
     [Parameter] public string? ActivityId { get; set; }
 
     private ActivityInputModel activityInput = new ActivityInputModel();
-    private string guildId = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -72,10 +67,8 @@
                     DateTime = activity.DateTime,
                     Payout = activity.Payout,
                     IsPasswordRequired = activity.IsPasswordRequired,
-                    Password = activity.Password,
                     GuildId = activity.GuildId
                 };
-                guildId = activity.GuildId;
             }
         }
     }
@@ -86,14 +79,15 @@
 
         if (!string.IsNullOrEmpty(ActivityId))
         {
+            GuildId = activityInput.GuildId;
             result = await ActivityService.UpdateAsync(ActivityId, activityInput);
         }
-        else
+        else if (GuildId != null)
         {
-            activityInput.GuildId = guildId;
+            activityInput.GuildId = GuildId;
             result = await ActivityService.CreateAsync(activityInput);
         }
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/{GuildId}/activities");
     }
 }
