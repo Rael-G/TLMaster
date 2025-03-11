@@ -15,6 +15,66 @@
         <p><strong>Descrição:</strong> @context.Description</p>
         <p><strong>Guild Master:</strong> @context.GuildMaster.UserName</p>
         <p><strong>Id:</strong> @context.Id</p>
+
+        <p><strong>Characters:</strong></p>
+        <ul>
+            @foreach(var character in @context.Characters)
+            {
+                <li>
+                    <a href="/characters/@character.Id">@character.Name</a> 
+                </li>
+            }
+        </ul>
+
+        <p><strong>Auctions:</strong></p>
+        <ul>
+            @foreach(var auction in @context.Auctions)
+            {
+                <li>
+                    <a href="/auctions/@auction.Id">@auction.Status</a> 
+                </li>
+            }
+        </ul>
+
+        <p><strong>Parties:</strong></p>
+        <ul>
+            @foreach(var party in @context.Parties)
+            {
+                <li>
+                    <a href="/parties/@party.Id">@party.Name</a> 
+                </li>
+            }
+        </ul>
+
+        <p><strong>Items:</strong></p>
+        <ul>
+            @foreach(var item in @context.Items)
+            {
+                <li>
+                    <a href="/items/@item.Id">@item.Name</a> 
+                </li>
+            }
+        </ul>
+
+        <p><strong>Activities:</strong></p>
+        <ul>
+            @foreach(var activity in @context.Activities)
+            {
+                <li>
+                    <a href="/activities/@activity.Id">@activity.Name</a> 
+                </li>
+            }
+        </ul>
+
+        <p><strong>Staff:</strong></p>
+        <ul>
+            @foreach(var staff in @context.Staff)
+            {
+                <li>
+                    <a href="/users/@staff.Id">@staff.UserName</a> 
+                </li>
+            }
+        </ul>
     </ChildContent>
 </Details>
 

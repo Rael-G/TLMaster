@@ -14,7 +14,7 @@
     <ChildContent>
         @if(context.Owner is not null)
         {
-            <p><strong>Owner:</strong> @context.Owner.Name</p>
+            <p><strong>Owner:</strong> <a href="/characters/@context.Owner.Id">@context.Owner.Name</a></p>
         }
         <p><strong>Id:</strong> @context.Id</p>
     </ChildContent>

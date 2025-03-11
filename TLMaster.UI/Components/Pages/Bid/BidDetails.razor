@@ -8,12 +8,12 @@
 <Details TItem="BidModel" TId="string"
          ItemName="Bid"
          Item="bid"
-         GetItemName="@(c => c.Amount.ToString())"
+         GetItemName="@(c => c.Bidder.Name)"
          NavigateToEdit="NavigateToEdit"
          DeleteItem="DeleteBid">
     <ChildContent>
-        <p><strong>Bidder:</strong> @context.Bidder.Name</p>
-        <p><strong>Bidder:</strong> @context.Auction.Id</p>
+        <p><strong>Amount:</strong> @context.Amount</p>
+        <p><strong>Bidder:</strong> <a href="/characters/@context.Bidder.Id">@context.Bidder.Name</a> </p>
     </ChildContent>
 </Details>
 

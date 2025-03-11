@@ -1,4 +1,4 @@
-﻿@page "/partys/{PartyId}"
+﻿@page "/parties/{PartyId}"
 @using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
 
@@ -14,6 +14,16 @@
     <ChildContent>
         <p><strong>Name:</strong> @context.Name</p>
         <p><strong>Id:</strong> @context.Id</p>
+
+        <p><strong>Characters:</strong></p>
+        <ul>
+            @foreach(var character in @context.Characters)
+            {
+                <li>
+                    <a href="/characters/@character.Id">@character.Name</a> 
+                </li>
+            }
+        </ul>
     </ChildContent>
 </Details>
 

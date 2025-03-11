@@ -14,11 +14,27 @@
     <ChildContent>
         <p><strong>Role:</strong> @context.Role</p>
         <p><strong>Coins:</strong> @context.Coin</p>
+        <p><strong>Guild:</strong>
+            @if(context.Guild is not null)
+            {
+                <a href="/items/@context.Guild?.Id">@context.Guild?.Name</a>
+            }
+        </p>
         <ul>
             <li><strong>Weapons:</strong></li>
             @foreach (var w in context.Weapons)
             {
                 <li>@w.ToString()</li>
+            }
+        </ul>
+
+        <p><strong>Items:</strong></p>
+        <ul>
+            @foreach(var item in @context.Items)
+            {
+                <li>
+                    <a href="/items/@item.Id">@item.Name</a> 
+                </li>
             }
         </ul>
         <p><strong>Id:</strong> @context.Id</p>
