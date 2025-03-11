@@ -29,6 +29,9 @@ public class UserProvider(HttpClientProvider httpClientProvider, TokenProvider t
     {
         var token = await _tokenProvider.GetAccessToken();
         var handler = new JwtSecurityTokenHandler();
+        
+        if (token == null) return null;
+        
         var jwtSecurityToken = handler.ReadJwtToken(token);
 
         return jwtSecurityToken?.Claims?.FirstOrDefault(c => c.Type == "nameid")?.Value;
