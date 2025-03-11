@@ -5,10 +5,11 @@ namespace TLMaster.Application.Dtos.Summaries;
 
 public class AuctionSummaryDto 
 { 
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
+    public Guid ItemId { get; set; }
     public int InitialPrice { get; set; }
     public DateTime StartTime { get; set; }
     public TimeSpan Duration { get; set; }
     public AuctionStatus Status { get; set; }
-    public GuildSummaryDto Guild { get; set; } = new();
+    public Guid GuildId { get; set; }
 }

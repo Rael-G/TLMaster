@@ -9,6 +9,7 @@ public class CharacterSummaryDto
     public string Name { get; set; } = string.Empty;
     public Role Role { get; set; }
     public int Coin { get; set; }
-    public UserSummaryDto User { get; set; } = new();
+    public Guid UserId { get; set; }
+
 }
 
