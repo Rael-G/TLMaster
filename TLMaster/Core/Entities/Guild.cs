@@ -20,7 +20,7 @@ public class Guild : BaseEntity
 
     public List<Party> Parties { get; set; } = [];
 
-    public List<Item> Itens { get; set; } = [];
+    public List<Item> Items { get; set; } = [];
 
     public List<Activity> Activities { get; set; } = [];
 

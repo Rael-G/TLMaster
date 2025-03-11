@@ -128,7 +128,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Item
         modelBuilder.Entity<Item>()
             .HasOne(i => i.Guild)
-            .WithMany(g => g.Itens)
+            .WithMany(g => g.Items)
             .HasForeignKey(i => i.GuildId)
             .IsRequired()
             .OnDelete(DeleteBehavior.ClientCascade);
