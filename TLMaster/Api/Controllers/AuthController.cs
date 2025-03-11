@@ -84,15 +84,15 @@ namespace TLMaster.Api.Controllers
         public IActionResult GetToken()
         {
             if (!Request.Cookies.ContainsKey("AccessToken")
-                || !Request.Cookies.ContainsKey("RefreshToken"))
+                && !Request.Cookies.ContainsKey("RefreshToken"))
             {
                 return Unauthorized("Token not found.");
             }
 
-            string accessToken = Request.Cookies["AccessToken"]!;
-            string refreshToken = Request.Cookies["RefreshToken"]!;
+            var accessToken = Request.Cookies["AccessToken"];
+            var refreshToken = Request.Cookies["RefreshToken"];
             
-            var tokenDto = new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken };
+            var tokenDto = new { AccessToken = accessToken, RefreshToken = refreshToken };
 
             return Ok(tokenDto);
         }
