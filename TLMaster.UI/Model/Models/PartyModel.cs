@@ -6,4 +6,5 @@ public class PartyModel
     public string Name { get; set; } = string.Empty;
     public List<CharacterModel> Characters { get; set; } = [];
     public GuildModel Guild { get; set; } = new();
+    public string GuildId { get; set; } = string.Empty;
 }
