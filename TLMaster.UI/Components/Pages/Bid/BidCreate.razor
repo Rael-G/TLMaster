@@ -1,5 +1,6 @@
 ﻿@page "/{AuctionId}/create-bid"
 
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Models.Enums
 @using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
@@ -20,10 +21,20 @@
             <InputNumber id="amount" class="form-control" @bind-Value="bidInput.Amount" />
         </div>
 
-        <div class="form-group">
-            <label for="bidder">Bidder</label>
-            <InputText id="bidder" class="form-control" @bind-Value="bidInput.BidderId" />
-        </div>
+        @if (userCharacters.Any())
+        {
+            <div class="form-group">
+                <label for="character">Selecionar Personagem:</label>
+                <div class="d-flex">
+                    <InputSelect id="character" class="form-control me-2" @bind-Value="bidInput.BidderId">
+                        @foreach (var character in userCharacters)
+                        {
+                            <option value="@character.Id">@character.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+        }
 
     </ChildContent>
 </GenericForm>
@@ -31,8 +42,17 @@
 @code {
     [Parameter] public string AuctionId { get; set; } = string.Empty;
     [Parameter] public string? BidId { get; set; } = null;
+    private List<CharacterModel> userCharacters = new();
 
     private BidInputModel bidInput = new BidInputModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserProvider.GetUser();
+        userCharacters = user?.Characters.ToList() ?? [];
+        
+        bidInput.BidderId = userCharacters?.FirstOrDefault()?.Id ?? string.Empty;
+    }
 
     private async Task HandleValidSubmit()
     {
