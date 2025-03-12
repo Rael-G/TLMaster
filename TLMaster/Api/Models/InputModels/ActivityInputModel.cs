@@ -1,10 +1,6 @@
-using System;
-using TLMaster.Api.Interfaces;
-using TLMaster.Application.Dtos;
-
 namespace TLMaster.Api.Models.InputModels;
 
-public class ActivityInputModel : IInputModel<ActivityDto>
+public class ActivityInputModel
 {
     public string Name { get; set; } = string.Empty;
 
@@ -21,30 +17,4 @@ public class ActivityInputModel : IInputModel<ActivityDto>
     public string? Password { get; set; }
 
     public Guid GuildId { get; set; }
-
-    public ActivityDto InputToDto()
-    => new ()
-    {
-        Id = Guid.NewGuid(),
-        Name = Name,
-        Description = Description,
-        Payout = Payout,
-        WasPaid = WasPaid,
-        DateTime = DateTime,
-        IsPasswordRequired = IsPasswordRequired,
-        Password = Password,
-        GuildId = GuildId
-    };
-
-    public void InputToDto(ActivityDto dto)
-    {
-        dto.Name = Name;
-        dto.Description = Description;
-        dto.Payout = Payout;
-        dto.WasPaid = WasPaid;
-        dto.DateTime = DateTime;
-        dto.IsPasswordRequired = IsPasswordRequired;
-        dto.Password = Password;
-        dto.GuildId = GuildId;
-    }
 }

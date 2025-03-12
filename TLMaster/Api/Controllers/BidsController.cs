@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
@@ -9,7 +10,8 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class BidsController(IBidService service) : BaseController<BidDto>(service)
+    public class BidsController(IBidService service, IMapper mapper) 
+        : BaseController<BidDto>(service, mapper)
     {
         /// <summary>
         /// Retrieves all bids.

@@ -1,20 +1,20 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TLMaster.Api.Interfaces;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
 
 namespace TLMaster.Api.Controllers;
 
 [ApiController]
-public abstract class BaseController<TDto>(IBaseService<TDto> service)
+public abstract class BaseController<TDto>(IBaseService<TDto> service, IMapper mapper)
     : ControllerBase
     where TDto : IDto
 {
     protected readonly IBaseService<TDto> Service = service;
+    protected readonly IMapper Mapper = mapper;
 
     /// <summary>
     /// Retrieves all entities.
@@ -51,12 +51,12 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    protected async Task<IActionResult> Post([FromBody] IInputModel<TDto> input)
+    protected async Task<IActionResult> Post<TInput>([FromBody] TInput input)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var entity = input.InputToDto();
+        var entity = Mapper.Map<TDto>(input);
         try
         {
             await Service.Create(entity, GetUserId(User));
@@ -79,7 +79,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    protected async Task<IActionResult> Put(Guid id, [FromBody] IInputModel<TDto> input)
+    protected async Task<IActionResult> Put<IInput>(Guid id, [FromBody] IInput input)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -88,7 +88,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service)
         if (entity is null)
             return NotFound(new {Id = id});
 
-        input.InputToDto(entity);
+        entity = Mapper.Map(input, entity);
         try
         {
             await Service.Update(entity, GetUserId(User));

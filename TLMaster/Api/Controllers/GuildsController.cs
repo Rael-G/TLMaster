@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
@@ -9,7 +10,8 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class GuildsController(IGuildService service) : BaseController<GuildDto>(service)
+    public class GuildsController(IGuildService service, IMapper mapper) 
+        : BaseController<GuildDto>(service, mapper)
     {
         /// <summary>
         /// Retrieves all guilds.

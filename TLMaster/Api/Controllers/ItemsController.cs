@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
@@ -9,7 +10,8 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ItemsController(IItemService service) : BaseController<ItemDto>(service)
+    public class ItemsController(IItemService service, IMapper mapper) 
+        : BaseController<ItemDto>(service, mapper)
     {
         /// <summary>
         /// Retrieves all itens.

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TLMaster.Api.Models.InputModels;
@@ -9,7 +10,8 @@ namespace TLMaster.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PartiesController(IPartyService service) : BaseController<PartyDto>(service)
+    public class PartiesController(IPartyService service, IMapper mapper) 
+        : BaseController<PartyDto>(service, mapper)
     {
         /// <summary>
         /// Retrieves all parties.
