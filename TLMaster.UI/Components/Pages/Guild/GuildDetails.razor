@@ -1,9 +1,15 @@
 ﻿@page "/guilds/{GuildId}"
+@using AutoMapper
 @using TLMaster.UI.Model.Models
+@using TLMaster.UI.Models.InputModels
+@using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
+@inject UserProvider UserProvider
 @inject GuildService GuildService
+@inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
+@inject IMapper Mapper
 
 <Details TItem="GuildModel" TId="string"
          ItemName="Guild"
@@ -16,12 +22,28 @@
         <p><strong>Guild Master:</strong> @context.GuildMaster.UserName</p>
         <p><strong>Id:</strong> @context.Id</p>
 
-        <p><strong>Characters:</strong></p>
+        @if (userCharacters.Any())
+        {
+            <div class="form-group">
+                <label for="character">Selecionar Personagem para Aplicar</label>
+                <div class="d-flex">
+                    <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
+                        @foreach (var character in userCharacters)
+                        {
+                            <option value="@character.Id">@character.Name</option>
+                        }
+                    </InputSelect>
+                    <button type="button" class="btn btn-primary" @onclick="ApplyToGuild">Aplicar</button>
+                </div>
+            </div>
+        }
+
+        <p><strong>Applicants:</strong></p>
         <ul>
-            @foreach(var character in @context.Characters)
+            @foreach(var applicant in @context.Applicants)
             {
                 <li>
-                    <a href="/characters/@character.Id">@character.Name</a> 
+                    <a href="/characters/@applicant.Id">@applicant.Name</a> 
                 </li>
             }
         </ul>
@@ -46,10 +68,21 @@
 @code {
     [Parameter] public string GuildId { get; set; } = string.Empty;
     private GuildModel? guild;
+    private List<CharacterModel> userCharacters = new();
+    private string? selectedCharacterId;
 
     protected override async Task OnInitializedAsync()
     {
         guild = await GuildService.GetByIdAsync(GuildId);
+
+        var user = await UserProvider.GetUser();
+        if (user != null && guild != null)
+        {
+            userCharacters = user.Characters
+                .Where(c => c.GuildId == null && !guild.Applicants.Any(a => a.Id == c.Id))
+                .ToList();
+        }
+        selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
     }
 
     private void NavigateToEdit()
@@ -65,7 +98,21 @@
             NavigationManager.NavigateTo("/guilds");
         }
     }
-}
-    <div>
 
-    </div>
+    private async Task ApplyToGuild()
+    {
+        if (selectedCharacterId == null)
+            return;
+
+        var character = await CharacterService.GetByIdAsync(selectedCharacterId);
+        var characterInput = Mapper.Map<CharacterInputModel>(character);
+        characterInput.ApplicationIds.Add(GuildId);
+        
+        var success = await CharacterService.UpdateAsync(selectedCharacterId, characterInput);
+        if (success)
+        {
+            userCharacters.RemoveAll(c => c.Id == selectedCharacterId);
+            selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
+        }
+    }
+}
