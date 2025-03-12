@@ -14,7 +14,7 @@ public class Guild : BaseEntity
 
     public List<User> Staff { get; set; } = [];
 
-    public List<Character> Characters { get; set; } = [];
+    public List<Character> Members { get; set; } = [];
 
     public List<Auction> Auctions { get; set; } = [];
 
@@ -23,6 +23,8 @@ public class Guild : BaseEntity
     public List<Item> Items { get; set; } = [];
 
     public List<Activity> Activities { get; set; } = [];
+
+    public List<Character> Applicants { get; set; } = [];
 
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

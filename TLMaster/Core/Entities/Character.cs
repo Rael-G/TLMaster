@@ -28,6 +28,8 @@ public class Character : BaseEntity
 
     public List<Party> Parties { get; set; } = [];
 
+    public List<Guild> Applications { get; set; } = [];
+
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Character()

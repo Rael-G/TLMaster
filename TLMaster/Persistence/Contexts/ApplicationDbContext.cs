@@ -51,7 +51,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Character
         modelBuilder.Entity<Character>()
             .HasOne(c => c.Guild)
-            .WithMany(g => g.Characters)
+            .WithMany(g => g.Members)
             .HasForeignKey(c => c.GuildId)
             .OnDelete(DeleteBehavior.SetNull);
 
@@ -60,6 +60,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(i => i.Owner)
             .HasForeignKey(i => i.OwnerId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Character>()
+            .HasMany(c => c.Applications)
+            .WithMany(g => g.Applicants);
 
         // Guild
         modelBuilder.Entity<Guild>()
@@ -74,7 +78,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany(u => u.StaffGuilds);
 
         modelBuilder.Entity<Guild>()
-            .HasMany(g => g.Characters)
+            .HasMany(g => g.Members)
             .WithOne(c => c.Guild)
             .HasForeignKey(c => c.GuildId)
             .OnDelete(DeleteBehavior.SetNull);
