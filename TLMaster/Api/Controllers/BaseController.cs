@@ -57,6 +57,7 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service, IMapper m
             return BadRequest(ModelState);
 
         var entity = Mapper.Map<TDto>(input);
+        entity.Id = Guid.NewGuid();
         try
         {
             await Service.Create(entity, GetUserId(User));

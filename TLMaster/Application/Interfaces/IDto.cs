@@ -4,5 +4,5 @@ namespace TLMaster.Application.Interfaces;
 
 public interface IDto
 {
-    Guid Id { get; }
+    Guid Id { get; set; }
 }
