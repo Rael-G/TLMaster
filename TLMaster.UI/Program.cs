@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TLMaster.UI;
 using TLMaster.UI.Handlers;
+using TLMaster.UI.Mappings;
 using TLMaster.UI.Providers;
 using TLMaster.UI.Services;
 
@@ -12,6 +13,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Services
 var apiUrl = builder.Configuration["ApiUrl"] 
     ?? throw new NullReferenceException("Api Url is not defined in configuration.");
+
+ builder.Services.AddAutoMapper(typeof(ModelToInput));
 
 builder.Services.AddTransient<AuthenticatedHttpHandler>();
 builder.Services.AddTransient<CredentialsHttpHandler>();

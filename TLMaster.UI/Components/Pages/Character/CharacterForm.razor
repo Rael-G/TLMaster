@@ -1,4 +1,5 @@
-﻿@using TLMaster.UI.Models.Enums
+﻿@using AutoMapper
+@using TLMaster.UI.Models.Enums
 @using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
@@ -6,6 +7,7 @@
 @inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
+@inject IMapper Mapper
 
 <GenericForm TInputModel="CharacterInputModel"
              InputModel="characterInput"
@@ -52,12 +54,7 @@
             var character = await CharacterService.GetByIdAsync(CharacterId);
             if (character != null)
             {
-                characterInput = new CharacterInputModel
-                {
-                    Name = character.Name,
-                    Role = character.Role,
-                    Weapons = character.Weapons
-                };
+                characterInput = Mapper.Map<CharacterInputModel>(character);
             }
         }
     }
@@ -65,7 +62,7 @@
     private async Task HandleValidSubmit()
     {
         bool result;
-        characterInput.UserId = await UserProvider.GetUserId();
+        characterInput.UserId = await UserProvider.GetUserId()?? string.Empty;
 
         if (CharacterId != null)
         {

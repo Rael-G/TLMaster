@@ -1,4 +1,5 @@
-﻿@using TLMaster.UI.Model.Models
+﻿@using AutoMapper
+@using TLMaster.UI.Model.Models
 @using TLMaster.UI.Models.Enums
 @using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
@@ -8,6 +9,7 @@
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
+@inject IMapper Mapper
 
 <GenericForm TInputModel="AuctionInputModel"
              InputModel="auctionInput"
@@ -68,16 +70,7 @@
             var auction = await AuctionService.GetByIdAsync(AuctionId);
             if (auction != null)
             {
-                auctionInput = new AuctionInputModel
-                {
-                    ItemId = auction.ItemId, 
-                    InitialPrice = auction.InitialPrice,
-                    StartTime = auction.StartTime,
-                    Duration = auction.Duration,
-                    Status = auction.Status,
-                    GuildId = auction.GuildId
-                };
-
+                auctionInput = Mapper.Map<AuctionInputModel>(auction);
             }
         }
 

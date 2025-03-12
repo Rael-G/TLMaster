@@ -12,4 +12,5 @@ public class GuildModel
     public List<PartyModel> Parties { get; set; } = [];
     public List<ItemModel> Items { get; set; } = [];
     public List<ActivityModel> Activities { get; set; } = [];
+    public List<CharacterModel> Applicants { get; set; } = [];
 }

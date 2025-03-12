@@ -1,10 +1,12 @@
-﻿@using TLMaster.UI.Models.InputModels
+﻿@using AutoMapper
+@using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject GuildService GuildService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
+@inject IMapper Mapper
 
 <GenericForm TInputModel="GuildInputModel"
              InputModel="guildInput"
@@ -36,11 +38,7 @@
             var guild = await GuildService.GetByIdAsync(GuildId);
             if (guild != null)
             {
-                guildInput = new GuildInputModel
-                {
-                    Name = guild.Name,
-                    Description = guild.Description
-                };
+                guildInput = Mapper.Map<GuildInputModel>(guild);
             }
         }
     }

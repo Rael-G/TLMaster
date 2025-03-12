@@ -10,4 +10,6 @@ public class CharacterInputModel
     public Role Role { get; set; }
     public List<Weapon> Weapons { get; set; } = [];
     public string UserId { get; set; } = string.Empty;
+    public List<string> ApplicationIds { get; set; } = [];
+
 }

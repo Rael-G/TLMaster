@@ -1,10 +1,12 @@
-﻿@using TLMaster.UI.Models.InputModels
+﻿@using AutoMapper
+@using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject ItemService ItemService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
+@inject IMapper Mapper
 
 <GenericForm TInputModel="ItemInputModel"
              InputModel="itemInput"
@@ -32,11 +34,7 @@
             var item = await ItemService.GetByIdAsync(ItemId);
             if (item != null)
             {
-                itemInput = new ItemInputModel
-                {
-                    Name = item.Name,
-                    GuildId = item.GuildId
-                };
+                itemInput = Mapper.Map<ItemInputModel>(item);
             }
         }
     }

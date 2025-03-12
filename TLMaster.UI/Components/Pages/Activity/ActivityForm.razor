@@ -1,10 +1,12 @@
-﻿@using TLMaster.UI.Models.InputModels
+﻿@using AutoMapper
+@using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Providers
 @using TLMaster.UI.Services
 
 @inject ActivityService ActivityService
 @inject NavigationManager NavigationManager
 @inject UserProvider UserProvider
+@inject IMapper Mapper
 
 <GenericForm TInputModel="ActivityInputModel"
              InputModel="activityInput"
@@ -60,15 +62,7 @@
             var activity = await ActivityService.GetByIdAsync(ActivityId);
             if (activity != null)
             {
-                activityInput = new ActivityInputModel
-                {
-                    Name = activity.Name,
-                    Description = activity.Description,
-                    DateTime = activity.DateTime,
-                    Payout = activity.Payout,
-                    IsPasswordRequired = activity.IsPasswordRequired,
-                    GuildId = activity.GuildId
-                };
+                activityInput = Mapper.Map<ActivityInputModel>(activity);
             }
         }
     }
@@ -90,4 +84,6 @@
 
         NavigationManager.NavigateTo($"/{GuildId}/activities");
     }
-}
+}using AutoMapper;
+#line default
+#line hidden
