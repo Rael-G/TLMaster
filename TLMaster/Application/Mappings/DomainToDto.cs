@@ -65,5 +65,12 @@ public class DomainToDto : Profile
 
         CreateMap<Activity, ActivitySummaryDto>()
             .ReverseMap();
+
+        CreateMap<Balance, BalanceDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.Character, opt => opt.Ignore())
+            .ForMember(dest => dest.Guild, opt => opt.Ignore());
+
+         CreateMap<Balance, BalanceSummaryDto>();
     }
 }

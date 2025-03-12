@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using TLMaster.UI.Model.InputModels;
 using TLMaster.UI.Model.Models;
 using TLMaster.UI.Models.InputModels;
 
@@ -37,5 +38,9 @@ public class ModelToInput : Profile
         CreateMap<PartyModel, PartyInputModel>()
             .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId))
             .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(character => character.Id)));
+        
+        CreateMap<BalanceModel, BalanceInputModel>()
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId))
+            .ForMember(dest => dest.CharacterId, opt => opt.MapFrom(src => src.CharacterId));
     }
 }

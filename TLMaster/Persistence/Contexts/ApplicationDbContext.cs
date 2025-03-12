@@ -136,6 +136,21 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(i => i.GuildId)
             .IsRequired()
             .OnDelete(DeleteBehavior.ClientCascade);
+
+        // Balance
+        modelBuilder.Entity<Balance>()
+            .HasOne(b => b.Character)
+            .WithOne(c => c.Balance)
+            .HasForeignKey<Balance>(b => b.CharacterId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Balance>()
+            .HasOne(b => b.Guild)
+            .WithMany(g => g.Balances)
+            .HasForeignKey(b => b.CharacterId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
 }

@@ -26,5 +26,7 @@ public class InputToDto : Profile
         CreateMap<AuctionInputModel, AuctionDto>();
 
         CreateMap<ActivityInputModel, ActivityDto>();
+
+        CreateMap<BalanceInputModel, BalanceDto>();
     }
 }

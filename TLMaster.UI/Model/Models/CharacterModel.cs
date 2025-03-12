@@ -9,7 +9,7 @@ public class CharacterModel
     public GuildModel? Guild { get; set; }
     public string? GuildId { get; set; }
     public List<ItemModel> Items { get; set; } = [];
-    public int Coin { get; set; }
+    public BalanceModel Balance { get; set; } = new();
     public Role Role { get; set; }
     public List<Weapon> Weapons { get; set; } = [];
     public UserModel User { get; set; } = new();

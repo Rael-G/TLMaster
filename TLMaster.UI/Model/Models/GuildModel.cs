@@ -13,4 +13,5 @@ public class GuildModel
     public List<ItemModel> Items { get; set; } = [];
     public List<ActivityModel> Activities { get; set; } = [];
     public List<CharacterModel> Applicants { get; set; } = [];
+    public List<BalanceModel> Balances { get; set; } = [];
 }

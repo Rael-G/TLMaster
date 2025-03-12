@@ -12,7 +12,7 @@ public class Character : BaseEntity
 
     public List<Item> Itens { get; set; } = [];
 
-    public int Coin { get; set; } = 0;
+    public Balance Balance { get; set; }
 
     public Role Role { get; set; }
 

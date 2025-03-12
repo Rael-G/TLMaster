@@ -12,7 +12,7 @@ public class CharacterDto : IDto
     public GuildSummaryDto? Guild { get; set; }
     public Guid? GuildId { get; set; }
     public List<ItemSummaryDto> Items { get; set; } = [];
-    public int Coin { get; set; }
+    public BalanceSummaryDto Balance { get; set; } = new();
     public Role Role { get; set; }
     public List<Weapon> Weapons { get; set; } = [];
     public UserSummaryDto User { get; set; } = new();

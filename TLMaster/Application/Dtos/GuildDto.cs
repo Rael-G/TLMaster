@@ -18,4 +18,5 @@ public class GuildDto : IDto
     public List<ItemSummaryDto> Items { get; set; } = [];
     public List<ActivitySummaryDto> Activities { get; set; } = [];
     public List<CharacterSummaryDto> Applicants { get; set; } = [];
+    public List<BalanceSummaryDto> Balances { get; set; } = [];
 }

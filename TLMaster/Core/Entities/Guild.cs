@@ -1,5 +1,3 @@
-using System;
-
 namespace TLMaster.Core.Entities;
 
 public class Guild : BaseEntity
@@ -25,6 +23,8 @@ public class Guild : BaseEntity
     public List<Activity> Activities { get; set; } = [];
 
     public List<Character> Applicants { get; set; } = [];
+
+    public List<Balance> Balances { get; set; }
 
 // Parameterless constructor for serialization
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
