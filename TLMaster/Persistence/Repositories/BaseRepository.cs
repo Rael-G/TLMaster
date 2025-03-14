@@ -18,6 +18,12 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
 
     public virtual void Delete(T entity)
         => Context.Remove(entity);
+    
+    public virtual void Delete(Guid id)
+    {
+        var entity = Context.Find<T>(id);
+        if (entity != null) Context.Remove(entity);
+    }
 
     public virtual async Task<T?> GetByIdFull(Guid id, bool track = false)
     {

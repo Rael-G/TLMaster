@@ -24,6 +24,12 @@ public interface IBaseRepository<T> where T : BaseEntity
     void Delete(T entity);
 
     /// <summary>
+    /// Deletes an existing entity.
+    /// </summary>
+    /// <param name="id">The id of the entity to delete.</param>
+    void Delete(Guid id);
+
+    /// <summary>
     /// Retrieves an entity by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
