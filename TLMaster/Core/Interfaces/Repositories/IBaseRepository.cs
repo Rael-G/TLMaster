@@ -1,4 +1,3 @@
-using System;
 using TLMaster.Core.Entities;
 
 namespace TLMaster.Core.Interfaces.Repositories;
@@ -28,10 +27,11 @@ public interface IBaseRepository<T> where T : BaseEntity
     /// Retrieves an entity by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
+    /// <param name="track">Track this entity on Context</param>
     /// <returns>The retrieved entity, or null if not found.</returns>
-    Task<T?> GetByIdFull(Guid id);
+    Task<T?> GetByIdFull(Guid id, bool track = false);
 
-    Task<T?> GetById(Guid id);
+    Task<T?> GetById(Guid id, bool track = false);
 
     /// <summary>
     /// Retrieves all entities of type T.

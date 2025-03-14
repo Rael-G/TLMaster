@@ -19,9 +19,13 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
     public virtual void Delete(T entity)
         => Context.Remove(entity);
 
-    public virtual async Task<T?> GetByIdFull(Guid id)
+    public virtual async Task<T?> GetByIdFull(Guid id, bool track = false)
     {
-        IQueryable<T> query = Context.Set<T>().AsNoTracking();
+        IQueryable<T> query = Context.Set<T>().Where(e => e.Id == id);
+        if (!track)
+        {
+            query = query.AsNoTracking();
+        }
 
         foreach (var navigation in Context.Model.FindEntityType(typeof(T))?.GetNavigations() ?? [])
         {
@@ -36,11 +40,19 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
         return await query.FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public virtual async Task<T?> GetById(Guid id)
-        => await Context.Set<T>()
-        .Where(t => t.Id == id)
-        .AsNoTracking()
-        .FirstOrDefaultAsync();
+    public virtual async Task<T?> GetById(Guid id, bool track = false)
+    {
+        IQueryable<T> query = Context.Set<T>().Where(e => e.Id == id);
+        if (!track)
+        {
+            query = query.AsNoTracking();
+        }
+
+        var result = await query.FirstOrDefaultAsync();
+
+        return result;
+    }
+        
 
     public virtual async Task<IEnumerable<T>> GetAll()
         => await Context.Set<T>()
