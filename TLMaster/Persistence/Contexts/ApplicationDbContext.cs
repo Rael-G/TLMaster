@@ -148,7 +148,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Balance>()
             .HasOne(b => b.Guild)
             .WithMany(g => g.Balances)
-            .HasForeignKey(b => b.CharacterId)
+            .HasForeignKey(b => b.GuildId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
