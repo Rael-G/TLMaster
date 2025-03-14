@@ -63,9 +63,9 @@
         if (GuildId != null)
         {
             var guild = await GuildService.GetByIdAsync(GuildId);
-            if (guild?.Characters != null)
+            if (guild?.Members != null)
             {
-                availableCharacters = guild.Characters
+                availableCharacters = guild.Members
                     .Where(c => !partyInput.CharacterIds.Contains(c.Id))
                     .ToList();
             }

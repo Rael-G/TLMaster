@@ -106,9 +106,10 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service, IMapper m
     /// Deletes a entity by its ID.
     /// </summary>
     /// <param name="id">The ID of the entity to delete.</param>
-    /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found.</returns>
+    /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found or 400 Bad Request.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     protected async Task<IActionResult> Delete(Guid id)
     {
@@ -117,7 +118,14 @@ public abstract class BaseController<TDto>(IBaseService<TDto> service, IMapper m
         if (entity is null)
             return NotFound(new {Id = id});
 
-        await Service.Delete(entity, GetUserId(User));
+        try
+        {
+            await Service.Delete(entity, GetUserId(User));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message + " " + ex.InnerException?.Message });
+        }
 
         return NoContent();
     }

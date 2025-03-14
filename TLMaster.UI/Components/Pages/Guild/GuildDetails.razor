@@ -44,6 +44,19 @@
             {
                 <li>
                     <a href="/characters/@applicant.Id">@applicant.Name</a> 
+                    <button class="btn btn-success" @onclick="() => AcceptMember(applicant.Id)">Accept</button>
+                    <button class="btn btn-danger" @onclick="() => RejectMember(applicant.Id)">Reject</button>
+                </li>
+            }
+        </ul>
+
+        <p><strong>Members:</strong></p>
+        <ul>
+            @foreach(var member in @context.Members)
+            {
+                <li>
+                    <a href="/characters/@member.Id">@member.Name</a> 
+                    <button class="btn btn-danger" @onclick="() => RemoveMember(member.Id)">Remove</button>
                 </li>
             }
         </ul>
@@ -113,6 +126,45 @@
         {
             userCharacters.RemoveAll(c => c.Id == selectedCharacterId);
             selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
+            if (character != null) guild?.Applicants.Add(character);
         }
+    }
+
+    private async Task AcceptMember(string applicantId)
+    {
+        var success = await GuildService.AcceptMember(GuildId, applicantId);
+        if (success)
+        {
+            var applicant = guild?.Applicants.Where(c => c.Id == applicantId).FirstOrDefault();
+            if (applicant is not null)
+            {
+                guild?.Applicants.Remove(applicant);
+                guild?.Members.Add(applicant);
+            }
+        }
+    }
+
+    private async Task RejectMember(string applicantId)
+    {
+        var success = await GuildService.RejectMember(GuildId, applicantId);
+        if (success)
+        {
+            var applicant = guild?.Applicants.Where(c => c.Id == applicantId).FirstOrDefault();
+            guild?.Applicants.Remove(applicant);
+            userCharacters.Add(applicant);
+            selectedCharacterId = applicant.Id;
+        }
+    }
+
+    private async Task RemoveMember(string memberId)
+    {
+        var success = await GuildService.RemoveMember(GuildId, memberId);
+        if (success)
+        {
+            var member = guild?.Members.Where(c => c.Id == memberId).FirstOrDefault();
+            guild?.Members.Remove(member);
+            userCharacters.Add(member);
+            selectedCharacterId = member.Id;
+        }   
     }
 }
