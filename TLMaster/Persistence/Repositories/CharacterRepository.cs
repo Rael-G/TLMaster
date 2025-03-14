@@ -9,14 +9,5 @@ namespace TLMaster.Persistence.Repositories;
 public class CharacterRepository(ApplicationDbContext context)
     : BaseRepository<Character>(context), ICharacterRepository
 {
-    public async Task Update(Character character, List<Guid> guildIds)
-    {
-        var applcations = await Context.Guilds
-        .Where(g => guildIds.Contains(g.Id))
-        .ToListAsync();
 
-        character.Applications = applcations;
-
-        Context.Update(character);
-    }
 }
