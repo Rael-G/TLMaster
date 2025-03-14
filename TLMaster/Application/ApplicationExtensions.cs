@@ -26,5 +26,6 @@ public static class ApplicationExtensions
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IBalanceService, BalanceService>();
     }
 }
