@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Application.Enums;
@@ -34,6 +33,7 @@ public static class PersistenceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IBalanceRepository, BalanceRepository>();
     }
 
     public static async Task ConfigureRoles(this WebApplication app)
