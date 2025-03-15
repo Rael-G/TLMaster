@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
 using TLMaster.Core.Interfaces.Repositories;
@@ -59,7 +60,6 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
         return result;
     }
         
-
     public virtual async Task<IEnumerable<T>> GetAll()
         => await Context.Set<T>()
         .AsNoTracking()
@@ -67,4 +67,37 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
 
     public async Task Commit()
         => await Context.SaveChangesAsync();
+
+    public virtual async Task<IEnumerable<T>> Get(
+        Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        string includeProperties = "", bool track = false)
+    {
+        IQueryable<T> query =  Context.Set<T>();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (!track)
+        {
+            query = query.AsNoTracking();
+        }
+
+        foreach (var includeProperty in includeProperties.Split
+            ([','], StringSplitOptions.RemoveEmptyEntries))
+        {
+            query = query.Include(includeProperty);
+        }
+
+        if (orderBy != null)
+        {
+            return orderBy(query);
+        }
+        else
+        {
+            return await query.ToListAsync();
+        }
+    }
 }
