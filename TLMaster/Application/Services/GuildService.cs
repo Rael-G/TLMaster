@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TLMaster.Application.Dtos;
 using TLMaster.Application.Interfaces;
 using TLMaster.Core.Entities;
@@ -17,19 +18,24 @@ public class GuildService(IGuildRepository guildRepository, ICharacterRepository
 
     public override async Task Update(GuildDto guildDto, Guid authenticatedUserId)
     {
-        var guild = await _guildRepository.GetById(guildDto.Id, true);
+        var guild = await _guildRepository.GetByIdFull(guildDto.Id, true);
         guild = Mapper.Map(guildDto, guild);
-        List<User> users = [];
-        foreach(var user in guildDto.Staff)
-        {
-            var staff = await _userManager.FindByIdAsync(user.Id.ToString());
-            if (staff != null) users.Add(staff);
-        }
 
-        if (guild is not null)
+        if (guild != null)
         {
-            guild.Staff = users;
-        
+            guild.Staff.RemoveAll(c => !guildDto.Staff.Select(c => c.Id).Contains(c.Id));
+
+            var newStaff = await _userManager.Users.Where(g => 
+                guildDto.Staff
+                .Select(gs => gs.Id)
+                .Contains(g.Id) && 
+                !guild.Staff
+                .Select(gs => gs.Id)
+                .Contains(g.Id))
+                .ToListAsync();
+            
+            guild.Staff.AddRange(newStaff);
+
             _guildRepository.Update(guild);
             await _guildRepository.Commit();
         }

@@ -16,17 +16,21 @@ public class CharacterService(ICharacterRepository characterRepository, IMapper 
     {
         var character = await _characterRepository.GetByIdFull(characterDto.Id, true);
         character = Mapper.Map(characterDto, character);
-        List<Guild> applications = [];
-        foreach(var guild in characterDto.Applications)
-        {
-            var application = await _guildRepository.GetById(guild.Id, true);
-            if (application != null) applications.Add(application);
-        }
 
-        if (character is not null)
+        if (character != null)
         {
-            character.Applications = applications;
-        
+            character.Applications.RemoveAll(c => !characterDto.Applications.Select(c => c.Id).Contains(c.Id));
+
+            var newApplications = await _guildRepository.Get(c => 
+                characterDto.Applications
+                .Select(cs => cs.Id)
+                .Contains(c.Id) && 
+                !character.Applications
+                .Select(cs => cs.Id)
+                .Contains(c.Id));
+
+            character.Applications.AddRange(newApplications);
+
             _characterRepository.Update(character);
             await _characterRepository.Commit();
         }

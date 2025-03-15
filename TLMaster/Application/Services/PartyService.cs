@@ -16,19 +16,23 @@ public class PartyService(IPartyRepository partyRepository, IMapper mapper, ICha
     
     public override async Task Update(PartyDto partyDto, Guid authenticatedUserId)
     {
-        var party = await _partyRepository.GetById(partyDto.Id, true);
+        var party = await _partyRepository.GetByIdFull(partyDto.Id, true);
         party = Mapper.Map(partyDto, party);
-        List<Character> characters = [];
-        foreach(var character in partyDto.Characters)
-        {
-            var member = await _characterRepository.GetById(character.Id, true);
-            if (member != null) characters.Add(member);
-        }
 
         if (party is not null)
         {
-            party.Characters = characters;
-        
+            party.Characters.RemoveAll(c => !partyDto.Characters.Select(c => c.Id).Contains(c.Id));
+
+            var newMembers = await _characterRepository.Get(p => 
+                partyDto.Characters
+                .Select(ps => ps.Id)
+                .Contains(p.Id) && 
+                !party.Characters
+                .Select(ps => ps.Id)
+                .Contains(p.Id));
+            
+            party.Characters.AddRange(newMembers);
+
             _partyRepository.Update(party);
             await _partyRepository.Commit();
         }
