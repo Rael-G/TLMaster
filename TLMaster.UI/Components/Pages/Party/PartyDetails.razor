@@ -1,9 +1,13 @@
 ﻿@page "/parties/{PartyId}"
+@using AutoMapper
 @using TLMaster.UI.Model.Models
+@using TLMaster.UI.Models.InputModels
 @using TLMaster.UI.Services
 
 @inject PartyService PartyService
 @inject NavigationManager NavigationManager
+@inject GuildService GuildService
+@inject IMapper Mapper
 
 <Details TItem="PartyModel" TId="string"
          ItemName="Party"
@@ -15,12 +19,26 @@
         <p><strong>Name:</strong> @context.Name</p>
         <p><strong>Id:</strong> @context.Id</p>
 
-        <p><strong>Characters:</strong></p>
-        <ul>
-            @foreach(var character in @context.Characters)
+        <div class="form-group">
+            <label for="character">Adicionar Personagem</label>
+            <div class="d-flex">
+                <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
+                    @foreach (var character in availableCharacters)
+                    {
+                        <option value="@character.Id">@character.Name</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn btn-primary" @onclick="AddCharacter">Adicionar</button>
+            </div>
+        </div>
+
+        <h5>Membros</h5>
+        <ul class="list-group">
+            @foreach (var character in party.Characters)
             {
-                <li>
-                    <a href="/characters/@character.Id">@character.Name</a> 
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @character.Name
+                    <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveCharacter(character.Id)">Remover</button>
                 </li>
             }
         </ul>
@@ -31,9 +49,24 @@
     [Parameter] public string PartyId { get; set; } = string.Empty;
     private PartyModel? party;
 
+    private List<CharacterModel> availableCharacters = new();
+    private string? selectedCharacterId;
+
     protected override async Task OnInitializedAsync()
     {
         party = await PartyService.GetByIdAsync(PartyId);
+
+        if (party?.GuildId != null)
+        {
+            var guild = await GuildService.GetByIdAsync(party.GuildId);
+            if (guild?.Members != null)
+            {
+                availableCharacters = guild.Members
+                    .Where(c => !party.Characters.Select(c => c.Id).Contains(c.Id))
+                    .ToList();
+                selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+            }
+        }
     }
 
     private void NavigateToEdit()
@@ -49,7 +82,24 @@
             NavigationManager.NavigateTo("/partys");
         }
     }
-}
-    <div>
 
-    </div>
+    private async Task AddCharacter()
+    {
+        var character = availableCharacters.First(c => c.Id == selectedCharacterId);
+        party?.Characters.Add(character);
+        availableCharacters.Remove(character);
+        var partyInput = Mapper.Map<PartyInputModel>(party);
+        await PartyService.UpdateAsync(PartyId, partyInput);
+        selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+    }
+
+    private async Task RemoveCharacter(string characterId)
+    {
+        var character = party.Characters.Find(c => c.Id == characterId);
+        party?.Characters.Remove(character);
+        availableCharacters.Add(character);
+        var partyInput = Mapper.Map<PartyInputModel>(party);
+        await PartyService.UpdateAsync(PartyId, partyInput);
+        selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+    }
+}
