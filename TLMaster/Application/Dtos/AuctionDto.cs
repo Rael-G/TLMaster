@@ -10,7 +10,7 @@ public class AuctionDto : IDto
     public Guid Id { get; set; }
     public ItemSummaryDto Item { get; set; } = new();
     public Guid ItemId { get; set; }
-    public int InitialPrice { get; set; }
+    public int BidStep { get; set; }
     public DateTime StartTime { get; set; }
     public TimeSpan Duration { get; set; }
     public List<BidSummaryDto> Bids { get; set; } = [];

@@ -7,7 +7,7 @@ public class AuctionModel
     public string Id { get; set; } = string.Empty;
     public ItemModel Item { get; set; } = new();
     public string ItemId { get; set; } = string.Empty;
-    public int InitialPrice { get; set; }
+    public int BidStep { get; set; }
     public DateTime StartTime { get; set; }
     public TimeSpan Duration { get; set; }
     public List<BidModel> Bids { get; set; } = [];

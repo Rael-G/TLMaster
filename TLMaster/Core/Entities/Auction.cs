@@ -1,22 +1,23 @@
 using TLMaster.Core.Enums;
+using TLMaster.Persistence.Migrations;
 
 namespace TLMaster.Core.Entities;
 
 public class Auction : BaseEntity
 {
-    private int _initialPrice;
+    private int _bidStep;
 
     public Item Item { get; set; }
 
     public Guid ItemId { get; set; }
 
-    public int InitialPrice
+    public int BidStep
     {
-        get => _initialPrice;
+        get => _bidStep;
         set
         {
             ValidateInitialPrice(value);
-            _initialPrice = value;
+            _bidStep = value;
         }
     }
 
@@ -54,11 +55,14 @@ public class Auction : BaseEntity
         if (HighestBid is not null && bid.Amount <= HighestBid.Amount)
             throw new ArgumentException("New bid should be greater than the last bid on this auction.");
 
+        if (bid.Amount < BidStep || bid.Amount % BidStep != 0)
+            throw new ArgumentException("New Bid should Respect bid step.");
+
         Bids.Add(bid);
     }
 
     private static void ValidateInitialPrice(int value)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(InitialPrice));
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(BidStep));
     }
 }

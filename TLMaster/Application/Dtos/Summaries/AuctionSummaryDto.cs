@@ -7,7 +7,7 @@ public class AuctionSummaryDto
 { 
     public Guid Id { get; set; }
     public Guid ItemId { get; set; }
-    public int InitialPrice { get; set; }
+    public int BidStep { get; set; }
     public DateTime StartTime { get; set; }
     public TimeSpan Duration { get; set; }
     public AuctionStatus Status { get; set; }
