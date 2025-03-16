@@ -1,3 +1,4 @@
+using Quartz;
 using TLMaster.Application.Interfaces;
 using TLMaster.Application.Mappings;
 using TLMaster.Application.Services;
@@ -27,5 +28,9 @@ public static class ApplicationExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IBalanceService, BalanceService>();
+
+        // Registers Quartz to have jobs
+        services.AddQuartz();
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
 }

@@ -31,7 +31,7 @@ public class Auction : BaseEntity
 
     public Guid? WinnerId { get; set; }
 
-    public AuctionStatus Status { get; set; }
+    public AuctionStatus Status { get; private set; }
 
     public Bid? HighestBid => Bids.Count > 0 ? Bids.Max() : null;
 
@@ -47,7 +47,7 @@ public class Auction : BaseEntity
         
     }
 
-    public void AddBid(Bid bid)
+    public void ValidateBid(Bid bid)
     {
         if (Status is not AuctionStatus.Active)
             throw new ArgumentException("The auction isn't active.");
@@ -57,8 +57,35 @@ public class Auction : BaseEntity
 
         if (bid.Amount < BidStep || bid.Amount % BidStep != 0)
             throw new ArgumentException("New Bid should Respect bid step.");
+    }
 
-        Bids.Add(bid);
+    public void StartAuction()
+    {
+        if (Status == AuctionStatus.Pending)
+            Status = AuctionStatus.Active;
+        else
+            throw new Exception("An auction that is not pending should not be started.");
+    }
+
+    public void FinishAuction()
+    {
+        if (Status == AuctionStatus.Active)
+        {
+            Status = AuctionStatus.Finished;
+            Winner = HighestBid?.Bidder;
+        }
+        else
+        {
+            throw new Exception("An auction that is not active should not be finished.");
+        }
+    }
+
+    public void CancelAuction()
+    {
+        if (Status != AuctionStatus.Finished)
+            Status = AuctionStatus.Canceled;
+        else
+            throw new Exception("A finished auction should not be canceled.");
     }
 
     private static void ValidateInitialPrice(int value)
