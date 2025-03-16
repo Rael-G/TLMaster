@@ -1,8 +1,11 @@
 ﻿@page "/activities/{ActivityId}"
 @using TLMaster.UI.Model.Models
 @using TLMaster.UI.Services
+@using TLMaster.UI.Providers
 
 @inject ActivityService ActivityService
+@inject CharacterService CharacterService
+@inject UserProvider UserProvider
 @inject NavigationManager NavigationManager
 
 <Details TItem="ActivityModel" TId="string"
@@ -25,16 +28,48 @@
                 </li>
             }
         </ul>
+
+        @if (userCharacters.Any())
+        {
+            <div class="form-group">
+                <label for="character">Selecionar Personagem para Participar</label>
+                <div class="d-flex">
+                    <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
+                        @foreach (var character in userCharacters)
+                        {
+                            <option value="@character.Id">@character.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+                
+                <label for="password">Senha da Atividade</label>
+                <InputText id="password" class="form-control me-2" @bind-Value="activityPassword" type="password" />
+
+                <button type="button" class="btn btn-primary mt-2" @onclick="ParticipateInActivity">Participar</button>
+            </div>
+        }
     </ChildContent>
 </Details>
 
 @code {
     [Parameter] public string ActivityId { get; set; } = string.Empty;
     private ActivityModel? activity;
+    private List<CharacterModel> userCharacters = new();
+    private string? selectedCharacterId;
+    private string activityPassword = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         activity = await ActivityService.GetByIdAsync(ActivityId);
+
+        var user = await UserProvider.GetUser();
+        if (user != null && activity != null)
+        {
+            userCharacters = user.Characters
+                .Where(c => !activity.Participants.Any(p => p.Id == c.Id))
+                .ToList();
+        }
+        selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
     }
 
     private void NavigateToEdit()
@@ -48,6 +83,24 @@
         if (result)
         {
             NavigationManager.NavigateTo("/activities");
+        }
+    }
+
+    private async Task ParticipateInActivity()
+    {
+        if (selectedCharacterId == null || string.IsNullOrWhiteSpace(activityPassword))
+            return;
+
+        var success = await ActivityService.Participate(ActivityId, selectedCharacterId, activityPassword);
+        if (success)
+        {
+            var character = userCharacters.FirstOrDefault(c => c.Id == selectedCharacterId);
+            if (character != null)
+            {
+                activity?.Participants.Add(character);
+                userCharacters.Remove(character);
+                selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
+            }
         }
     }
 }

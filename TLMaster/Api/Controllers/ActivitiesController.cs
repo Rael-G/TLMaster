@@ -67,4 +67,36 @@ public class ActivitiesController(IActivityService service, IMapper mapper)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public new async Task<IActionResult> Delete(Guid id)
         => await base.Delete(id);
+
+    /// <summary>
+    /// Participate in an activity.
+    /// </summary>
+    /// <param name="activityId">The ID of the activity to participate.</param>
+    /// <param name="characterId">The ID of the character that is participating.</param>
+    /// <param name="password">The password of the activity.</param>
+    /// <returns>Returns 204 No Content if successful, otherwise returns a 404 Not Found or 400 Bad Request.</returns>
+    [HttpPut("{activityId}/participate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Participate(Guid activityId, [FromQuery] Guid characterId, [FromBody] string password)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var entity = await Service.GetById(activityId, GetUserId(User));
+        if (entity is null)
+            return NotFound(new {Id = activityId});
+
+        try
+        {
+            await service.Participate(activityId, characterId, password, GetUserId(User));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message + " " + ex.InnerException?.Message });
+        }
+
+        return NoContent();
+    }
 }
