@@ -99,7 +99,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Party
         modelBuilder.Entity<Party>()
             .HasMany(p => p.Characters)
-            .WithMany(c => c.Parties);
+            .WithOne(c => c.Party)
+            .HasForeignKey(p => p.PartyId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
 
         // User
         modelBuilder.Entity<User>()

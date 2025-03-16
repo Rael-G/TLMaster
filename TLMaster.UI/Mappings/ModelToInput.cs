@@ -23,8 +23,6 @@ public class ModelToInput : Profile
             .ForMember(dest => dest.AuctionId, opt => opt.MapFrom(src => src.Auction.Id));
 
         CreateMap<CharacterModel, CharacterInputModel>()
-            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId))
-            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
             .ForMember(dest => dest.ApplicationIds, opt => opt.MapFrom(src => src.Applications.Select(app => app.Id)));
 
         CreateMap<GuildModel, GuildInputModel>()
@@ -36,8 +34,7 @@ public class ModelToInput : Profile
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.OwnerId));
 
         CreateMap<PartyModel, PartyInputModel>()
-            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId))
-            .ForMember(dest => dest.CharacterIds, opt => opt.MapFrom(src => src.Characters.Select(character => character.Id)));
+            .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId));
         
         CreateMap<BalanceModel, BalanceInputModel>()
             .ForMember(dest => dest.GuildId, opt => opt.MapFrom(src => src.GuildId))

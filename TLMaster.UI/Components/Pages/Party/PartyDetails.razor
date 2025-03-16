@@ -5,6 +5,7 @@
 @using TLMaster.UI.Services
 
 @inject PartyService PartyService
+@inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
 @inject GuildService GuildService
 @inject IMapper Mapper
@@ -21,7 +22,9 @@
 
         <div class="form-group">
             <label for="character">Adicionar Personagem</label>
-            <div class="d-flex">
+            @if(availableCharacters.Count > 0)
+            {
+                <div class="d-flex">
                 <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
                     @foreach (var character in availableCharacters)
                     {
@@ -29,7 +32,13 @@
                     }
                 </InputSelect>
                 <button type="button" class="btn btn-primary" @onclick="AddCharacter">Adicionar</button>
-            </div>
+                </div>
+            }
+            else
+            {
+                <p>Nenhum Membro disponiel.</p>
+            }
+            
         </div>
 
         <h5>Membros</h5>
@@ -62,7 +71,7 @@
             if (guild?.Members != null)
             {
                 availableCharacters = guild.Members
-                    .Where(c => !party.Characters.Select(c => c.Id).Contains(c.Id))
+                    .Where(c => c.PartyId == null)
                     .ToList();
                 selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
             }
@@ -86,20 +95,28 @@
     private async Task AddCharacter()
     {
         var character = availableCharacters.First(c => c.Id == selectedCharacterId);
-        party?.Characters.Add(character);
-        availableCharacters.Remove(character);
-        var partyInput = Mapper.Map<PartyInputModel>(party);
-        await PartyService.UpdateAsync(PartyId, partyInput);
-        selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+        character.PartyId = PartyId;
+        var characterInput = Mapper.Map<CharacterInputModel>(character);
+
+        if (await CharacterService.UpdateAsync(character.Id, characterInput))
+        {
+            availableCharacters.Remove(character);
+            party.Characters.Add(character);
+            selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+        }
     }
 
     private async Task RemoveCharacter(string characterId)
     {
-        var character = party.Characters.Find(c => c.Id == characterId);
-        party?.Characters.Remove(character);
-        availableCharacters.Add(character);
-        var partyInput = Mapper.Map<PartyInputModel>(party);
-        await PartyService.UpdateAsync(PartyId, partyInput);
-        selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+        var character = party.Characters.First(c => c.Id == characterId);
+        character.PartyId = null;
+        
+        var characterInput = Mapper.Map<CharacterInputModel>(character);
+        if (await CharacterService.UpdateAsync(character.Id, characterInput))
+        {
+            availableCharacters.Add(character);
+            party.Characters.Remove(character);
+            selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
+        }
     }
 }

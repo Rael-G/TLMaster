@@ -23,7 +23,7 @@ public abstract class BaseRepository<T>(ApplicationDbContext context)
     public virtual void Delete(Guid id)
     {
         var entity = Context.Find<T>(id);
-        if (entity != null) Context.Remove(entity);
+        if (entity != null) Delete(entity);
     }
 
     public virtual async Task<T?> GetByIdFull(Guid id, bool track = false)

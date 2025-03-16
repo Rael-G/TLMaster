@@ -17,6 +17,8 @@ public class CharacterDto : IDto
     public List<Weapon> Weapons { get; set; } = [];
     public UserSummaryDto User { get; set; } = new();
     public Guid UserId { get; set; }
+    public PartySummaryDto? Party { get; set; }
+    public Guid? PartyId { get; set; }
     public List<ActivitySummaryDto> Activities { get; set; } = [];
     public List<GuildSummaryDto> Applications { get; set; } = [];
 }

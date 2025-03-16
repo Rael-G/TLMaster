@@ -11,6 +11,6 @@ public class CharacterSummaryDto
     public Role Role { get; set; }
     public int Coin { get; set; }
     public Guid UserId { get; set; }
-
+    public Guid? PartyId { get; set; }
 }
 

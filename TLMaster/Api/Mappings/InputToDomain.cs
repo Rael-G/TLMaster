@@ -13,8 +13,7 @@ public class InputToDto : Profile
         CreateMap<CharacterInputModel, CharacterDto>()
             .ForMember(dest => dest.Applications, opt => opt.MapFrom(src => src.ApplicationIds.Select(id => new GuildSummaryDto() { Id = id })));
 
-        CreateMap<PartyInputModel, PartyDto>()
-            .ForMember(dest => dest.Characters, opt => opt.MapFrom(src => src.CharacterIds.Select(id => new CharacterSummaryDto() { Id = id })));
+        CreateMap<PartyInputModel, PartyDto>();
 
         CreateMap<ItemInputModel, ItemDto>();
 

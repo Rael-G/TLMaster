@@ -24,9 +24,11 @@ public class Character : BaseEntity
 
     public Guid UserId { get; private set; }
 
-    public List<Activity> Activities { get; set; } = [];
+    public Party? Party { get; set; }
 
-    public List<Party> Parties { get; set; } = [];
+    public Guid? PartyId { get; set; }
+
+    public List<Activity> Activities { get; set; } = [];
 
     public List<Guild> Applications { get; set; } = [];
 

@@ -34,6 +34,7 @@ public class DomainToDto : Profile
             .ForMember(dest => dest.Balance, opt => opt.Ignore())
             .ForMember(dest => dest.User, opt => opt.Ignore())
             .ForMember(dest => dest.Itens, opt => opt.Ignore())
+            .ForMember(dest => dest.Party, opt => opt.Ignore())
             .ForMember(dest => dest.Activities, opt => opt.Ignore())
             .ForMember(dest => dest.Applications, opt => opt.Ignore());
 

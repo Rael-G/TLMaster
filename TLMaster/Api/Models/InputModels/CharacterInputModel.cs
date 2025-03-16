@@ -10,5 +10,6 @@ public class CharacterInputModel
     public Role Role { get; set; }
     public List<Weapon> Weapons { get; set; } = [];
     public Guid UserId { get; set; }
+    public Guid? PartyId { get; set; }
     public List<Guid> ApplicationIds { get; set; } = [];
 }

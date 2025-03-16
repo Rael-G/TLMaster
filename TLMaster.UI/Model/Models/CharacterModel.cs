@@ -13,6 +13,8 @@ public class CharacterModel
     public Role Role { get; set; }
     public List<Weapon> Weapons { get; set; } = [];
     public UserModel User { get; set; } = new();
+    public string UserId { get; set; } = string.Empty;
+    public string? PartyId { get; set; }
     public List<ActivityModel> Activities { get; set; } = [];
     public List<GuildModel> Applications { get; set; } = [];
 }
