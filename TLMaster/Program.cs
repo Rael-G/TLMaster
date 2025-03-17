@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigurePersistence(builder.Configuration);
-builder.Services.ConfigureApplication();
+builder.Services.ConfigureApplication(builder.Configuration);
 builder.Services.ConfigureCors(builder.Configuration);
 builder.Services.ConfigureDoc();
 builder.Services.ConfigureAuth(builder.Configuration);

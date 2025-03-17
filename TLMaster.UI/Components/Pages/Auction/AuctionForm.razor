@@ -33,13 +33,16 @@
         </div>
 
         <div>
-            <label for="dateTime">Escolha a data e hora de inicio:</label>
-            <InputDate id="dateTime" class="form-control" @bind-Value="auctionInput.StartTime"></InputDate>
+            <label for="date">Escolha a data de início:</label>
+            <InputDate id="date" class="form-control" @bind-Value="auctionDate" />
+
+            <label for="time">Escolha a hora de início:</label>
+            <InputText id="time" type="time" class="form-control" @bind-Value="_selectedTime" />
         </div>
 
         <div>
             <label>Duração (Horas)</label>
-            <InputNumber @bind-Value="hours" />
+            <InputNumber id="duration" class="form-control" @bind-Value="_duration" />
         </div>
 
         <div class="form-group">
@@ -58,6 +61,10 @@
     [Parameter] public string? GuildId { get; set; }
     [Parameter] public string? AuctionId { get; set; }
 
+    private DateTime auctionDate = DateTime.Now.Date;
+    private string _selectedTime = string.Empty;
+    private int _duration;
+
     private int hours;
     private List<ItemModel> items = [];
 
@@ -71,7 +78,14 @@
             if (auction != null)
             {
                 auctionInput = Mapper.Map<AuctionInputModel>(auction);
+                    auctionDate = auctionInput.StartTime.Date;
+                _selectedTime = auctionInput.StartTime.TimeOfDay.ToString(@"hh\:mm");
             }
+        }
+        else
+        {
+            auctionDate = DateTime.Now.Date;
+            _selectedTime = DateTime.Now.ToString(@"hh\:mm");
         }
 
         var guildId = GuildId?? auctionInput.GuildId;  
@@ -89,6 +103,12 @@
 
     private async Task HandleValidSubmit()
     {
+        if (TimeSpan.TryParse(_selectedTime, out var selectedTime))
+        {
+            auctionInput.StartTime = auctionDate.Add(selectedTime);
+            auctionInput.Duration = TimeSpan.FromHours(_duration);
+        }
+
         bool result;
         if (AuctionId != null)
         {

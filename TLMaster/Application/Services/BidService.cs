@@ -13,7 +13,7 @@ public class BidService(IBidRepository bidRepository, IAuctionRepository auction
     public override async Task Create(BidDto dto, Guid authenticatedUserId)
     {
         var bid = Mapper.Map<Bid>(dto);
-        var auction = await auctionRepository.GetById(dto.AuctionId);
+        var auction = (await auctionRepository.Get(filter: a => a.Id == dto.AuctionId, includeProperties:"Bids")).FirstOrDefault();
         auction?.ValidateBid(bid);
         await base.Create(dto, authenticatedUserId);
     }

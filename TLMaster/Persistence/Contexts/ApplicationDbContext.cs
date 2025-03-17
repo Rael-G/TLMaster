@@ -1,3 +1,5 @@
+using AppAny.Quartz.EntityFrameworkCore.Migrations;
+using AppAny.Quartz.EntityFrameworkCore.Migrations.SqlServer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
@@ -153,6 +155,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(b => b.GuildId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+        //Quartz Jobs
+        modelBuilder.AddQuartz(builder => builder.UseSqlServer());
     }
 
 }

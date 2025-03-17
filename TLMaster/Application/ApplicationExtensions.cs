@@ -11,7 +11,7 @@ public static class ApplicationExtensions
     /// Configures application-related services.
     /// </summary>
     /// <param name="services">The collection of services to configure.</param>
-    public static void ConfigureApplication(this IServiceCollection services)
+    public static void ConfigureApplication(this IServiceCollection services, IConfiguration configuration)
     {
         // Registers the AutoMapper service
         services.AddAutoMapper(typeof(DomainToDto));
@@ -30,7 +30,13 @@ public static class ApplicationExtensions
         services.AddScoped<IBalanceService, BalanceService>();
 
         // Registers Quartz to have jobs
-        services.AddQuartz();
+        var connectionString = configuration.GetConnectionString("ConnectionString")
+            ?? throw new NullReferenceException("Connection string not configured");
+        services.AddQuartz( q => q
+            .UsePersistentStore(c => c
+                .UseSqlServer(connectionString)
+            )
+        );
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
 }

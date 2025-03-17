@@ -30,6 +30,9 @@ public class AuctionService(IAuctionRepository auctionRepository, IMapper mapper
 
         var startTrigger = TriggerBuilder.Create()
             .StartAt(auction.StartTime)
+            .WithSimpleSchedule(x => x
+                .WithMisfireHandlingInstructionFireNow()
+            )
             .Build();
 
         await scheduler.ScheduleJob(startJob, startTrigger);
@@ -41,6 +44,9 @@ public class AuctionService(IAuctionRepository auctionRepository, IMapper mapper
 
         var endTrigger = TriggerBuilder.Create()
             .StartAt(auction.StartTime + auction.Duration)
+            .WithSimpleSchedule(x => x
+                .WithMisfireHandlingInstructionFireNow()
+            )
             .Build();
 
         await scheduler.ScheduleJob(endJob, endTrigger);
