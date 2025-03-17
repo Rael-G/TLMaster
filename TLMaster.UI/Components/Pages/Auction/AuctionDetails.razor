@@ -15,10 +15,11 @@
         <p><strong>Item:</strong> <a href="/items/@context.Item.Id">@context.Item.Name</a> </p>
         <p><strong>StartTime:</strong> @context.StartTime</p>
         <p><strong>Duration:</strong> @context.Duration</p>
+        <p><strong>BidStep:</strong> @context.BidStep</p>
 
         @if(@context.Winner is not null)
         {
-            <p><strong>Item:</strong> <a href="/characters/@context.Winner.Id">@context.Winner.Name</a> </p>
+            <p><strong>Winner:</strong> <a href="/characters/@context.Winner.Id">@context.Winner.Name</a> </p>
         }
 
         <a href="@context.Id/bids/">Bids</a>

@@ -10,7 +10,8 @@ public class StartAuctionJob(IAuctionRepository auctionRepository) : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var auctionId = context.JobDetail.JobDataMap.GetGuid("AuctionId");
+        if (!Guid.TryParse(context.JobDetail.JobDataMap.GetString("AuctionId"), out var auctionId))
+            return;
         
         var auction = (await _auctionRepository.Get
             (filter: a => a.Id == auctionId && 

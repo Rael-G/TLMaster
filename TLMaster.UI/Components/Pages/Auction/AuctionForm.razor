@@ -34,7 +34,7 @@
 
         <div>
             <label for="date">Escolha a data de início:</label>
-            <InputDate id="date" class="form-control" @bind-Value="auctionDate" />
+            <InputDate id="date" class="form-control" @bind-Value="auctionInput.StartTime" />
 
             <label for="time">Escolha a hora de início:</label>
             <InputText id="time" type="time" class="form-control" @bind-Value="_selectedTime" />
@@ -42,7 +42,7 @@
 
         <div>
             <label>Duração (Horas)</label>
-            <InputNumber id="duration" class="form-control" @bind-Value="_duration" />
+            <InputNumber id="duration" class="form-control" @bind-Value="hoursDuration" />
         </div>
 
         <div class="form-group">
@@ -61,11 +61,9 @@
     [Parameter] public string? GuildId { get; set; }
     [Parameter] public string? AuctionId { get; set; }
 
-    private DateTime auctionDate = DateTime.Now.Date;
     private string _selectedTime = string.Empty;
-    private int _duration;
+    private int hoursDuration;
 
-    private int hours;
     private List<ItemModel> items = [];
 
     private AuctionInputModel auctionInput = new AuctionInputModel();
@@ -78,15 +76,14 @@
             if (auction != null)
             {
                 auctionInput = Mapper.Map<AuctionInputModel>(auction);
-                    auctionDate = auctionInput.StartTime.Date;
-                _selectedTime = auctionInput.StartTime.TimeOfDay.ToString(@"hh\:mm");
             }
         }
         else
         {
-            auctionDate = DateTime.Now.Date;
-            _selectedTime = DateTime.Now.ToString(@"hh\:mm");
+            auctionInput.StartTime = DateTime.Now;
         }
+        _selectedTime = auctionInput.StartTime.TimeOfDay.ToString(@"hh\:mm");
+
 
         var guildId = GuildId?? auctionInput.GuildId;  
         if (guildId != null)
@@ -105,8 +102,8 @@
     {
         if (TimeSpan.TryParse(_selectedTime, out var selectedTime))
         {
-            auctionInput.StartTime = auctionDate.Add(selectedTime);
-            auctionInput.Duration = TimeSpan.FromHours(_duration);
+            auctionInput.StartTime =  auctionInput.StartTime.Date + selectedTime;
+            auctionInput.Duration = TimeSpan.FromMinutes(hoursDuration);
         }
 
         bool result;

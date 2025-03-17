@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Quartz;
+using Quartz.Impl.AdoJobStore;
 using TLMaster.Application.Interfaces;
 using TLMaster.Application.Mappings;
 using TLMaster.Application.Services;
@@ -11,7 +13,7 @@ public static class ApplicationExtensions
     /// Configures application-related services.
     /// </summary>
     /// <param name="services">The collection of services to configure.</param>
-    public static void ConfigureApplication(this IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureApplication(this IServiceCollection services)
     {
         // Registers the AutoMapper service
         services.AddAutoMapper(typeof(DomainToDto));
@@ -30,12 +32,17 @@ public static class ApplicationExtensions
         services.AddScoped<IBalanceService, BalanceService>();
 
         // Registers Quartz to have jobs
-        var connectionString = configuration.GetConnectionString("ConnectionString")
-            ?? throw new NullReferenceException("Connection string not configured");
         services.AddQuartz( q => q
-            .UsePersistentStore(c => c
-                .UseSqlServer(connectionString)
-            )
+            .UsePersistentStore(c => 
+            {
+                c.UseNewtonsoftJsonSerializer();
+                c.UseSqlServer(o => 
+                {
+                    o.ConnectionStringName = "ConnectionString";
+                    o.UseDriverDelegate<SqlServerDelegate>();
+                    o.TablePrefix = "quartz.qrtz_";
+                });
+            })
         );
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }

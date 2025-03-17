@@ -1,5 +1,4 @@
 using TLMaster.Core.Enums;
-using TLMaster.Persistence.Migrations;
 
 namespace TLMaster.Core.Entities;
 
@@ -16,7 +15,7 @@ public class Auction : BaseEntity
         get => _bidStep;
         set
         {
-            ValidateInitialPrice(value);
+            ValidateBidStep(value);
             _bidStep = value;
         }
     }
@@ -73,6 +72,7 @@ public class Auction : BaseEntity
         {
             Status = AuctionStatus.Finished;
             Winner = HighestBid?.Bidder;
+            WinnerId = HighestBid?.BidderId;
         }
         else
         {
@@ -88,8 +88,8 @@ public class Auction : BaseEntity
             throw new Exception("A finished auction should not be canceled.");
     }
 
-    private static void ValidateInitialPrice(int value)
+    private static void ValidateBidStep(int value)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(BidStep));
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(value, 0, nameof(BidStep));
     }
 }
