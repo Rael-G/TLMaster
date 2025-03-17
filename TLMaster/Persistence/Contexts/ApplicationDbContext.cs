@@ -58,7 +58,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Character>()
-            .HasMany(c => c.Itens)
+            .HasMany(c => c.Items)
             .WithOne(i => i.Owner)
             .HasForeignKey(i => i.OwnerId)
             .OnDelete(DeleteBehavior.SetNull);

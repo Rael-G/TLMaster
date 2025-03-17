@@ -10,7 +10,7 @@ public class Character : BaseEntity
 
     public Guid? GuildId { get; set; }
 
-    public List<Item> Itens { get; set; } = [];
+    public List<Item> Items { get; set; } = [];
 
     public Balance? Balance { get; set; }
 
