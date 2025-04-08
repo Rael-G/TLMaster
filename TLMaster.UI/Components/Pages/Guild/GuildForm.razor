@@ -11,17 +11,26 @@
 <GenericForm TInputModel="GuildInputModel"
              InputModel="guildInput"
              Id="@GuildId"
-             ItemName="Guilda"
+             ItemName="Guild"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
-        <div class="form-group">
-            <label for="name">Nome</label>
-            <InputText id="name" class="form-control" @bind-Value="guildInput.Name" />
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Guild Name</label>
+            <InputText id="name" class="form-control" @bind-Value="guildInput.Name" placeholder="Enter the guild name" />
         </div>
 
-        <div class="form-group">
-            <label for="description">Descrição</label>
-            <InputTextArea id="description" class="form-control" @bind-Value="guildInput.Description" />
+        <div class="form-group mb-4">
+            <label for="description" class="form-label">Description</label>
+            <InputTextArea id="description" class="form-control" @bind-Value="guildInput.Description" placeholder="Enter a description of the guild" rows="4" />
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary w-48">
+                @(GuildId != null ? "Save Changes" : "Create Guild")
+            </button>
+            <button type="button" class="btn btn-secondary w-48" @onclick="NavigateBack">
+                Cancel
+            </button>
         </div>
     </ChildContent>
 </GenericForm>
@@ -57,6 +66,11 @@
             result = await GuildService.CreateAsync(guildInput);
         }
 
+        NavigateBack();
+    }
+
+    private void NavigateBack()
+    {
         NavigationManager.NavigateTo("/guilds");
     }
 }

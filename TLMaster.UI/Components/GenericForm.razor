@@ -2,7 +2,7 @@
 
 @using Microsoft.AspNetCore.Components.Forms
 
-<h3>@(Id != null ? $"Editar {ItemName}" : $"Criar {ItemName}")</h3>
+<h3>@(Id != null ? $"Edit {ItemName}" : $"Create {ItemName}")</h3>
 
 <EditForm Model="@InputModel" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -10,9 +10,6 @@
 
     @ChildContent
 
-    <button type="submit" class="btn btn-primary">
-        @(Id != null ? $"Salvar Alterações" : $"Criar {ItemName}")
-    </button>
 </EditForm>
 
 @code {

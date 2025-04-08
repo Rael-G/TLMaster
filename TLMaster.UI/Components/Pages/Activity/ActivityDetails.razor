@@ -9,97 +9,125 @@
 @inject NavigationManager NavigationManager
 @inject GuildService GuildService
 
-<Details TItem="ActivityModel" TId="string"
-         ItemName="Activity"
-         Item="activity"
-         GetItemName="@(a => a.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteActivity">
-    <ChildContent>
-        <p><strong>Description:</strong> @context.Description</p>
-        <p><strong>Payout:</strong> @context.Payout</p>
-        <p><strong>Date:</strong> @context.DateTime.ToString()</p>
-
-        <p><strong>Participants:</strong></p>
-
-        @foreach (var party in parties)
-        {
-            <div class="mb-3">
-                <h5>
-                    <a href="/parties/@party.Id" class="text-decoration-none">@party.Name</a>
-                </h5>
-
-                <table class="table table-striped">
-                    <tbody>
-                        @foreach (var character in party.Characters)
-                        {
-                            <tr>
-                                <td>
-                                    <a href="/characters/@character.Id" class="text-decoration-none">@character.Name</a>
-                                </td>
-                                <td>
-                                    @if (context.Participants.Any(c => c.Id == character.Id))
-                                    {
-                                        <span class="badge bg-success">Presente</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Faltou</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-
-        <h5>Completes:</h5>
-
-        <table class="table table-striped">
-            <tbody>
-                @foreach (var character in guild.Members.Where(c => c.PartyId == null))
-                {
-                    <tr>
-                        <td>
-                            <a href="/characters/@character.Id" class="text-decoration-none">@character.Name</a>
-                        </td>
-                        <td>
-                            @if (context.Participants.Any(c => c.Id == character.Id))
-                            {
-                                <span class="badge bg-success">Presente</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Faltou</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        @if (userCharacters.Any())
-        {
-            <div class="form-group">
-                <label for="character">Selecionar Personagem para Participar</label>
-                <div class="d-flex">
-                    <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
-                        @foreach (var character in userCharacters)
-                        {
-                            <option value="@character.Id">@character.Name</option>
-                        }
-                    </InputSelect>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Activity Details</h4>
                 </div>
-                
-                <label for="password">Senha da Atividade</label>
-                <InputText id="password" class="form-control me-2" @bind-Value="activityPassword" type="password" />
-
-                <button type="button" class="btn btn-primary mt-2" @onclick="ParticipateInActivity">Participar</button>
+                <div class="card-body">
+                    @if (activity != null)
+                    {
+                        <p><strong>Description:</strong> @activity.Description</p>
+                        <p><strong>Reward:</strong> @activity.Payout</p>
+                        <p><strong>Date:</strong> @activity.DateTime.ToString("f")</p>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">Activity not found.</div>
+                    }
+                </div>
             </div>
-        }
-    </ChildContent>
-</Details>
+
+            @if (parties.Any())
+            {
+                <h5 class="mt-4">Participants</h5>
+                @foreach (var party in parties)
+                {
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-header bg-secondary text-white d-flex justify-content-between">
+                            <a href="/parties/@party.Id" class="text-decoration-none text-white">@party.Name</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover table-striped table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Character</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var character in party.Characters)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a href="/characters/@character.Id" class="text-decoration-none">@character.Name</a>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(activity.Participants.Any(c => c.Id == character.Id) ? "bg-success" : "bg-danger")">
+                                                    @(activity.Participants.Any(c => c.Id == character.Id) ? "Present" : "Absent")
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Characters Without Party</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th>Character</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var character in guild?.Members.Where(c => c.PartyId == null) ?? [])
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="/characters/@character.Id" class="text-decoration-none">@character.Name</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(activity.Participants.Any(c => c.Id == character.Id) ? "bg-success" : "bg-danger")">
+                                            @(activity.Participants.Any(c => c.Id == character.Id) ? "Present" : "Absent")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (userCharacters.Any())
+            {
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Join Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="character" class="form-label">Select Character</label>
+                                <InputSelect id="character" class="form-select" @bind-Value="selectedCharacterId">
+                                    @foreach (var character in userCharacters)
+                                    {
+                                        <option value="@character.Id">@character.Name</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Activity Password</label>
+                                <InputText id="password" class="form-control" @bind-Value="activityPassword" type="password" />
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary mt-3 w-100" @onclick="ParticipateInActivity">Join</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public string ActivityId { get; set; } = string.Empty;
@@ -108,38 +136,41 @@
     private string? selectedCharacterId;
     private string activityPassword = string.Empty;
     private List<PartyModel> parties = [];
-    private GuildModel guild;
+    private GuildModel? guild = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadActivityData();
+    }
+
+    private async Task LoadActivityData()
+    {
         activity = await ActivityService.GetByIdAsync(ActivityId);
+        if (activity == null) return;
 
         var user = await UserProvider.GetUser();
-        if (user != null && activity != null)
-        {
-            userCharacters = user.Characters
-                .Where(c => !activity.Participants.Any(p => p.Id == c.Id))
-                .ToList();
-        }
+        userCharacters = user?.Characters
+            .Where(c => !activity.Participants.Any(p => p.Id == c.Id))
+            .ToList() ?? new List<CharacterModel>();
+        
         selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
-
         guild = await GuildService.GetByIdAsync(activity.GuildId);
-        parties = guild.Parties;
-        foreach (var party in parties)
+        if (guild != null)
         {
-            party.Characters = guild.Members.Where(c => c.PartyId == party.Id).ToList();
-        }
+            parties = guild.Parties;
+        
+            foreach (var party in parties)
+            {
+                party.Characters = guild.Members.Where(c => c.PartyId == party.Id).ToList();
+            }
+        }        
     }
 
-    private void NavigateToEdit()
-    {
-        NavigationManager.NavigateTo($"/edit-activity/{ActivityId}");
-    }
+    private void NavigateToEdit() => NavigationManager.NavigateTo($"/edit-activity/{ActivityId}");
 
     private async Task DeleteActivity()
     {
-        var result = await ActivityService.DeleteAsync(ActivityId);
-        if (result)
+        if (await ActivityService.DeleteAsync(ActivityId))
         {
             NavigationManager.NavigateTo("/activities");
         }
@@ -147,18 +178,15 @@
 
     private async Task ParticipateInActivity()
     {
-        if (selectedCharacterId == null || string.IsNullOrWhiteSpace(activityPassword))
+        if (string.IsNullOrWhiteSpace(selectedCharacterId))
             return;
 
-        var success = await ActivityService.Participate(ActivityId, selectedCharacterId, activityPassword);
-        if (success)
+        if (await ActivityService.Participate(ActivityId, selectedCharacterId, activityPassword))
         {
             var character = userCharacters.FirstOrDefault(c => c.Id == selectedCharacterId);
             if (character != null)
             {
                 activity?.Participants.Add(character);
-                userCharacters.Remove(character);
-                selectedCharacterId = userCharacters.FirstOrDefault()?.Id;
             }
         }
     }

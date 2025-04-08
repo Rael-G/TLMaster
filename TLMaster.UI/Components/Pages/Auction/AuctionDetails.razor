@@ -5,28 +5,66 @@
 @inject AuctionService AuctionService
 @inject NavigationManager NavigationManager
 
-<Details TItem="AuctionModel" TId="string"
-         ItemName="Auction"
-         Item="auction"
-         GetItemName="@(a => a.Status.ToString())"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteAuction">
-    <ChildContent>
-        <p><strong>Item:</strong> <a href="/items/@context.Item.Id">@context.Item.Name</a> </p>
-        <p><strong>StartTime:</strong> @context.StartTime</p>
-        <p><strong>Duration:</strong> @context.Duration</p>
-        <p><strong>BidStep:</strong> @context.BidStep</p>
+@if (auction is null)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container my-5">
+        <div class="card shadow-lg rounded-3 border-light">
+            <div class="card-header bg-primary text-white rounded-top">
+                <h4 class="mb-0">Auction Details</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Item</th>
+                            <td><a href="/items/@auction.Item.Id" class="btn btn-link text-primary">@auction.Item.Name</a></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Start Time</th>
+                            <td>@auction.StartTime</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Duration</th>
+                            <td>@auction.Duration</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Bid Step</th>
+                            <td>@auction.BidStep</td>
+                        </tr>
 
-        @if(@context.Winner is not null)
-        {
-            <p><strong>Winner:</strong> <a href="/characters/@context.Winner.Id">@context.Winner.Name</a> </p>
-        }
+                        @if (auction.Winner is not null)
+                        {
+                            <tr>
+                                <th scope="row">Winner</th>
+                                <td><a href="/characters/@auction.Winner.Id" class="btn btn-link text-primary">@auction.Winner.Name</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-        <a href="@context.Id/bids/">Bids</a>
-
-        <p><strong>Id:</strong> @context.Id</p>
-    </ChildContent>
-</Details>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="@auction.Id/bids/" class="btn btn-primary btn-lg">View Bids</a>
+                    <div class="btn-group">
+                        <button class="btn btn-warning btn-lg" @onclick="NavigateToEdit">
+                            <i class="bi bi-pencil-square"></i> Edit Auction
+                        </button>
+                        <button class="btn btn-danger btn-lg" @onclick="DeleteAuction">
+                            <i class="bi bi-trash"></i> Delete Auction
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public string AuctionId { get; set; } = string.Empty;
@@ -47,7 +85,7 @@
         var result = await AuctionService.DeleteAsync(AuctionId);
         if (result)
         {
-            NavigationManager.NavigateTo("/activities");
+            NavigationManager.NavigateTo("/auctions");
         }
     }
 }

@@ -11,72 +11,91 @@
 @inject NavigationManager NavigationManager
 @inject IMapper Mapper
 
-<Details TItem="GuildModel" TId="string"
-         ItemName="Guild"
-         Item="guild"
-         GetItemName="@(c => c.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteGuild">
-    <ChildContent>
-        <p><strong>Descrição:</strong> @context.Description</p>
-        <p><strong>Guild Master:</strong> @context.GuildMaster.UserName</p>
-        <p><strong>Id:</strong> @context.Id</p>
-
-        @if (userCharacters.Any())
-        {
-            <div class="form-group">
-                <label for="character">Selecionar Personagem para Aplicar</label>
-                <div class="d-flex">
-                    <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
-                        @foreach (var character in userCharacters)
-                        {
-                            <option value="@character.Id">@character.Name</option>
-                        }
-                    </InputSelect>
-                    <button type="button" class="btn btn-primary" @onclick="ApplyToGuild">Aplicar</button>
+@if (guild is null)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container my-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@guild.Name</h4>
+                <div class="btn-group">
+                    <a href="@guild.Id/auctions/" class="btn btn-outline-light">Auctions</a>
+                    <a href="@guild.Id/parties/" class="btn btn-outline-light">Parties</a>
+                    <a href="@guild.Id/items/" class="btn btn-outline-light">Items</a>
+                    <a href="@guild.Id/activities/" class="btn btn-outline-light">Activities</a>
                 </div>
             </div>
-        }
+            <div class="card-body">
+                <p class="card-text"><strong>Description:</strong> @guild.Description</p>
+                <p class="card-text"><strong>Guild Master:</strong> @guild.GuildMaster.UserName</p>
 
-        <p><strong>Applicants:</strong></p>
-        <ul>
-            @foreach(var applicant in @context.Applicants)
-            {
-                <li>
-                    <a href="/characters/@applicant.Id">@applicant.Name</a> 
-                    <button class="btn btn-success" @onclick="() => AcceptMember(applicant.Id)">Accept</button>
-                    <button class="btn btn-danger" @onclick="() => RejectMember(applicant.Id)">Reject</button>
-                </li>
-            }
-        </ul>
+                @if (userCharacters.Any())
+                {
+                    <div class="mb-4">
+                        <label for="character" class="form-label">Select Character to Apply</label>
+                        <div class="input-group">
+                            <InputSelect id="character" class="form-control" @bind-Value="selectedCharacterId">
+                                @foreach (var character in userCharacters)
+                                {
+                                    <option value="@character.Id">@character.Name</option>
+                                }
+                            </InputSelect>
+                            <button type="button" class="btn btn-primary" @onclick="ApplyToGuild">Apply</button>
+                        </div>
+                    </div>
+                }
 
-        <p><strong>Members:</strong></p>
-        <ul>
-            @foreach(var member in @context.Members)
-            {
-                <li>
-                    <a href="/characters/@member.Id">@member.Name</a> 
-                    <button class="btn btn-danger" @onclick="() => RemoveMember(member.Id)">Remove</button>
-                </li>
-            }
-        </ul>
+                <div class="mb-4">
+                    <h6><strong>Applicants:</strong></h6>
+                    <ul class="list-unstyled">
+                        @foreach (var applicant in guild.Applicants)
+                        {
+                            <li class="d-flex justify-content-between align-items-center mb-2">
+                                <a href="/characters/@applicant.Id">@applicant.Name</a>
+                                <div>
+                                    <button class="btn btn-success btn-sm" @onclick="() => AcceptMember(applicant.Id)">Accept</button>
+                                    <button class="btn btn-danger btn-sm" @onclick="() => RejectMember(applicant.Id)">Reject</button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
 
-        <a href="@context.Id/auctions/">Auctions</a>
-        <a href="@context.Id/parties/">Parties</a>
-        <a href="@context.Id/items/">Items</a>
-        <a href="@context.Id/activities/">Activities</a>
+                <div class="mb-4">
+                    <h6><strong>Members:</strong></h6>
+                    <ul class="list-unstyled">
+                        @foreach (var member in guild.Members)
+                        {
+                            <li class="d-flex justify-content-between align-items-center mb-2">
+                                <a href="/characters/@member.Id">@member.Name</a>
+                                <button class="btn btn-danger btn-sm" @onclick="() => RemoveMember(member.Id)">Remove</button>
+                            </li>
+                        }
+                    </ul>
+                </div>
 
-        <p><strong>Staff:</strong></p>
-        <ul>
-            @foreach(var staff in @context.Staff)
-            {
-                <li>
-                    <a href="/users/@staff.Id">@staff.UserName</a> 
-                </li>
-            }
-        </ul>
-    </ChildContent>
-</Details>
+                <div class="mb-4">
+                    <h6><strong>Staff:</strong></h6>
+                    <ul class="list-unstyled">
+                        @foreach (var staff in guild.Staff)
+                        {
+                            <li>
+                                <a href="/users/@staff.Id">@staff.UserName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public string GuildId { get; set; } = string.Empty;
@@ -120,7 +139,7 @@
         var character = await CharacterService.GetByIdAsync(selectedCharacterId);
         var characterInput = Mapper.Map<CharacterInputModel>(character);
         characterInput.ApplicationIds.Add(GuildId);
-        
+
         var success = await CharacterService.UpdateAsync(selectedCharacterId, characterInput);
         if (success)
         {
@@ -135,7 +154,7 @@
         var success = await GuildService.AcceptMember(GuildId, applicantId);
         if (success)
         {
-            var applicant = guild?.Applicants.Where(c => c.Id == applicantId).FirstOrDefault();
+            var applicant = guild?.Applicants.FirstOrDefault(c => c.Id == applicantId);
             if (applicant is not null)
             {
                 guild?.Applicants.Remove(applicant);
@@ -149,7 +168,7 @@
         var success = await GuildService.RejectMember(GuildId, applicantId);
         if (success)
         {
-            var applicant = guild?.Applicants.Where(c => c.Id == applicantId).FirstOrDefault();
+            var applicant = guild?.Applicants.FirstOrDefault(c => c.Id == applicantId);
             guild?.Applicants.Remove(applicant);
             userCharacters.Add(applicant);
             selectedCharacterId = applicant.Id;
@@ -161,10 +180,10 @@
         var success = await GuildService.RemoveMember(GuildId, memberId);
         if (success)
         {
-            var member = guild?.Members.Where(c => c.Id == memberId).FirstOrDefault();
+            var member = guild?.Members.FirstOrDefault(c => c.Id == memberId);
             guild?.Members.Remove(member);
             userCharacters.Add(member);
             selectedCharacterId = member.Id;
-        }   
+        }
     }
 }

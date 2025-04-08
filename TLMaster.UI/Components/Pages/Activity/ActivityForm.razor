@@ -14,32 +14,46 @@
              ItemName="Activity"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
+
         <div class="form-group">
-            <label for="name">Nome</label>
-            <InputText id="name" class="form-control" @bind-Value="activityInput.Name" />
+            <label for="name" class="form-label">Activity Name</label>
+            <InputText id="name" class="form-control" @bind-Value="activityInput.Name" placeholder="Enter activity name" />
         </div>
 
         <div class="form-group">
-            <label for="description">Description</label>
-            <InputText id="description" class="form-control" @bind-Value="activityInput.Description" />
-        </div>
-
-        <div>
-            <label for="date">Escolha a data:</label>
-            <InputDate id="date" class="form-control" @bind-Value="activityInput.DateTime" />
-
-            <label for="time">Escolha a hora:</label>
-            <InputText id="time" type="time" class="form-control" @bind-Value="_selectedTime" />
+            <label for="description" class="form-label">Description</label>
+            <InputText id="description" class="form-control" @bind-Value="activityInput.Description" placeholder="Enter activity description" />
         </div>
 
         <div class="form-group">
-            <label for="payout">Payout</label>
-            <InputNumber id="payout" class="form-control" @bind-Value="activityInput.Payout" />
+            <div class="row">
+
+                <div class="col-md-6">
+                    <label for="date" class="form-label">Choose Date</label>
+                    <InputDate id="date" class="form-control" @bind-Value="activityInput.DateTime" />
+                </div>
+
+                <div class="col-md-6">
+                    <label for="time" class="form-label">Choose Time</label>
+                    <InputText id="time" type="time" class="form-control" @bind-Value="_selectedTime" />
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="password">Password</label>
-            <InputText type="password" id="password" class="form-control" @bind-Value="activityInput.Password" />
+            <label for="payout" class="form-label">Payout</label>
+            <InputNumber id="payout" class="form-control" @bind-Value="activityInput.Payout" placeholder="Enter payout value" />
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="form-label">Activity Password</label>
+            <InputText type="password" id="password" class="form-control" @bind-Value="activityInput.Password" placeholder="Enter activity password" />
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary w-100">
+                @(ActivityId != null ? "Save Changes" : "Create Activity")
+            </button>
         </div>
     </ChildContent>
 </GenericForm>

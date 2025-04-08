@@ -10,113 +10,128 @@
 @inject GuildService GuildService
 @inject IMapper Mapper
 
-<Details TItem="PartyModel" TId="string"
-         ItemName="Party"
-         Item="party"
-         GetItemName="@(c => c.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteParty">
-    <ChildContent>
-        <p><strong>Name:</strong> @context.Name</p>
-        <p><strong>Id:</strong> @context.Id</p>
-
-        <div class="form-group">
-            <label for="character">Adicionar Personagem</label>
-            @if(availableCharacters.Count > 0)
-            {
-                <div class="d-flex">
-                <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
-                    @foreach (var character in availableCharacters)
-                    {
-                        <option value="@character.Id">@character.Name</option>
-                    }
-                </InputSelect>
-                <button type="button" class="btn btn-primary" @onclick="AddCharacter">Adicionar</button>
+<div class="container my-5">
+    @if (party is null)
+    {
+        <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">@party.Name</h4>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button class="btn btn-warning" @onclick="NavigateToEdit">Edit</button>
+                    <button class="btn btn-danger" @onclick="DeleteParty">Delete</button>
                 </div>
-            }
-            else
-            {
-                <p>Nenhum Membro disponiel.</p>
-            }
-            
+
+                <div class="form-group mb-4">
+                    <label for="character">Add Character</label>
+                    @if (availableCharacters.Any())
+                    {
+                        <div class="d-flex">
+                            <InputSelect id="character" class="form-control me-2" @bind-Value="selectedCharacterId">
+                                @foreach (var character in availableCharacters)
+                                {
+                                    <option value="@character.Id">@character.Name</option>
+                                }
+                            </InputSelect>
+                            <button type="button" class="btn btn-primary" @onclick="AddCharacter">Add</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No available members to add.</p>
+                    }
+                </div>
+
+                <h5 class="mt-4">Party Members</h5>
+                <ul class="list-group">
+                    @foreach (var character in party.Characters)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@character.Name</span>
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveCharacter(character.Id)">Remove</button>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
 
-        <h5>Membros</h5>
-        <ul class="list-group">
-            @foreach (var character in party.Characters)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @character.Name
-                    <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveCharacter(character.Id)">Remover</button>
-                </li>
-            }
-        </ul>
-    </ChildContent>
-</Details>
+        <div class="d-flex justify-content-between">
+            <a href="/@party.GuildId/parties" class="btn btn-link">Back to Parties</a>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter] public string PartyId { get; set; } = string.Empty;
     private PartyModel? party;
-
     private List<CharacterModel> availableCharacters = new();
     private string? selectedCharacterId;
 
     protected override async Task OnInitializedAsync()
     {
         party = await PartyService.GetByIdAsync(PartyId);
-
-        if (party?.GuildId != null)
+        if (party?.GuildId is not null)
         {
             var guild = await GuildService.GetByIdAsync(party.GuildId);
-            if (guild?.Members != null)
-            {
-                availableCharacters = guild.Members
-                    .Where(c => c.PartyId == null)
-                    .ToList();
-                selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
-            }
+            availableCharacters = guild?.Members
+                .Where(c => c.PartyId == null)
+                .ToList() ?? new List<CharacterModel>();
+
+            selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
         }
     }
 
-    private void NavigateToEdit()
-    {
+    private void NavigateToEdit() =>
         NavigationManager.NavigateTo($"/edit-party/{PartyId}");
-    }
 
     private async Task DeleteParty()
     {
-        var result = await PartyService.DeleteAsync(PartyId);
-        if (result)
+        if (await PartyService.DeleteAsync(PartyId))
         {
-            NavigationManager.NavigateTo("/partys");
+            NavigationManager.NavigateTo("/parties");
         }
     }
 
     private async Task AddCharacter()
     {
-        var character = availableCharacters.First(c => c.Id == selectedCharacterId);
-        character.PartyId = PartyId;
-        var characterInput = Mapper.Map<CharacterInputModel>(character);
+        var character = availableCharacters.FirstOrDefault(c => c.Id == selectedCharacterId);
+        if (character == null) return;
 
-        if (await CharacterService.UpdateAsync(character.Id, characterInput))
+        character.PartyId = PartyId;
+        if (await UpdateCharacter(character))
         {
             availableCharacters.Remove(character);
-            party.Characters.Add(character);
+            party?.Characters.Add(character);
             selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
         }
     }
 
     private async Task RemoveCharacter(string characterId)
     {
-        var character = party.Characters.First(c => c.Id == characterId);
+        var character = party?.Characters.FirstOrDefault(c => c.Id == characterId);
+        if (character == null) return;
+
         character.PartyId = null;
-        
-        var characterInput = Mapper.Map<CharacterInputModel>(character);
-        if (await CharacterService.UpdateAsync(character.Id, characterInput))
+        if (await UpdateCharacter(character))
         {
             availableCharacters.Add(character);
-            party.Characters.Remove(character);
+            party?.Characters.Remove(character);
             selectedCharacterId = availableCharacters.FirstOrDefault()?.Id;
         }
+    }
+
+    private async Task<bool> UpdateCharacter(CharacterModel character)
+    {
+        var characterInput = Mapper.Map<CharacterInputModel>(character);
+        return await CharacterService.UpdateAsync(character.Id, characterInput);
     }
 }

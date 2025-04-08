@@ -5,20 +5,49 @@
 @inject ItemService ItemService
 @inject NavigationManager NavigationManager
 
-<Details TItem="ItemModel" TId="string"
-         ItemName="Item"
-         Item="item"
-         GetItemName="@(c => c.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteItem">
-    <ChildContent>
-        @if(context.Owner is not null)
-        {
-            <p><strong>Owner:</strong> <a href="/characters/@context.Owner.Id">@context.Owner.Name</a></p>
-        }
-        <p><strong>Id:</strong> @context.Id</p>
-    </ChildContent>
-</Details>
+<div class="container my-5">
+    @if (item is null)
+    {
+        <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">@item.Name</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h5><strong>Details:</strong></h5>
+                        <p><strong>Item Name:</strong> @item.Name</p>
+                    </div>
+                    <div class="col-md-4 d-flex flex-column align-items-center">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-warning" @onclick="NavigateToEdit">Edit</button>
+                            <button class="btn btn-danger" @onclick="DeleteItem">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+                @if (item.Owner is not null)
+                {
+                    <div class="mb-4">
+                        <p><strong>Owner:</strong> <a href="/characters/@item.Owner.Id" class="text-decoration-none">@item.Owner.Name</a></p>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/@item?.GuildId/items" class="btn btn-link">Back to Items List</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter] public string ItemId { get; set; } = string.Empty;
@@ -29,15 +58,12 @@
         item = await ItemService.GetByIdAsync(ItemId);
     }
 
-    private void NavigateToEdit()
-    {
+    private void NavigateToEdit() =>
         NavigationManager.NavigateTo($"/edit-item/{ItemId}");
-    }
 
     private async Task DeleteItem()
     {
-        var result = await ItemService.DeleteAsync(ItemId);
-        if (result)
+        if (await ItemService.DeleteAsync(ItemId))
         {
             NavigationManager.NavigateTo("/items");
         }

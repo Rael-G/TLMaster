@@ -12,17 +12,18 @@
 <GenericForm TInputModel="CharacterInputModel"
              InputModel="characterInput"
              Id="@CharacterId"
-             ItemName="Charactera"
+             ItemName="Character"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
-        <div class="form-group">
-            <label for="name">Nome</label>
-            <InputText id="name" class="form-control" @bind-Value="characterInput.Name" />
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Name</label>
+            <InputText id="name" class="form-control" @bind-Value="characterInput.Name" placeholder="Enter character name" />
         </div>
 
-        <div class="form-group">
-            <label for="role">Função</label>
+        <div class="form-group mb-4">
+            <label for="role" class="form-label">Role</label>
             <InputSelect id="role" class="form-control" @bind-Value="characterInput.Role">
+                <option value="" disabled selected>Select Role</option>
                 @foreach (var role in Enum.GetValues(typeof(Role)))
                 {
                     <option value="@role">@role</option>
@@ -30,14 +31,23 @@
             </InputSelect>
         </div>
 
-        <div class="form-group">
-            <label>Weapons</label>
-            <select class="form-control" @onchange="OnWeaponSelectionChanged" multiple>
+        <div class="form-group mb-4">
+            <label for="weapons" class="form-label">Weapons</label>
+            <select id="weapons" class="form-control" @onchange="OnWeaponSelectionChanged" multiple>
                 @foreach (var weapon in Enum.GetValues(typeof(Weapon)))
                 {
                     <option value="@weapon">@weapon</option>
                 }
             </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary w-48">
+                @(CharacterId != null ? "Save Changes" : "Create Character")
+            </button>
+            <button type="button" class="btn btn-secondary w-48" @onclick="NavigateBack">
+                Cancel
+            </button>
         </div>
     </ChildContent>
 </GenericForm>
@@ -62,7 +72,7 @@
     private async Task HandleValidSubmit()
     {
         bool result;
-        characterInput.UserId = await UserProvider.GetUserId()?? string.Empty;
+        characterInput.UserId = await UserProvider.GetUserId() ?? string.Empty;
 
         if (CharacterId != null)
         {
@@ -73,13 +83,13 @@
             result = await CharacterService.CreateAsync(characterInput);
         }
 
-        NavigationManager.NavigateTo("/characters");
+        NavigateBack();
     }
 
     private void OnWeaponSelectionChanged(ChangeEventArgs e)
     {
         characterInput.Weapons.Clear();
-        var selectedValues = (string[]?)e.Value ?? [];
+        var selectedValues = (string[]?)e.Value ?? Array.Empty<string>();
 
         foreach (var value in selectedValues)
         {
@@ -88,5 +98,10 @@
                 characterInput.Weapons.Add(parsedWeapon);
             }
         }
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/characters");
     }
 }

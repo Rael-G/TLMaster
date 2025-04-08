@@ -14,9 +14,18 @@
              ItemName="Item"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
-        <div class="form-group">
-            <label for="name">Nome</label>
-            <InputText id="name" class="form-control" @bind-Value="itemInput.Name" />
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Item Name</label>
+            <InputText id="name" class="form-control" @bind-Value="itemInput.Name" placeholder="Enter item name" required />
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary w-48">
+                @(ItemId != null ? "Save Changes" : "Create Item")
+            </button>
+            <button type="button" class="btn btn-secondary w-48" @onclick="NavigateBack">
+                Cancel
+            </button>
         </div>
     </ChildContent>
 </GenericForm>
@@ -41,19 +50,26 @@
 
     private async Task HandleValidSubmit()
     {
-        bool result;
+        bool result = false;
 
         if (ItemId != null)
         {
-            GuildId = itemInput.GuildId;
             result = await ItemService.UpdateAsync(ItemId, itemInput);
         }
-        else if(GuildId != null)
+        else if (GuildId != null)
         {
             itemInput.GuildId = GuildId;
             result = await ItemService.CreateAsync(itemInput);
         }
 
+        if (result)
+        {
+            NavigateBack();
+        }
+    }
+
+    private void NavigateBack()
+    {
         NavigationManager.NavigateTo($"/{GuildId}/items");
     }
 }

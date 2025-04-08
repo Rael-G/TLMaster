@@ -5,17 +5,35 @@
 @inject BidService BidService
 @inject NavigationManager NavigationManager
 
-<Details TItem="BidModel" TId="string"
-         ItemName="Bid"
-         Item="bid"
-         GetItemName="@(c => c.Bidder.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteBid">
-    <ChildContent>
-        <p><strong>Amount:</strong> @context.Amount</p>
-        <p><strong>Bidder:</strong> <a href="/characters/@context.Bidder.Id">@context.Bidder.Name</a> </p>
-    </ChildContent>
-</Details>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">Bid Details</h3>
+        <button class="btn btn-primary" @onclick="NavigateToEdit">Edit Bid</button>
+    </div>
+
+    @if (bid == null)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bidder Information</h5>
+                <p class="card-text"><strong>Amount:</strong> @bid.Amount</p>
+                <p class="card-text"><strong>Bidder:</strong> <a href="/characters/@bid.Bidder.Id">@bid.Bidder.Name</a></p>
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-info btn-sm" @onclick="NavigateToEdit">Edit</button>
+                    <button class="btn btn-danger btn-sm" @onclick="DeleteBid">Delete</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter] public string BidId { get; set; } = string.Empty;

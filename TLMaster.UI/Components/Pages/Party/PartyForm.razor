@@ -16,13 +16,22 @@
              ItemName="Party"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
-        <div class="form-group">
-            <label for="name">Nome</label>
-            <InputText id="name" class="form-control" @bind-Value="partyInput.Name" />
+
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Party Name</label>
+            <InputText id="name" class="form-control" @bind-Value="partyInput.Name" placeholder="Enter party name" required />
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary w-48">
+                @(PartyId != null ? "Save Changes" : "Create Party")
+            </button>
+            <button type="button" class="btn btn-secondary w-48" @onclick="NavigateBack">
+                Cancel
+            </button>
         </div>
     </ChildContent>
 </GenericForm>
-
 
 @code {
     [Parameter] public string? PartyId { get; set; }
@@ -35,12 +44,15 @@
         if (GuildId != null)
         {
             var guild = await GuildService.GetByIdAsync(GuildId);
-
         }
 
         if (PartyId != null)
         {
-            Mapper.Map(await PartyService.GetByIdAsync(PartyId), partyInput);
+            var party = await PartyService.GetByIdAsync(PartyId);
+            if (party != null)
+            {
+                Mapper.Map(party, partyInput);
+            }
         }
     }
 
@@ -57,8 +69,10 @@
             partyInput.GuildId = GuildId;
             result = await PartyService.CreateAsync(partyInput);
         }
-
-        NavigationManager.NavigateTo($"/{GuildId}/parties");
     }
 
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo($"/{GuildId}/parties");
+    }
 }

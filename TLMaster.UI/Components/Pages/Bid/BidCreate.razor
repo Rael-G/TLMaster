@@ -16,26 +16,29 @@
              ItemName="Bid"
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
-        <div class="form-group">
-            <label for="amount">Amount</label>
-            <InputNumber id="amount" class="form-control" @bind-Value="bidInput.Amount" />
+        <div class="form-group mb-4">
+            <label for="amount" class="form-label">Amount</label>
+            <InputNumber id="amount" class="form-control" @bind-Value="bidInput.Amount" placeholder="Enter your bid amount" />
         </div>
 
         @if (userCharacters.Any())
         {
-            <div class="form-group">
-                <label for="character">Selecionar Personagem:</label>
-                <div class="d-flex">
-                    <InputSelect id="character" class="form-control me-2" @bind-Value="bidInput.BidderId">
-                        @foreach (var character in userCharacters)
-                        {
-                            <option value="@character.Id">@character.Name</option>
-                        }
-                    </InputSelect>
-                </div>
+            <div class="form-group mb-4">
+                <label for="character" class="form-label">Select Character</label>
+                <InputSelect id="character" class="form-control" @bind-Value="bidInput.BidderId">
+                    @foreach (var character in userCharacters)
+                    {
+                        <option value="@character.Id">@character.Name</option>
+                    }
+                </InputSelect>
             </div>
         }
 
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary w-100">
+                @(BidId != null ? "Save Changes" : "Place Bid")
+            </button>
+        </div>
     </ChildContent>
 </GenericForm>
 
@@ -49,8 +52,8 @@
     protected override async Task OnInitializedAsync()
     {
         var user = await UserProvider.GetUser();
-        userCharacters = user?.Characters.ToList() ?? [];
-        
+        userCharacters = user?.Characters.ToList() ?? new List<CharacterModel>();
+
         bidInput.BidderId = userCharacters?.FirstOrDefault()?.Id ?? string.Empty;
     }
 
@@ -58,10 +61,15 @@
     {
         bidInput.AuctionId = AuctionId;
 
-        bool result;
+        bool result = await BidService.CreateAsync(bidInput);
 
-        result = await BidService.CreateAsync(bidInput);
-
-        NavigationManager.NavigateTo($"/{AuctionId}/bids");
+        if (result)
+        {
+            NavigationManager.NavigateTo($"/{AuctionId}/bids");
+        }
+        else
+        {
+            // Handle error: show a notification or message to the user
+        }
     }
 }

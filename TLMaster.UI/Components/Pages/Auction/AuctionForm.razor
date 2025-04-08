@@ -18,7 +18,7 @@
              OnValidSubmit="HandleValidSubmit">
     <ChildContent>
         <div class="form-group">
-            <label for="item">Item</label>
+            <label for="item" class="form-label">Item</label>
             <InputSelect id="item" class="form-control" @bind-Value="auctionInput.ItemId">
                 @foreach (var item in items)
                 {
@@ -28,31 +28,39 @@
         </div>
 
         <div class="form-group">
-            <label for="initialPrice">Initial Price</label>
+            <label for="initialPrice" class="form-label">Initial Price</label>
             <InputNumber id="initialPrice" class="form-control" @bind-Value="auctionInput.BidStep" />
         </div>
 
-        <div>
-            <label for="date">Escolha a data de início:</label>
+        <div class="form-group">
+            <label for="date" class="form-label">Start Date</label>
             <InputDate id="date" class="form-control" @bind-Value="auctionInput.StartTime" />
+        </div>
 
-            <label for="time">Escolha a hora de início:</label>
+        <div class="form-group">
+            <label for="time" class="form-label">Start Time</label>
             <InputText id="time" type="time" class="form-control" @bind-Value="_selectedTime" />
         </div>
 
-        <div>
-            <label>Duração (Horas)</label>
+        <div class="form-group">
+            <label for="duration" class="form-label">Duration (Hours)</label>
             <InputNumber id="duration" class="form-control" @bind-Value="hoursDuration" />
         </div>
 
         <div class="form-group">
-            <label for="status">Status</label>
+            <label for="status" class="form-label">Auction Status</label>
             <InputSelect id="status" class="form-control" @bind-Value="auctionInput.Status">
                 @foreach (var status in Enum.GetValues(typeof(AuctionStatus)))
                 {
                     <option value="@status">@status</option>
                 }
             </InputSelect>
+        </div>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary w-100">
+                @(AuctionId != null ? "Save Changes" : "Create Auction")
+            </button>
         </div>
     </ChildContent>
 </GenericForm>
@@ -64,7 +72,7 @@
     private string _selectedTime = string.Empty;
     private int hoursDuration;
 
-    private List<ItemModel> items = [];
+    private List<ItemModel> items = new List<ItemModel>();
 
     private AuctionInputModel auctionInput = new AuctionInputModel();
 
@@ -84,16 +92,15 @@
         }
         _selectedTime = auctionInput.StartTime.TimeOfDay.ToString(@"hh\:mm");
 
-
-        var guildId = GuildId?? auctionInput.GuildId;  
+        var guildId = GuildId ?? auctionInput.GuildId;
         if (guildId != null)
         {
             var guild = await GuildService.GetByIdAsync(guildId);
 
             items = guild?.Items
                 .Where(i => !guild.Auctions.Any(a => a.ItemId == i.Id))
-                .ToList() ?? [];
-            
+                .ToList() ?? new List<ItemModel>();
+
             auctionInput.ItemId = items.FirstOrDefault()?.Id ?? string.Empty;
         }
     }
@@ -102,14 +109,15 @@
     {
         if (TimeSpan.TryParse(_selectedTime, out var selectedTime))
         {
-            auctionInput.StartTime =  auctionInput.StartTime.Date + selectedTime;
-            auctionInput.Duration = TimeSpan.FromMinutes(hoursDuration);
+            auctionInput.StartTime = auctionInput.StartTime.Date + selectedTime;
+            auctionInput.Duration = TimeSpan.FromHours(hoursDuration);
         }
 
         bool result;
         if (AuctionId != null)
         {
             GuildId = auctionInput.GuildId;
+            result = await AuctionService.UpdateAsync(AuctionId, auctionInput);
         }
         else if (GuildId != null)
         {

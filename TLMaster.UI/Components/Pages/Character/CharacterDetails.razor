@@ -5,41 +5,84 @@
 @inject CharacterService CharacterService
 @inject NavigationManager NavigationManager
 
-<Details TItem="CharacterModel" TId="string"
-         ItemName="Character"
-         Item="character"
-         GetItemName="@(c => c.Name)"
-         NavigateToEdit="NavigateToEdit"
-         DeleteItem="DeleteCharacter">
-    <ChildContent>
-        <p><strong>Role:</strong> @context.Role</p>
-        <p><strong>Balance:</strong> @context.Balance?.Amount</p>
-        <p><strong>Guild:</strong>
-            @if(context.Guild is not null)
-            {
-                <a href="/guilds/@context.Guild?.Id">@context.Guild?.Name</a>
-            }
-        </p>
-        <ul>
-            <li><strong>Weapons:</strong></li>
-            @foreach (var w in context.Weapons)
-            {
-                <li>@w.ToString()</li>
-            }
-        </ul>
+@if (character is null)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container my-5">
+        <div class="card shadow-lg rounded-3 border-light">
+            <div class="card-header bg-primary text-white rounded-top">
+                <h4 class="mb-0">Character Details</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-center text-primary mb-4">@character.Name</h5>
 
-        <p><strong>Items:</strong></p>
-        <ul>
-            @foreach(var item in @context.Items)
-            {
-                <li>
-                    <a href="/items/@item.Id">@item.Name</a> 
-                </li>
-            }
-        </ul>
-        <p><strong>Id:</strong> @context.Id</p>
-    </ChildContent>
-</Details>
+                <div class="mb-4">
+                    <h6><strong>Role:</strong> @character.Role</h6>
+                    <h6><strong>Guild:</strong>
+                        @if(character.Guild is not null)
+                        {
+                            <a href="/guilds/@character.Guild?.Id" class="btn btn-link">@character.Guild?.Name</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No guild</span>
+                        }
+                    </h6>
+                    <h6><strong>Balance:</strong>
+                    @if (character.Balance != null)
+                    {
+                        @character.Balance.Amount
+                    }
+                    else
+                    {
+                        0.ToString();
+                    }
+                    </h6>
+                </div>
+
+                <div class="mb-4">
+                    <h6><strong>Weapons:</strong></h6>
+                    <ul class="list-unstyled">
+                        @foreach (var weapon in character.Weapons)
+                        {
+                            <li class="mb-2">@weapon.ToString()</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h6><strong>Items:</strong></h6>
+                    <ul class="list-unstyled">
+                        @foreach (var item in character.Items)
+                        {
+                            <li class="mb-2">
+                                <a href="/items/@item.Id" class="btn btn-link text-primary">@item.Name</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <button class="btn btn-warning btn-lg me-3" @onclick="NavigateToEdit">
+                            <i class="bi bi-pencil-square"></i> Edit Character
+                        </button>
+                        <button class="btn btn-danger btn-lg" @onclick="DeleteCharacter">
+                            <i class="bi bi-trash"></i> Delete Character
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public string CharacterId { get; set; } = string.Empty;
