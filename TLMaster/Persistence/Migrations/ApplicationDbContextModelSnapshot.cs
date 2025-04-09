@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TLMaster.Persistence.Contexts;
 
 #nullable disable
@@ -18,17 +18,17 @@ namespace TLMaster.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.2")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ActivityCharacter", b =>
                 {
                     b.Property<Guid>("ActivitiesId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ParticipantsId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("ActivitiesId", "ParticipantsId");
 
@@ -40,552 +40,453 @@ namespace TLMaster.Persistence.Migrations
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzBlobTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<byte[]>("BlobData")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("BLOB_DATA");
+                        .HasColumnType("bytea")
+                        .HasColumnName("blob_data");
 
                     b.HasKey("SchedulerName", "TriggerName", "TriggerGroup");
 
-                    b.ToTable("QRTZ_BLOB_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_blob_triggers", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzCalendar", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("CalendarName")
-                        .HasMaxLength(200)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("CALENDAR_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("calendar_name");
 
                     b.Property<byte[]>("Calendar")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("CALENDAR");
+                        .HasColumnType("bytea")
+                        .HasColumnName("calendar");
 
                     b.HasKey("SchedulerName", "CalendarName");
 
-                    b.ToTable("QRTZ_CALENDARS", "quartz");
+                    b.ToTable("qrtz_calendars", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzCronTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<string>("CronExpression")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("CRON_EXPRESSION");
+                        .HasColumnType("text")
+                        .HasColumnName("cron_expression");
 
                     b.Property<string>("TimeZoneId")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("TIME_ZONE_ID");
+                        .HasColumnType("text")
+                        .HasColumnName("time_zone_id");
 
                     b.HasKey("SchedulerName", "TriggerName", "TriggerGroup");
 
-                    b.ToTable("QRTZ_CRON_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_cron_triggers", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzFiredTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("EntryId")
-                        .HasMaxLength(140)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(140)")
-                        .HasColumnName("ENTRY_ID");
+                        .HasColumnType("text")
+                        .HasColumnName("entry_id");
 
                     b.Property<long>("FiredTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("FIRED_TIME");
+                        .HasColumnName("fired_time");
 
                     b.Property<string>("InstanceName")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("INSTANCE_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("instance_name");
 
                     b.Property<bool>("IsNonConcurrent")
-                        .HasColumnType("bit")
-                        .HasColumnName("IS_NONCONCURRENT");
+                        .HasColumnType("bool")
+                        .HasColumnName("is_nonconcurrent");
 
                     b.Property<string>("JobGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("job_group");
 
                     b.Property<string>("JobName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("job_name");
 
                     b.Property<int>("Priority")
-                        .HasColumnType("int")
-                        .HasColumnName("PRIORITY");
+                        .HasColumnType("integer")
+                        .HasColumnName("priority");
 
                     b.Property<bool?>("RequestsRecovery")
-                        .HasColumnType("bit")
-                        .HasColumnName("REQUESTS_RECOVERY");
+                        .HasColumnType("bool")
+                        .HasColumnName("requests_recovery");
 
                     b.Property<long>("ScheduledTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("SCHED_TIME");
+                        .HasColumnName("sched_time");
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(16)")
-                        .HasColumnName("STATE");
+                        .HasColumnType("text")
+                        .HasColumnName("state");
 
                     b.Property<string>("TriggerGroup")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<string>("TriggerName")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.HasKey("SchedulerName", "EntryId");
 
                     b.HasIndex("InstanceName")
-                        .HasDatabaseName("IDX_QRTZ_FT_TRIG_INST_NAME");
+                        .HasDatabaseName("idx_qrtz_ft_trig_inst_name");
 
                     b.HasIndex("JobGroup")
-                        .HasDatabaseName("IDX_QRTZ_FT_JOB_GROUP");
+                        .HasDatabaseName("idx_qrtz_ft_job_group");
 
                     b.HasIndex("JobName")
-                        .HasDatabaseName("IDX_QRTZ_FT_JOB_NAME");
+                        .HasDatabaseName("idx_qrtz_ft_job_name");
 
                     b.HasIndex("RequestsRecovery")
-                        .HasDatabaseName("IDX_QRTZ_FT_JOB_REQ_RECOVERY");
+                        .HasDatabaseName("idx_qrtz_ft_job_req_recovery");
 
                     b.HasIndex("TriggerGroup")
-                        .HasDatabaseName("IDX_QRTZ_FT_TRIG_GROUP");
+                        .HasDatabaseName("idx_qrtz_ft_trig_group");
 
                     b.HasIndex("TriggerName")
-                        .HasDatabaseName("IDX_QRTZ_FT_TRIG_NAME");
+                        .HasDatabaseName("idx_qrtz_ft_trig_name");
 
                     b.HasIndex("SchedulerName", "TriggerName", "TriggerGroup")
-                        .HasDatabaseName("IDX_QRTZ_FT_TRIG_NM_GP");
+                        .HasDatabaseName("idx_qrtz_ft_trig_nm_gp");
 
-                    b.ToTable("QRTZ_FIRED_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_fired_triggers", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzJobDetail", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("JobName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("job_name");
 
                     b.Property<string>("JobGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("job_group");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDurable")
-                        .HasColumnType("bit")
-                        .HasColumnName("IS_DURABLE");
+                        .HasColumnType("bool")
+                        .HasColumnName("is_durable");
 
                     b.Property<bool>("IsNonConcurrent")
-                        .HasColumnType("bit")
-                        .HasColumnName("IS_NONCONCURRENT");
+                        .HasColumnType("bool")
+                        .HasColumnName("is_nonconcurrent");
 
                     b.Property<bool>("IsUpdateData")
-                        .HasColumnType("bit")
-                        .HasColumnName("IS_UPDATE_DATA");
+                        .HasColumnType("bool")
+                        .HasColumnName("is_update_data");
 
                     b.Property<string>("JobClassName")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("JOB_CLASS_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("job_class_name");
 
                     b.Property<byte[]>("JobData")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("JOB_DATA");
+                        .HasColumnType("bytea")
+                        .HasColumnName("job_data");
 
                     b.Property<bool>("RequestsRecovery")
-                        .HasColumnType("bit")
-                        .HasColumnName("REQUESTS_RECOVERY");
+                        .HasColumnType("bool")
+                        .HasColumnName("requests_recovery");
 
                     b.HasKey("SchedulerName", "JobName", "JobGroup");
 
                     b.HasIndex("RequestsRecovery")
-                        .HasDatabaseName("IDX_QRTZ_J_REQ_RECOVERY");
+                        .HasDatabaseName("idx_qrtz_j_req_recovery");
 
-                    b.ToTable("QRTZ_JOB_DETAILS", "quartz");
+                    b.ToTable("qrtz_job_details", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzLock", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("LockName")
-                        .HasMaxLength(40)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("LOCK_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("lock_name");
 
                     b.HasKey("SchedulerName", "LockName");
 
-                    b.ToTable("QRTZ_LOCKS", "quartz");
+                    b.ToTable("qrtz_locks", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzPausedTriggerGroup", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.HasKey("SchedulerName", "TriggerGroup");
 
-                    b.ToTable("QRTZ_PAUSED_TRIGGER_GRPS", "quartz");
+                    b.ToTable("qrtz_paused_trigger_grps", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzSchedulerState", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("InstanceName")
-                        .HasMaxLength(200)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("INSTANCE_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("instance_name");
 
                     b.Property<long>("CheckInInterval")
                         .HasColumnType("bigint")
-                        .HasColumnName("CHECKIN_INTERVAL");
+                        .HasColumnName("checkin_interval");
 
                     b.Property<long>("LastCheckInTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("LAST_CHECKIN_TIME");
+                        .HasColumnName("last_checkin_time");
 
                     b.HasKey("SchedulerName", "InstanceName");
 
-                    b.ToTable("QRTZ_SCHEDULER_STATE", "quartz");
+                    b.ToTable("qrtz_scheduler_state", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzSimplePropertyTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<bool?>("BooleanProperty1")
-                        .HasColumnType("bit")
-                        .HasColumnName("BOOL_PROP_1");
+                        .HasColumnType("bool")
+                        .HasColumnName("bool_prop_1");
 
                     b.Property<bool?>("BooleanProperty2")
-                        .HasColumnType("bit")
-                        .HasColumnName("BOOL_PROP_2");
+                        .HasColumnType("bool")
+                        .HasColumnName("bool_prop_2");
 
                     b.Property<decimal?>("DecimalProperty1")
-                        .HasColumnType("numeric(13,4)")
-                        .HasColumnName("DEC_PROP_1");
+                        .HasColumnType("numeric")
+                        .HasColumnName("dec_prop_1");
 
                     b.Property<decimal?>("DecimalProperty2")
-                        .HasColumnType("numeric(13,4)")
-                        .HasColumnName("DEC_PROP_2");
+                        .HasColumnType("numeric")
+                        .HasColumnName("dec_prop_2");
 
                     b.Property<int?>("IntegerProperty1")
-                        .HasColumnType("int")
-                        .HasColumnName("INT_PROP_1");
+                        .HasColumnType("integer")
+                        .HasColumnName("int_prop_1");
 
                     b.Property<int?>("IntegerProperty2")
-                        .HasColumnType("int")
-                        .HasColumnName("INT_PROP_2");
+                        .HasColumnType("integer")
+                        .HasColumnName("int_prop_2");
 
                     b.Property<long?>("LongProperty1")
                         .HasColumnType("bigint")
-                        .HasColumnName("LONG_PROP_1");
+                        .HasColumnName("long_prop_1");
 
                     b.Property<long?>("LongProperty2")
                         .HasColumnType("bigint")
-                        .HasColumnName("LONG_PROP_2");
+                        .HasColumnName("long_prop_2");
 
                     b.Property<string>("StringProperty1")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(512)")
-                        .HasColumnName("STR_PROP_1");
+                        .HasColumnType("text")
+                        .HasColumnName("str_prop_1");
 
                     b.Property<string>("StringProperty2")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(512)")
-                        .HasColumnName("STR_PROP_2");
+                        .HasColumnType("text")
+                        .HasColumnName("str_prop_2");
 
                     b.Property<string>("StringProperty3")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(512)")
-                        .HasColumnName("STR_PROP_3");
+                        .HasColumnType("text")
+                        .HasColumnName("str_prop_3");
 
                     b.Property<string>("TimeZoneId")
-                        .HasMaxLength(80)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(80)")
-                        .HasColumnName("TIME_ZONE_ID");
+                        .HasColumnType("text")
+                        .HasColumnName("time_zone_id");
 
                     b.HasKey("SchedulerName", "TriggerName", "TriggerGroup");
 
-                    b.ToTable("QRTZ_SIMPROP_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_simprop_triggers", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzSimpleTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<long>("RepeatCount")
                         .HasColumnType("bigint")
-                        .HasColumnName("REPEAT_COUNT");
+                        .HasColumnName("repeat_count");
 
                     b.Property<long>("RepeatInterval")
                         .HasColumnType("bigint")
-                        .HasColumnName("REPEAT_INTERVAL");
+                        .HasColumnName("repeat_interval");
 
                     b.Property<long>("TimesTriggered")
                         .HasColumnType("bigint")
-                        .HasColumnName("TIMES_TRIGGERED");
+                        .HasColumnName("times_triggered");
 
                     b.HasKey("SchedulerName", "TriggerName", "TriggerGroup");
 
-                    b.ToTable("QRTZ_SIMPLE_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_simple_triggers", "quartz");
                 });
 
             modelBuilder.Entity("AppAny.Quartz.EntityFrameworkCore.Migrations.QuartzTrigger", b =>
                 {
                     b.Property<string>("SchedulerName")
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("SCHED_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("sched_name");
 
                     b.Property<string>("TriggerName")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_name");
 
                     b.Property<string>("TriggerGroup")
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("TRIGGER_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_group");
 
                     b.Property<string>("CalendarName")
-                        .HasMaxLength(200)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("CALENDAR_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("calendar_name");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<long?>("EndTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("END_TIME");
+                        .HasColumnName("end_time");
 
                     b.Property<byte[]>("JobData")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("JOB_DATA");
+                        .HasColumnType("bytea")
+                        .HasColumnName("job_data");
 
                     b.Property<string>("JobGroup")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_GROUP");
+                        .HasColumnType("text")
+                        .HasColumnName("job_group");
 
                     b.Property<string>("JobName")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("JOB_NAME");
+                        .HasColumnType("text")
+                        .HasColumnName("job_name");
 
                     b.Property<short?>("MisfireInstruction")
                         .HasColumnType("smallint")
-                        .HasColumnName("MISFIRE_INSTR");
+                        .HasColumnName("misfire_instr");
 
                     b.Property<long?>("NextFireTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("NEXT_FIRE_TIME");
+                        .HasColumnName("next_fire_time");
 
                     b.Property<long?>("PreviousFireTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("PREV_FIRE_TIME");
+                        .HasColumnName("prev_fire_time");
 
                     b.Property<int?>("Priority")
-                        .HasColumnType("int")
-                        .HasColumnName("PRIORITY");
+                        .HasColumnType("integer")
+                        .HasColumnName("priority");
 
                     b.Property<long>("StartTime")
                         .HasColumnType("bigint")
-                        .HasColumnName("START_TIME");
+                        .HasColumnName("start_time");
 
                     b.Property<string>("TriggerState")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(16)")
-                        .HasColumnName("TRIGGER_STATE");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_state");
 
                     b.Property<string>("TriggerType")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(8)")
-                        .HasColumnName("TRIGGER_TYPE");
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_type");
 
                     b.HasKey("SchedulerName", "TriggerName", "TriggerGroup");
 
                     b.HasIndex("NextFireTime")
-                        .HasDatabaseName("IDX_QRTZ_T_NEXT_FIRE_TIME");
+                        .HasDatabaseName("idx_qrtz_t_next_fire_time");
 
                     b.HasIndex("TriggerState")
-                        .HasDatabaseName("IDX_QRTZ_T_STATE");
+                        .HasDatabaseName("idx_qrtz_t_state");
 
                     b.HasIndex("NextFireTime", "TriggerState")
-                        .HasDatabaseName("IDX_QRTZ_T_NFT_ST");
+                        .HasDatabaseName("idx_qrtz_t_nft_st");
 
                     b.HasIndex("SchedulerName", "JobName", "JobGroup");
 
-                    b.ToTable("QRTZ_TRIGGERS", "quartz");
+                    b.ToTable("qrtz_triggers", "quartz");
                 });
 
             modelBuilder.Entity("CharacterGuild", b =>
                 {
                     b.Property<Guid>("ApplicantsId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ApplicationsId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("ApplicantsId", "ApplicationsId");
 
@@ -597,10 +498,10 @@ namespace TLMaster.Persistence.Migrations
             modelBuilder.Entity("GuildUser", b =>
                 {
                     b.Property<Guid>("StaffGuildsId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("StaffId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("StaffGuildsId", "StaffId");
 
@@ -613,18 +514,18 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -637,18 +538,18 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -660,16 +561,16 @@ namespace TLMaster.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -681,10 +582,10 @@ namespace TLMaster.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -696,16 +597,16 @@ namespace TLMaster.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -716,28 +617,28 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Payout")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -750,26 +651,25 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -778,28 +678,28 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("BidStep")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
+                        .HasColumnType("interval");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("WinnerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -817,16 +717,16 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Amount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("CharacterId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -842,16 +742,16 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Amount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("AuctionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("BidderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -866,27 +766,27 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("PartyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<string>("Weapons")
+                    b.PrimitiveCollection<int[]>("Weapons")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("integer[]");
 
                     b.HasKey("Id");
 
@@ -903,18 +803,18 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("GuildMasterId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -927,17 +827,17 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -952,14 +852,14 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -972,26 +872,26 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -1004,54 +904,54 @@ namespace TLMaster.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1060,8 +960,7 @@ namespace TLMaster.Persistence.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1336,7 +1235,7 @@ namespace TLMaster.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("TLMaster.Core.Entities.Character", "Owner")
-                        .WithMany("Itens")
+                        .WithMany("Items")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -1394,7 +1293,7 @@ namespace TLMaster.Persistence.Migrations
 
                     b.Navigation("Bids");
 
-                    b.Navigation("Itens");
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("TLMaster.Core.Entities.Guild", b =>

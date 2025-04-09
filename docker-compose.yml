@@ -7,17 +7,31 @@ volumes:
 
 services:
 
+  # db:
+  #   image: mcr.microsoft.com/mssql/server:latest
+  #   ports:
+  #     - 1433:1433
+  #   restart: unless-stopped
+  #   environment:
+  #     ACCEPT_EULA: Y 
+  #     MSSQL_SA_PASSWORD: DevelopmentPW1! 
+  #     MSSQL_PID: Developer
+  #   volumes:
+  #     - sqlserver-volume:/var/opt/mssql
+  #   networks:
+  #     - tlmaster-network
+
   db:
-    image: mcr.microsoft.com/mssql/server:latest
+    image: postgres:16
     ports:
-      - 1433:1433
+      - 5432:5432
     restart: unless-stopped
     environment:
-      ACCEPT_EULA: Y 
-      MSSQL_SA_PASSWORD: DevelopmentPW1! 
-      MSSQL_PID: Developer
+      POSTGRES_PASSWORD: tlmaster 
+      POSTGRES_USER: tlmaster 
+      POSTGRES_DB: tlmaster
     volumes:
-      - sqlserver-volume:/var/opt/mssql
+      - postgres-volume:/var/lib/postgresql/data
     networks:
       - tlmaster-network
   
@@ -32,7 +46,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80;
-      - ConnectionStrings__ConnectionString=Server=db,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;TrustServerCertificate=true;
+#     - ConnectionStrings__ConnectionString=Server=db,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;TrustServerCertificate=true;
+      - ConnectionStrings__ConnectionString=Server=db,5432;Database=tlmaster;User Id=tlmaster;Password=tlmaster;
     networks:
       - tlmaster-network
     depends_on: 

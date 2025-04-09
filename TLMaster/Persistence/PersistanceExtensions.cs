@@ -18,7 +18,7 @@ public static class PersistenceExtensions
     public static void ConfigurePersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
+            options.UseNpgsql(configuration.GetConnectionString("ConnectionString")));
 
         services.AddIdentity<User, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -1,5 +1,5 @@
 using AppAny.Quartz.EntityFrameworkCore.Migrations;
-using AppAny.Quartz.EntityFrameworkCore.Migrations.SqlServer;
+using AppAny.Quartz.EntityFrameworkCore.Migrations.PostgreSQL;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TLMaster.Core.Entities;
@@ -157,7 +157,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .OnDelete(DeleteBehavior.Cascade);
 
         //Quartz Jobs
-        modelBuilder.AddQuartz(builder => builder.UseSqlServer());
+        modelBuilder.AddQuartz(builder => builder.UsePostgreSql());
     }
 
 }
