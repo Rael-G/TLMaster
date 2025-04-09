@@ -3,7 +3,7 @@ networks:
     driver: bridge
 
 volumes:
-  sqlserver-volume:
+  postgres-volume:
 
 services:
 
@@ -35,21 +35,21 @@ services:
     networks:
       - tlmaster-network
   
-  api:
-    ports:
-      - 5001:80
-      - 7001:443
-    restart: always
-    build:
-      context: .
-      dockerfile: TLMaster/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80;
-#     - ConnectionStrings__ConnectionString=Server=db,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;TrustServerCertificate=true;
-      - ConnectionStrings__ConnectionString=Server=db,5432;Database=tlmaster;User Id=tlmaster;Password=tlmaster;
-    networks:
-      - tlmaster-network
-    depends_on: 
-      - db
+#   api:
+#     ports:
+#       - 5001:80
+#       - 7001:443
+#     restart: unless-stopped
+#     build:
+#       context: .
+#       dockerfile: TLMaster/Dockerfile
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ASPNETCORE_URLS=http://+:80;
+# #     - ConnectionStrings__ConnectionString=Server=db,1433;Database=TLMasterDB;User Id=sa;Password=DevelopmentPW1!;TrustServerCertificate=true;
+#       - ConnectionStrings__ConnectionString=Server=db,5432;Database=tlmaster;User id=tlmaster;Password=tlmaster;
+#     networks:
+#       - tlmaster-network
+#     depends_on: 
+#       - db
 

@@ -36,10 +36,10 @@ public static class ApplicationExtensions
             .UsePersistentStore(c => 
             {
                 c.UseNewtonsoftJsonSerializer();
-                c.UseSqlServer(o => 
+                c.UsePostgres(o => 
                 {
                     o.ConnectionStringName = "ConnectionString";
-                    o.UseDriverDelegate<SqlServerDelegate>();
+                    o.UseDriverDelegate<PostgreSQLDelegate>();
                     o.TablePrefix = "quartz.qrtz_";
                 });
             })
