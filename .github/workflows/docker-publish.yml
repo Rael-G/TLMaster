@@ -89,4 +89,10 @@ jobs:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: |
+          IFS=',' read -ra IMAGES <<< "${TAGS}"
+          for IMAGE in "${IMAGES[@]}"; do
+            echo "🔏 Signing image: ${IMAGE}@${DIGEST}"
+            cosign sign --yes "${IMAGE}@${DIGEST}"
+          done
+
