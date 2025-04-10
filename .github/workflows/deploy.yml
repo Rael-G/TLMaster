@@ -1,4 +1,4 @@
-name: Docker
+name: Deploy
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -14,13 +14,9 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,6 +28,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set lowercase IMAGE_NAME env
+        run: |
+          echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -95,4 +95,14 @@ jobs:
             echo "🔏 Signing image: ${IMAGE}@${DIGEST}"
             cosign sign --yes "${IMAGE}@${DIGEST}"
           done
+        
+      - name: Deploy image to Dokku via git:from-image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.DOKKU_HOST }}
+          username: ubuntu
+          key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            dokku git:from-image tlmaster ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
 
