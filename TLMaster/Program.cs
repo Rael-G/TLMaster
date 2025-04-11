@@ -2,6 +2,7 @@ using Scalar.AspNetCore;
 using TLMaster;
 using TLMaster.Application;
 using TLMaster.Persistence;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +24,13 @@ if (app.Environment.IsDevelopment())
         options.RouteTemplate = "/openapi/{documentName}.json";
     });
 	app.MapScalarApiReference();
-
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 app.InitializeDb();
 await app.ConfigureRoles();
 app.SeedDb();
