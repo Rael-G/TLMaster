@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.0.1"></a>
+## [2.0.1](https://www.github.com/Rael-G/TLMaster/releases/tag/v2.0.1) (2025-04-11)
+
+### Bug Fixes
+
+* allways https return url ([fce8561](https://www.github.com/Rael-G/TLMaster/commit/fce856158eec238874a012146b6478e96bc12839))
+
 <a name="2.0.0"></a>
 ## [2.0.0](https://www.github.com/Rael-G/TLMaster/releases/tag/v2.0.0) (2025-04-09)
 
